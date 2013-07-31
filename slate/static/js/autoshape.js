@@ -1,6 +1,6 @@
 /// XXX - fix the 500 constant
-"use strict";
 var AutoShape = function() {
+    "use strict";
     // All of these constants are pretty arbitrary
     var HOUGH_CELL_SIZE = 5;
     var MAX_ANGLE_IN_POLYGON = 140;
@@ -12,9 +12,25 @@ var AutoShape = function() {
     var SEEN_ANGLE_DEGREE_THRESHOLD = 30;
     var SEEN_ANGLE_PIXEL_THRESHOLD = 30;
 
+    // From http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+    function square(x) { return x * x; }
+    function dist2(v, w) { return square(v.x - w.x) + square(v.y - w.y); }
+    function distToSegmentSquared(p, v, w) {
+        var l2 = dist2(v, w);
+        if (l2 == 0) { return dist2(p, v); }
+        var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
+        if (t < 0) { return dist2(p, v); }
+        if (t > 1) { return dist2(p, w); }
+        return dist2(p, { x: v.x + t * (w.x - v.x),
+                            y: v.y + t * (w.y - v.y) });
+    }
+
+
+
     function polygon_area(points) {
-        var total = 0;
-        for (var i = 0; i < points.length -1; i++) {
+        var total = 0,
+            i = 0;
+        for (i = 0; i < points.length -1; i++) {
             var px1 = points[i].x;
             var py1 = points[i].y;
             var px2 = points[i + 1].x;
@@ -37,12 +53,13 @@ var AutoShape = function() {
         var new_list = [];
         var threshold = CLOSE_ANGLE_THRESHOLD;
         var angle_rads = angle.rads;
+        var i, test_rads;
 
         var max_drop = angle_rads + threshold;
         var min_drop = angle_rads - threshold;
 
-        for (var i = 0; i < others.length; i++) {
-            var test_rads = others[i].rads;
+        for (i = 0; i < others.length; i++) {
+            test_rads = others[i].rads;
 
             if (test_rads > max_drop || test_rads < min_drop) {
                 new_list.push(others[i]);
@@ -54,14 +71,19 @@ var AutoShape = function() {
 
     // Hough lines that are almost the same just add noise, and make it harder to find good polygons
     function seen_angle(angle, slope, x, y, seen_angles) {
+        var i,
+            angle_diff,
+            x2,
+            y2,
+            point_diff;
         // If this is more than 30 degrees from any previous line, it's definitely not seen
         // If it's less than 30, we need to see where it intersects, so we don't exclue parallel lines
-        for (var i = 0; i < seen_angles.length; i++) {
-            var angle_diff = Math.abs(seen_angles[i].a - angle);
+        for (i = 0; i < seen_angles.length; i++) {
+            angle_diff = Math.abs(seen_angles[i].a - angle);
             if (angle_diff < SEEN_ANGLE_DEGREE_THRESHOLD) {
-                var x2 = seen_angles[i].x;
-                var y2 = seen_angles[i].y;
-                var point_diff = Math.sqrt(square(x-x2) + square(y-y2));
+                x2 = seen_angles[i].x;
+                y2 = seen_angles[i].y;
+                point_diff = Math.sqrt(square(x-x2) + square(y-y2));
 
                 if (point_diff < SEEN_ANGLE_PIXEL_THRESHOLD) {
                     return true;
@@ -92,6 +114,7 @@ var AutoShape = function() {
     }
 
     function intersection_point(s1, x1, y1, s2, x2, y2) {
+        var x_intercept, y_intercept;
         if (s1 == s2) {
             return;
         }
@@ -99,32 +122,18 @@ var AutoShape = function() {
         // That's a vertical line.  An 89 degree angle has a slope of
         // ~57.3, this check will be OK up to 89.7 degrees
         if (s1 > 200) {
-            var y_intercept = -1 * s2 * (x2 - x1) - y2;
+            y_intercept = -1 * s2 * (x2 - x1) - y2;
             return { x: x1, y: y_intercept };
         }
 
-        var x_intercept;
         if (s2 > 200) {
             x_intercept = x2;
         }
         else {
             x_intercept = (y1 - y2 + (x1 * s1) - (x2 * s2)) / (s1 - s2);
         }
-        var y_intercept = -1 * s1 * (x1 - x_intercept) - y1;
+        y_intercept = -1 * s1 * (x1 - x_intercept) - y1;
         return { x: x_intercept, y: y_intercept };
-    }
-
-    // From http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-    function square(x) { return x * x }
-    function dist2(v, w) { return square(v.x - w.x) + square(v.y - w.y) }
-    function distToSegmentSquared(p, v, w) {
-        var l2 = dist2(v, w);
-        if (l2 == 0) return dist2(p, v);
-        var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-        if (t < 0) return dist2(p, v);
-        if (t > 1) return dist2(p, w);
-        return dist2(p, { x: v.x + t * (w.x - v.x),
-                            y: v.y + t * (w.y - v.y) });
     }
 
     function find_line_error_for_point(point, line) {
@@ -133,10 +142,11 @@ var AutoShape = function() {
 
     function find_polygon_error_for_point(point, verticies) {
         var smallest_error = Number.MAX_VALUE;
+        var i;
 
         if (!verticies.length) { return 0; }
 
-        for (var i = 0; i < verticies.length -1; i++) {
+        for (i = 0; i < verticies.length -1; i++) {
             var distance_squared = distToSegmentSquared(point, verticies[i], verticies[i+1]);
 
             if (distance_squared < smallest_error) {
@@ -209,134 +219,93 @@ var AutoShape = function() {
 
     }
 
-    function find_polygon(input_points) {
-        var min_dist = Number.MAX_VALUE;
-        var max_dist = -1 * Number.MAX_VALUE;
+    function fill_gap_linear(x1, y1, x2, y2) {
 
-        var accumulator = linear_hough_accumulator(input_points);
-        var sorted_lines = line_candidates_from_acumulator(accumulator);
+        var distance = Math.sqrt(square(x2 - x1) + square(y2 - y1));
+        var steps = Math.floor(distance);
+        var fills = [];
+        var i;
+        for (i = 1; i < steps; i++) {
+            var fill_x = (((x2 - x1) / steps) * i) + x1;
+            var fill_y = (((y2 - y1) / steps) * i) + y1;
 
-        var bounding_box = get_bounding_box(input_points);
-
-        var intersections = intersections_from_lines(sorted_lines, bounding_box);
-        var accepted_vertix = find_polygon_in_intersections(intersections);
-
-        var poly_error = 0;
-
-        for (var i = 0; i < input_points.length; i++) {
-            poly_error += find_polygon_error_for_point(input_points[i], accepted_vertix);
+            fills.push({'x': fill_x, 'y': fill_y });
         }
 
-        var intersection1 = get_intersection(input_points[0], sorted_lines[0]);
-        var intersection2 = get_intersection(input_points[input_points.length - 1], sorted_lines[0]);
-
-        var line = [intersection1, intersection2];
-
-        var line_error = 0;
-        for (var i = 0; i < input_points.length; i++) {
-            line_error += find_line_error_for_point(input_points[i], line);
-        }
-
-        return { 'poly': accepted_vertix, 'poly_error': poly_error, 'line': line, 'line_error': line_error };
-    }
-
-    function find_circle(input_points) {
-        var hough_values = circle_hough_accumulator(input_points);
-
-        var cx = hough_values.x;
-        var cy = hough_values.y;
-        var r = hough_values.r;
-
-        var error = 0;
-
-        for (var i = 0; i < input_points.length; i++) {
-            var ix = input_points[i].x;
-            var iy = input_points[i].y;
-
-            var distance = Math.sqrt(square(ix-cx) + square(iy-cy));
-            error += square(r - distance);
-        }
-
-        hough_values.error = error;
-        return hough_values;
+        return fills;
     }
 
 
-    function circle_hough_accumulator(base_points) {
-        var min_x = Number.MAX_VALUE;
-        var min_y = Number.MAX_VALUE;
-        var max_x = 0;
-        var max_y = 0;
 
+    function linear_hough_accumulator(base_points) {
+        // We need to fill in points, otherwise a slowly drawn section will have many more data points,
+        // and improperly bias the accumulator.
         var input_points = [];
-        for (var i = 0; i < base_points.length; i++) {
-            var px = base_points[i].x;
-            var py = base_points[i].y;
-
-            if (px < min_x) { min_x = px; }
-            if (py < min_y) { min_y = py; }
-            if (px > max_x) { max_x = px; }
-            if (py > max_y) { max_y = py; }
-
-            input_points.push(base_points[i]);
+        var i,
+            f,
+            angle;
+        for (i = 0; i < base_points.length; i++) {
             if (i > 0) {
-                var fills = fill_gap_linear(base_points[i-1].x, base_points[i-1].y, base_points[i].x, base_points[i].y)
-                for (var f = 0; f < fills.length; f++) {
+                var fills = fill_gap_linear(base_points[i-1].x, base_points[i-1].y, base_points[i].x, base_points[i].y);
+                for (f = 0; f < fills.length; f++) {
                     input_points.push(fills[f]);
                 }
             }
         }
 
-        var center_x = (min_x + max_x) / 2;
-        var center_y = (min_y + max_y) / 2;
-
-        // These are to limit the size of the accumulator - the circle needs to be roughly accurate to count
-        var min_x_center = center_x - 5;
-        var max_x_center = center_x + 5;
-        var min_y_center = center_y - 5;
-        var max_y_center = center_y + 5;
 
         var accumulator = [];
-        for (var i = 0; i < max_x_center - min_x_center; i++) {
-            accumulator[i] = [];
-            for (var j = 0; j < max_y_center - min_y_center; j++) {
-                accumulator[i][j] = {};
+        for (angle = 0; angle < 180; angle += 5) {
+            accumulator[angle/5] = [];
+        }
+
+        var max_accumulator;
+
+        for (i = 0; i < input_points.length; i++) {
+            var px = input_points[i].x;
+            var py = input_points[i].y;
+
+            for (angle = 0; angle < 180; angle += 5) {
+                var radians = Math.PI * angle / 180.0;
+                var dist = px * Math.cos(radians) + py * Math.sin(radians);
+
+                var accumulator_distance;
+                if (dist > 0) {
+                    accumulator_distance = Math.floor(dist/HOUGH_CELL_SIZE) * HOUGH_CELL_SIZE;
+                }
+                else {
+                    accumulator_distance = Math.ceil(dist/HOUGH_CELL_SIZE) * HOUGH_CELL_SIZE;
+                }
+
+                if (!accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE]) {
+                    accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE] = 0;
+                }
+                accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE] += 1;
             }
         }
 
-        for (var p = 0; p < input_points.length; p++) {
-            var px = input_points[p].x;
-            var py = input_points[p].y;
+        return accumulator;
+    }
 
-            for (var i = 0; i < max_x_center - min_x_center; i++) {
-                var test_x = min_x_center + i;
-                for (var j = 0; j < max_y_center - min_y_center; j++) {
-                    var test_y = min_y_center + j;
-                    var distance = Math.sqrt(square(px - test_x) + square(py - test_y));
-                    distance = Math.floor(distance);
-                    if (!accumulator[i][j][distance]) {
-                        accumulator[i][j][distance] = 0;
-                    }
-                    accumulator[i][j][distance]++;
+    function line_candidates_from_acumulator(accumulator) {
+        var line_candidates = [];
+        var i,
+            j;
+        for (i = 0; i < accumulator.length; i++) {
+            for (j = 0; j < accumulator[i].length; j++) {
+                var value = accumulator[i][j];
+
+                if (value > 0) {
+                    line_candidates.push({'value': value, 'a': i*5, 'd': (j * HOUGH_CELL_SIZE) - 500 });
                 }
             }
         }
 
-        var best_value = 0;
-        var best_match = null;
+        var sorted_lines = line_candidates.sort(function(a, b) {
+            return (b.value - a.value);
+        });
 
-        for (var i = 0; i < max_x_center - min_x_center; i++) {
-            for (var j = 0; j < max_y_center - min_y_center; j++) {
-                for (var distance in accumulator[i][j]) {
-                    if (accumulator[i][j][distance] > best_value) {
-                        best_value = accumulator[i][j][distance];
-                        best_match = { 'x': min_x_center + i, 'y': min_y_center + j, 'r': distance };
-                    }
-                }
-            }
-        }
-
-        return best_match;
+        return sorted_lines;
     }
 
     function get_bounding_box(points) {
@@ -349,7 +318,7 @@ var AutoShape = function() {
             px = 0,
             py = 0;
 
-        for (var i = 0; i < point_length; i++) {
+        for (i = 0; i < point_length; i++) {
             px = points[i].x;
             py = points[i].y;
 
@@ -375,72 +344,6 @@ var AutoShape = function() {
         };
     }
 
-    function linear_hough_accumulator(base_points) {
-        // We need to fill in points, otherwise a slowly drawn section will have many more data points,
-        // and improperly bias the accumulator.
-        var input_points = [];
-        for (var i = 0; i < base_points.length; i++) {
-            if (i > 0) {
-                var fills = fill_gap_linear(base_points[i-1].x, base_points[i-1].y, base_points[i].x, base_points[i].y)
-                for (var f = 0; f < fills.length; f++) {
-                    input_points.push(fills[f]);
-                }
-            }
-        }
-
-
-        var accumulator = [];
-        for (var angle = 0; angle < 180; angle += 5) {
-            accumulator[angle/5] = [];
-        }
-
-        var max_accumulator;
-
-        for (var i = 0; i < input_points.length; i++) {
-            var px = input_points[i].x;
-            var py = input_points[i].y;
-
-            for (var angle = 0; angle < 180; angle += 5) {
-                var radians = Math.PI * angle / 180.0;
-                var dist = px * Math.cos(radians) + py * Math.sin(radians);
-
-                var accumulator_distance;
-                if (dist > 0) {
-                    accumulator_distance = Math.floor(dist/HOUGH_CELL_SIZE) * HOUGH_CELL_SIZE;
-                }
-                else {
-                    accumulator_distance = Math.ceil(dist/HOUGH_CELL_SIZE) * HOUGH_CELL_SIZE;
-                }
-
-                if (!accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE]) {
-                    accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE] = 0;
-                }
-                accumulator[angle/5][(accumulator_distance + 500) / HOUGH_CELL_SIZE] += 1;
-            }
-        }
-
-        return accumulator;
-    }
-
-    function line_candidates_from_acumulator(accumulator) {
-        var line_candidates = [];
-        for (var i = 0; i < accumulator.length; i++) {
-            for (var j = 0; j < accumulator[i].length; j++) {
-                var value = accumulator[i][j];
-
-                if (value > 0) {
-                    line_candidates.push({'value': value, 'a': i*5, 'd': (j * HOUGH_CELL_SIZE) - 500 });
-                }
-            }
-        }
-
-        var sorted_lines = line_candidates.sort(function(a, b) {
-            return (b.value - a.value);
-        });
-
-        return sorted_lines;
-    }
-
     function intersections_from_lines(sorted_lines, bounding_box) {
         var best_value = sorted_lines[0].value,
             threshold = best_value / 2,
@@ -449,23 +352,25 @@ var AutoShape = function() {
             min_x = bounding_box.min_x,
             max_x = bounding_box.max_x,
             min_y = bounding_box.min_y,
-            max_y = bounding_box.max_y;
+            max_y = bounding_box.max_y,
+            i,
+            j;
 
-        for (var i = 0; i < 12; i++) {
+        for (i = 0; i < 12; i++) {
             var max_values = sorted_lines[i];
 
-            var line_angle = max_values['a'] + 90;
+            var line_angle = max_values.a + 90;
             var line_slope = Math.tan(line_angle * Math.PI / 180);
-            var point1_x = max_values['d'] * Math.sin(line_angle * Math.PI / 180);
-            var point1_y = max_values['d'] * Math.cos(line_angle * Math.PI / 180);
+            var point1_x = max_values.d * Math.sin(line_angle * Math.PI / 180);
+            var point1_y = max_values.d * Math.cos(line_angle * Math.PI / 180);
 
             if (seen_angle(line_angle, line_slope, point1_x, point1_y, seen_angles)) {
                 continue;
             }
-            seen_angles.push({ 'a': line_angle, 's': line_slope, 'x': point1_x, 'y': point1_y })
+            seen_angles.push({ 'a': line_angle, 's': line_slope, 'x': point1_x, 'y': point1_y });
         }
 
-        var percent = .2;
+        var percent = 0.2;
 
         var x_range = max_x - min_x;
         var min_intersect_x = min_x - percent * x_range;
@@ -476,10 +381,10 @@ var AutoShape = function() {
         var max_intersect_y = max_y + percent * y_range;
 
         var intersections = [];
-        for (var i = 0; i < seen_angles.length; i++) {
+        for (i = 0; i < seen_angles.length; i++) {
             var seen_i = seen_angles[i];
 
-            for (var j = 0; j < i; j++) {
+            for (j = 0; j < i; j++) {
                 var seen_j = seen_angles[j];
                 var intersection = intersection_point(seen_i.s, seen_i.x, seen_i.y, seen_j.s, seen_j.x, seen_j.y);
 
@@ -507,10 +412,13 @@ var AutoShape = function() {
         var max_i_y = 0;
         var min_i_x = Number.MAX_VALUE;
         var min_i_y = Number.MAX_VALUE;
+        var i,
+            i_x,
+            i_y;
 
-        for (var i = 0; i < intersections.length; i++) {
-            var i_x = intersections[i].x;
-            var i_y = intersections[i].y;
+        for (i = 0; i < intersections.length; i++) {
+            i_x = intersections[i].x;
+            i_y = intersections[i].y;
             if (max_i_x < i_x) {
                 max_i_x = i_x;
             }
@@ -532,10 +440,10 @@ var AutoShape = function() {
 
         var intersection_from_center_info = [];
         var angles = [];
-        for (var i = 0; i < intersections.length; i++) {
+        for (i = 0; i < intersections.length; i++) {
             var angle_rads;
-            var i_x = intersections[i].x;
-            var i_y = intersections[i].y;
+            i_x = intersections[i].x;
+            i_y = intersections[i].y;
 
             // Using law of cosigns to get the angle.  Point 3 is 200 px to the right of the center point.
             var lenA = Math.sqrt(square(center_x - i_x) + square(center_y - i_y));
@@ -544,7 +452,7 @@ var AutoShape = function() {
             var lenC = 200;
 
 
-            var angle_rads = Math.acos((square(lenB) - square(lenA) - square(lenC)) / (2 * lenA * lenC));
+            angle_rads = Math.acos((square(lenB) - square(lenA) - square(lenC)) / (2 * lenA * lenC));
 
             // If the test spot is below center, we need to add PI radians, otherwise it'll just mirror things above it
             if (i_y < center_y) {
@@ -561,7 +469,7 @@ var AutoShape = function() {
             intersections[i].distance_from_center = Math.sqrt(square(i_x - center_x) + square(i_y - center_y));
         }
 
-        var by_distance = intersections.sort(function(a, b) { return b.distance_from_center - a.distance_from_center });
+        var by_distance = intersections.sort(function(a, b) { return b.distance_from_center - a.distance_from_center; });
 
         var accepted_vertix = [];
 
@@ -573,13 +481,13 @@ var AutoShape = function() {
         }
 
 
-        accepted_vertix.sort(function(a, b) { return a.rads - b.rads });
+        accepted_vertix.sort(function(a, b) { return a.rads - b.rads; });
 
         accepted_vertix.push(accepted_vertix[0]);
         accepted_vertix.push(accepted_vertix[1]);
 
         var prune_indicies = [];
-        for (var i = 1; i < accepted_vertix.length - 1; i ++) {
+        for (i = 1; i < accepted_vertix.length - 1; i ++) {
             var angle = angle_between_points(accepted_vertix[i - 1], accepted_vertix[i], accepted_vertix[i + 1]);
 
             if (angle > MAX_ANGLE_IN_POLYGON) {
@@ -596,7 +504,7 @@ var AutoShape = function() {
         // Remove the extra wrap-around for the angle tests
 
         var final_list = [];
-        for (var i = 0; i < accepted_vertix.length; i++) {
+        for (i = 0; i < accepted_vertix.length; i++) {
             if (prune_indicies[i]) {
                 continue;
             }
@@ -611,21 +519,150 @@ var AutoShape = function() {
         return final_list;
     }
 
-    function fill_gap_linear(x1, y1, x2, y2) {
 
-        var distance = Math.sqrt(square(x2 - x1) + square(y2 - y1));
-        var steps = Math.floor(distance);
-        var fills = [];
-        for (var i = 1; i < steps; i++) {
-            var fill_x = (((x2 - x1) / steps) * i) + x1;
-            var fill_y = (((y2 - y1) / steps) * i) + y1;
 
-            fills.push({'x': fill_x, 'y': fill_y });
+    function find_polygon(input_points) {
+        var min_dist = Number.MAX_VALUE;
+        var max_dist = -1 * Number.MAX_VALUE;
+
+        var accumulator = linear_hough_accumulator(input_points);
+        var sorted_lines = line_candidates_from_acumulator(accumulator);
+
+        var bounding_box = get_bounding_box(input_points);
+
+        var intersections = intersections_from_lines(sorted_lines, bounding_box);
+        var accepted_vertix = find_polygon_in_intersections(intersections);
+
+        var poly_error = 0,
+            i;
+
+        for (i = 0; i < input_points.length; i++) {
+            poly_error += find_polygon_error_for_point(input_points[i], accepted_vertix);
         }
 
-        return fills;
+        var intersection1 = get_intersection(input_points[0], sorted_lines[0]);
+        var intersection2 = get_intersection(input_points[input_points.length - 1], sorted_lines[0]);
+
+        var line = [intersection1, intersection2];
+
+        var line_error = 0;
+        for (i = 0; i < input_points.length; i++) {
+            line_error += find_line_error_for_point(input_points[i], line);
+        }
+
+        return { 'poly': accepted_vertix, 'poly_error': poly_error, 'line': line, 'line_error': line_error };
     }
 
+    function circle_hough_accumulator(base_points) {
+        var min_x = Number.MAX_VALUE;
+        var min_y = Number.MAX_VALUE;
+        var max_x = 0;
+        var max_y = 0;
+
+        var input_points = [],
+            i,
+            j,
+            f,
+            p,
+            distance,
+            px,
+            py;
+        for (i = 0; i < base_points.length; i++) {
+            px = base_points[i].x;
+            py = base_points[i].y;
+
+            if (px < min_x) { min_x = px; }
+            if (py < min_y) { min_y = py; }
+            if (px > max_x) { max_x = px; }
+            if (py > max_y) { max_y = py; }
+
+            input_points.push(base_points[i]);
+            if (i > 0) {
+                var fills = fill_gap_linear(base_points[i-1].x, base_points[i-1].y, base_points[i].x, base_points[i].y);
+                for (f = 0; f < fills.length; f++) {
+                    input_points.push(fills[f]);
+                }
+            }
+        }
+
+        var center_x = (min_x + max_x) / 2;
+        var center_y = (min_y + max_y) / 2;
+
+        // These are to limit the size of the accumulator - the circle needs to be roughly accurate to count
+        var min_x_center = center_x - 5;
+        var max_x_center = center_x + 5;
+        var min_y_center = center_y - 5;
+        var max_y_center = center_y + 5;
+
+        var accumulator = [];
+        for (i = 0; i < max_x_center - min_x_center; i++) {
+            accumulator[i] = [];
+            for (j = 0; j < max_y_center - min_y_center; j++) {
+                accumulator[i][j] = {};
+            }
+        }
+
+        for (p = 0; p < input_points.length; p++) {
+            px = input_points[p].x;
+            py = input_points[p].y;
+
+            for (i = 0; i < max_x_center - min_x_center; i++) {
+                var test_x = min_x_center + i;
+                for (j = 0; j < max_y_center - min_y_center; j++) {
+                    var test_y = min_y_center + j;
+                    distance = Math.sqrt(square(px - test_x) + square(py - test_y));
+                    distance = Math.floor(distance);
+                    if (!accumulator[i][j][distance]) {
+                        accumulator[i][j][distance] = 0;
+                    }
+                    accumulator[i][j][distance]++;
+                }
+            }
+        }
+
+        var best_value = 0;
+        var best_match = null;
+
+        for (i = 0; i < max_x_center - min_x_center; i++) {
+            for (j = 0; j < max_y_center - min_y_center; j++) {
+                var distance_accumulator = accumulator[i][j];
+                for (distance in distance_accumulator) {
+                    if (distance_accumulator.hasOwnProperty(distance)) {
+                        var value = distance_accumulator[distance];
+                        if (value > best_value) {
+                            best_value = value;
+                            best_match = { 'x': min_x_center + i, 'y': min_y_center + j, 'r': distance };
+                        }
+                    }
+                }
+            }
+        }
+
+        return best_match;
+    }
+
+
+    function find_circle(input_points) {
+        var hough_values = circle_hough_accumulator(input_points);
+
+        var cx = hough_values.x;
+        var cy = hough_values.y;
+        var r = hough_values.r;
+
+        var error = 0;
+        var i;
+
+        for (i = 0; i < input_points.length; i++) {
+            var ix = input_points[i].x;
+            var iy = input_points[i].y;
+
+            var distance = Math.sqrt(square(ix-cx) + square(iy-cy));
+            error += square(r - distance);
+        }
+
+        hough_values.error = error;
+        return hough_values;
+    }
 
     var me = {
         find_shape: function(input_points) {
@@ -635,7 +672,6 @@ var AutoShape = function() {
             var circle_area = square(circle.r)*Math.PI;
             var line_length = Math.sqrt(square(poly.line[0].x - poly.line[1].x) + square(poly.line[0].y - poly.line[1].y));
 
-            var choice = 'none';
             var min_error = Number.MAX_VALUE;
 
             if (circle.error < min_error) {
