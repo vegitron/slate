@@ -1,0 +1,4 @@
+slate
+=====
+
+A shared whiteboard
