@@ -1,23 +1,38 @@
 <style>
-    #title { position: fixed; top: 0px; left: 0px; width: 100%; height: 40px; }
-    #sidebar { position: fixed; top: 0px; right: 0px; width: 200px; height: 100%; }
-    #canvas_container { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 </style>
+
+<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tech.css"/>
+
 <div id="canvas_container"><canvas id="artboard"></canvas></div>
 <div id="scroller"></div>
 <div id="title">This is the title</div>
 <div id="sidebar">
     <div>
-        Actions
+        Actions - not active yet <br />
+        <input type="radio" name="board_actions" value="autoshape">Draw autoshape <br />
+        <input type="radio" name="board_actions" value="rectangle">Draw rectangle <br />
+        ... <br />
+        <input type="radio" name="board_actions" value="pan">Move around canvas<br />
+
+
     </div>
-    <div>
+    <div id="layers_sidebar">
         Layers
+        <div>
+            <button id="add_layer">Add Layer</button>
+        </div>
     </div>
     <div>
         Preview
     </div>
 </div>
 
+<script src="{{STATIC_URL}}js/jquery-2.0.3.min.js"></script>
+<script src="{{STATIC_URL}}js/app.js"></script>
+<script src="{{STATIC_URL}}js/handlebars.js"></script>
+<script src="{{STATIC_URL}}js/handlebars_util.js"></script>
 <script src="{{STATIC_URL}}js/autoshape.js"></script>
+<script src="{{STATIC_URL}}js/layers.js"></script>
 
+{% include "handlebars/layer/sidebar.html" %}
 

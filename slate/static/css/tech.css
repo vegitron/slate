@@ -1,0 +1,16 @@
+/*
+This file is a place for engineers to put things in that help them.
+As elements from here are styled properly, these styles can go away.
+*/
+
+
+#title { position: fixed; top: 0px; left: 0px; width: 100%; height: 40px; }
+#sidebar { position: fixed; top: 0px; right: 0px; width: 200px; height: 100%; }
+#canvas_container { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
+
+.layer_sidebar { border: 1px solid blue; }
+
+.layer_sidebar.selected { background: #DDD; }
+
+.layer_preview { border: 1px solid black; }
+
