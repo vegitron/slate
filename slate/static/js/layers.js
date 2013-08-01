@@ -33,3 +33,7 @@ function select_layer(id) {
     $("#layer_sidebar_"+id).addClass("selected");
 }
 
+function get_active_layer() {
+    return app_context.layer_data.selected_layer;
+}
+

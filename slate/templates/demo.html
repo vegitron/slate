@@ -3,13 +3,16 @@
 
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tech.css"/>
 
-<div id="canvas_container"><canvas id="artboard"></canvas></div>
+<div id="canvas_container">
+    <canvas id="artboard"></canvas>
+    <canvas id="draw_surface"></canvas>
+</div>
 <div id="scroller"></div>
 <div id="title">This is the title</div>
 <div id="sidebar">
     <div>
         Actions - not active yet <br />
-        <input type="radio" name="board_actions" value="autoshape">Draw autoshape <br />
+        <input type="radio" name="board_actions" value="autoshape" checked="checked">Draw autoshape <br />
         <input type="radio" name="board_actions" value="rectangle">Draw rectangle <br />
         ... <br />
         <input type="radio" name="board_actions" value="pan">Move around canvas<br />
@@ -33,6 +36,7 @@
 <script src="{{STATIC_URL}}js/handlebars_util.js"></script>
 <script src="{{STATIC_URL}}js/autoshape.js"></script>
 <script src="{{STATIC_URL}}js/layers.js"></script>
+<script src="{{STATIC_URL}}js/drawing.js"></script>
 
 {% include "handlebars/layer/sidebar.html" %}
 

@@ -14,3 +14,6 @@ As elements from here are styled properly, these styles can go away.
 
 .layer_preview { border: 1px solid black; }
 
+#artboard { position: absolute; left: 0px; top: 0px; }
+#draw_surface { position: absolute; left: 0px; top: 0px;  }
+
