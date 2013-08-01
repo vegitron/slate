@@ -41,9 +41,32 @@ function live_update_drawing(ev) {
             y: ev.clientY
         });
     }
+
+    else if (action_type === "rectangle") {
+        var canvas = document.getElementById("draw_surface");
+        var context = canvas.getContext("2d");
+
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        var points = app_context.drawing_state.points;
+        var last_point = points[points.length - 1];
+        var x1 = last_point.x;
+        var y1 = last_point.y;
+        var x2 = ev.clientX;
+        var y2 = ev.clientY;
+
+        draw_polygon(context, 'black', [
+                { x: x1, y: y1 },
+                { x: x1, y: y2 },
+                { x: x2, y: y2 },
+                { x: x2, y: y1 },
+                { x: x1, y: y1 }
+            ]
+        );
+    }
 }
 
-function finish_drawing() {
+function finish_drawing(ev) {
     if (app_context.drawing_state.is_drawing) {
         app_context.drawing_state.is_drawing = false;
 
@@ -62,6 +85,28 @@ function finish_drawing() {
             if (shape_type === "bezier") {
                 shape_values = { points: app_context.drawing_state.points };
             }
+        }
+        else if (action_type === "rectangle") {
+            var draw_canvas = document.getElementById("draw_surface");
+            var draw_context = canvas.getContext("2d");
+
+            draw_context.clearRect(0, 0, canvas.width, canvas.height);
+
+            var points = app_context.drawing_state.points;
+            var last_point = points[points.length - 1];
+            var x1 = last_point.x;
+            var y1 = last_point.y;
+            var x2 = ev.clientX;
+            var y2 = ev.clientY;
+
+            shape_type = 'polygon';
+            shape_values = { points: [
+                    { x: x1, y: y1 },
+                    { x: x1, y: y2 },
+                    { x: x2, y: y2 },
+                    { x: x2, y: y1 },
+                    { x: x1, y: y1 }
+                ] };
         }
 
         add_shape_to_artboard({
