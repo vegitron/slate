@@ -132,20 +132,14 @@ function add_shape_to_artboard(info) {
     var shape = info.shape;
     var values = info.values;
 
-    if (shape === 'circle') {
-        draw_circle(context, 'black', values.cx, values.cy, values.radius);
-    }
-    else if (shape === 'polygon') {
-        draw_polygon(context, 'black', values.points);
-    }
-    else if (shape === 'line') {
-        draw_line(context, 'black', values.points);
-    }
-    else if (shape === 'bezier') {
-        draw_bezier(context, 'black', values.points);
-    }
+    info.coverage_area = get_invalid_area(info);
+    info.z_index = app_context.layer_data.layer_shapes[info.layer].length;
 
+    app_context.layer_data.layer_shapes[info.layer].push(info);
 
+    invalidate_rectangle(info.coverage_area);
+
+    redraw_regions();
 }
 
 function draw_polygon(context, color,  points) {
