@@ -7,8 +7,8 @@ function get_invalid_area_for_bezier(info) {
 function get_invalid_area_for_polygon(info) {
     var min_x = Number.MAX_VALUE;
     var min_y = Number.MAX_VALUE;
-    var max_x = Number.MIN_VALUE;
-    var max_y = Number.MIN_VALUE;
+    var max_x = -1 * Number.MAX_VALUE;
+    var max_y = -1 * Number.MAX_VALUE;
 
     var points = info.points;
     for (var i = 0; i < points.length; i++) {
@@ -67,9 +67,9 @@ function get_invalid_area_for_line(info) {
     }
 
     return {
-        x: x,
-        y: y,
-        width: width,
-        height: height
+        x: x - INVALID_AREA_SLOP,
+        y: y - INVALID_AREA_SLOP,
+        width: width + (2 * INVALID_AREA_SLOP),
+        height: height + (2 * INVALID_AREA_SLOP)
     };
 }

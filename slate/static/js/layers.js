@@ -106,11 +106,13 @@ function redraw_regions() {
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
+    var origin = get_canvas_origin();
     context.save();
     context.beginPath();
     for (var i = 0; i < app_context.redraw_info.areas.length; i++) {
         var region = app_context.redraw_info.areas[i];
-        context.rect(region.x, region.y, region.width, region.height);
+        context.rect(region.x + origin.x, region.y + origin.y, region.width, region.height);
+
     }
     context.clip();
     context.clearRect(0, 0, canvas.width, canvas.height);
