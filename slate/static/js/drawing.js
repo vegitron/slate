@@ -139,11 +139,43 @@ function live_update_drawing(ev) {
 }
 
 function _finish_drawing_autoshape(ev) {
-    var autoshape = AutoShape().find_shape(app_context.drawing_state.points);
+    // need to send autoshape coordinates that aren't offset by the origin - wacky
+    // things happen when the canvas is in the negative area
+    var autoshape_points = [];
+    var origin = get_canvas_origin();
+    for (var i = 0; i < app_context.drawing_state.points.length; i++) {
+        autoshape_points.push({
+            x: app_context.drawing_state.points[i].x + origin.x,
+            y: app_context.drawing_state.points[i].y + origin.y
+        });
+    }
+
+    var autoshape = AutoShape().find_shape(autoshape_points);
+
+    // move things back to the origin offset...
     var shape_type = autoshape.best;
     var shape_values = autoshape.full[autoshape.best];
-    if (shape_type === "bezier") {
+
+    if (shape_type === "circle") {
+        shape_values.cx -= origin.x;
+        shape_values.cy -= origin.y;
+    }
+    else if (shape_type === "bezier") {
         shape_values = { points: app_context.drawing_state.points };
+    }
+    else if (shape_type === "line") {
+        for (var i = 0; i < shape_values.points.length; i++) {
+            shape_values.points[i].x -= origin.x;
+            shape_values.points[i].y -= origin.y;
+        }
+    }
+    else if (shape_type === "polygon") {
+        // The last element in this array is a reference to the first, so don't
+        // offset it twice
+        for (var i = 0; i < shape_values.points.length-1; i++) {
+            shape_values.points[i].x -= origin.x;
+            shape_values.points[i].y -= origin.y;
+        }
     }
 
     add_shape_to_artboard({
