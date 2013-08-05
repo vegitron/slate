@@ -718,7 +718,8 @@ var AutoShape = function() {
                 },
                 circle: {
                     error: circle.error,
-                    radius: circle.r,
+                    // cast to a number
+                    radius: +circle.r,
                     cx: circle.x,
                     cy: circle.y,
                     area: circle_area
