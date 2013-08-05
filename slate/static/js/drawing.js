@@ -18,6 +18,10 @@ function start_drawing(ev) {
             y: ev.clientY,
         });
     }
+    else if (action_type === "select") {
+        var shape = find_select_object(ev.clientX - origin.x, ev.clientY - origin.y);
+        select_shape(shape);
+    }
     else {
         app_context.drawing_state.points.push({
             x: ev.clientX - origin.x,

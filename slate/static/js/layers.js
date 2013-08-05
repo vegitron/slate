@@ -85,20 +85,29 @@ function get_invalid_area(shape) {
     }
 }
 
-function invalidate_rectangle(rectangle) {
-    app_context.redraw_info.areas.push(rectangle);
-
-    
+function find_intersecting_shapes(rectangle) {
+    var intersecting_shapes = [];
     for (var layer_id in app_context.layer_data.layer_shapes) {
         if (app_context.layer_data.layer_shapes.hasOwnProperty(layer_id)) {
             var layer_shapes = app_context.layer_data.layer_shapes[layer_id];
             for (var i = 0; i < layer_shapes.length; i++) {
                 var info = layer_shapes[i];
                 if (area_overlap(rectangle, info.coverage_area)) {
-                    app_context.redraw_info.shapes.push(info);
+                    intersecting_shapes.push(info);
                 }
             }
         }
+    }
+
+    return intersecting_shapes;
+}
+
+function invalidate_rectangle(rectangle) {
+    app_context.redraw_info.areas.push(rectangle);
+
+    var intersecting_shapes = find_intersecting_shapes(rectangle);
+    for (var i = 0; i < intersecting_shapes.length; i++) {
+        app_context.redraw_info.shapes.push(intersecting_shapes[i]);
     }
 }
 
@@ -143,17 +152,21 @@ function redraw_regions() {
         var shape_layer = info.layer;
 
         if (app_context.layer_data.layers[shape_layer].visible) {
+            var color = 'black';
+            if (info.selected_shape) {
+                color = 'red';
+            }
             if (shape === 'circle') {
-                draw_circle(context, 'black', values.cx, values.cy, values.radius);
+                draw_circle(context, color, values.cx, values.cy, values.radius);
             }
             else if (shape === 'polygon') {
-                draw_polygon(context, 'black', values.points);
+                draw_polygon(context, color, values.points);
             }
             else if (shape === 'line') {
-                draw_line(context, 'black', values.points);
+                draw_line(context, color, values.points);
             }
             else if (shape === 'bezier') {
-                draw_bezier(context, 'black', values.points);
+                draw_bezier(context, color, values.points);
             }
         }
 
