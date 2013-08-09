@@ -67,7 +67,7 @@ function _live_update_rectangle(ev) {
     var x2 = ev.clientX - origin.x;
     var y2 = ev.clientY - origin.y;
 
-    draw_polygon(context, 'black', [
+    draw_polygon(context, get_canvas_origin(), 'black', [
             { x: x1, y: y1 },
             { x: x1, y: y2 },
             { x: x2, y: y2 },
@@ -238,12 +238,15 @@ function finish_drawing(ev) {
 
         if (action_type === "autoshape") {
             _finish_drawing_autoshape(ev);
+            draw_layer_previews();
         }
         else if (action_type === "rectangle") {
             _finish_drawing_rectangle(ev);
+            draw_layer_previews();
         }
         else if (action_type === "pan") {
             _finish_panning(ev);
+            draw_layer_previews();
         }
 
         app_context.drawing_state.points = [];
@@ -280,8 +283,7 @@ function get_canvas_origin() {
     };
 }
 
-function draw_polygon(context, color,  points) {
-    var origin = get_canvas_origin();
+function draw_polygon(context, origin, color,  points) {
     for (var i = 0; i < points.length-1; i++) {
         context.beginPath();
         context.moveTo(points[i].x + origin.x, points[i].y + origin.y);
@@ -293,8 +295,7 @@ function draw_polygon(context, color,  points) {
     }
 }
 
-function draw_line(context, color, points) {
-    var origin = get_canvas_origin();
+function draw_line(context, origin, color, points) {
     context.beginPath();
     context.moveTo(points[0].x + origin.x, points[0].y + origin.y);
     context.strokeStyle = color;
@@ -304,8 +305,7 @@ function draw_line(context, color, points) {
 }
 
 
-function draw_circle(context, color, cx, cy, radius) {
-    var origin = get_canvas_origin();
+function draw_circle(context, origin, color, cx, cy, radius) {
     context.beginPath();
     context.arc(cx + origin.x, cy + origin.y, radius, 0, 2 * Math.PI, false);
     context.lineWidth = 3;
@@ -314,8 +314,8 @@ function draw_circle(context, color, cx, cy, radius) {
 }
 
 // Obviously not really bezier yet :(
-function draw_bezier(context, color, points) {
-    draw_polygon(context, color, points);
+function draw_bezier(context, origin, color, points) {
+    draw_polygon(context, origin, color, points);
 }
 
 

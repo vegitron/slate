@@ -143,35 +143,7 @@ function redraw_regions() {
 
         return 0;
     });
-
-    for (var i = 0; i < sorted_shapes.length; i++) {
-        var info = sorted_shapes[i];
-        var shape = info.shape;
-        var values = info.values;
-
-        var shape_layer = info.layer;
-
-        if (app_context.layer_data.layers[shape_layer].visible) {
-            var color = 'black';
-            if (info.selected_shape) {
-                color = 'red';
-            }
-            if (shape === 'circle') {
-                draw_circle(context, color, values.cx, values.cy, values.radius);
-            }
-            else if (shape === 'polygon') {
-                draw_polygon(context, color, values.points);
-            }
-            else if (shape === 'line') {
-                draw_line(context, color, values.points);
-            }
-            else if (shape === 'bezier') {
-                draw_bezier(context, color, values.points);
-            }
-        }
-
-        info.coverage_area.overlaps = false;
-    }
+    _draw_shapes(context, sorted_shapes, get_canvas_origin());
 
     app_context.redraw_info.areas = [];
     app_context.redraw_info.shapes = [];
@@ -207,3 +179,122 @@ function area_overlap(region, rectangle) {
     return true;
 }
 
+function draw_layer_previews() {
+    $(app_context.layer_data.layers).each(function(idx, value){
+        if(value !== undefined && app_context.layer_data.layer_shapes[value.id].length > 0){
+            _draw_preview(value.id);
+        }
+    });
+}
+
+function _draw_preview(layer_id) {
+    var temp_canvas = draw_temp_canvas(layer_id);
+    var thumb_canvas = document.getElementById("layer_preview_" + layer_id);
+
+    var dimensions = get_drawing_dimensions(layer_id);
+
+    var preview_canvas_width = thumb_canvas.width;
+    var preview_canvas_height = thumb_canvas.height;
+    var scaled_width = dimensions.width;
+    var scaled_height = dimensions.height;
+    
+    if (dimensions.width > preview_canvas_width) {
+        scaled_width = preview_canvas_width;
+        scaled_height = (scaled_width * dimensions.height) / dimensions.width;
+    }
+    if (scaled_height > preview_canvas_height) {
+        scaled_height = preview_canvas_height;
+        scaled_width = (scaled_height * dimensions.width) / dimensions.height;
+    }
+    var thumb_context = thumb_canvas.getContext('2d');
+    thumb_context.clearRect(0, 0, 100, 100);
+    thumb_context.drawImage(temp_canvas, 0, 0, scaled_width, scaled_height);
+}
+
+//Determine the maximum dimensions of all content across given layer
+function get_drawing_dimensions(layer_id) {
+    //Return 0 length dimensions of no shapes exist
+    if(app_context.layer_data.layer_shapes[1].length === 0){
+        return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0};
+    }
+    var starting_point = get_invalid_area(app_context.layer_data.layer_shapes[layer_id][0]);
+    var max_x = starting_point.x + starting_point.width,
+        min_x = starting_point.x,
+        max_y = starting_point.y + starting_point.height,
+        min_y = starting_point.y;
+
+    layer_shapes = app_context.layer_data.layer_shapes[layer_id]
+    if (layer_shapes !== undefined){
+        $.each(layer_shapes, function (shape_id, shape){
+            shape_area = get_invalid_area(shape);
+            if (shape_area.x + shape_area.width > max_x) {
+                max_x = shape_area.x + shape_area.width;
+            } else if (shape_area.x < min_x) {
+                min_x = shape_area.x;
+            }
+            if (shape_area.y + shape_area.height > max_y) {
+                max_y = shape_area.y + shape_area.height;
+            } else if (shape_area.y < min_y) {
+                min_y = shape_area.y;
+            }
+        });
+    }
+
+    return {"max_x": max_x, "min_x": min_x, "max_y": max_y, "min_y": min_y, "height": Math.abs(min_y - max_y), "width": Math.abs(min_x - max_x)};
+}
+
+// Creates a temporary canvas containing the entire drawing for a given layer 
+function draw_temp_canvas(layer_id) {
+    var source_canvas = document.getElementById("artboard");
+    var source_context = source_canvas.getContext("2d");
+
+    var dimensions = get_drawing_dimensions(layer_id);
+
+    var temp_canvas = document.createElement('canvas');
+    $(temp_canvas).attr('height', dimensions.height).attr('width', dimensions.width);
+    var temp_context = temp_canvas.getContext('2d');
+    var origin = {'x':0, 'y':0};
+    if (dimensions.min_x > 0){
+        origin.x = origin.x - dimensions.min_x;
+    } else if (dimensions.min_x < 0){
+        origin.x = Math.abs(dimensions.min_x);
+    }
+    if (dimensions.min_y > 0){
+        origin.y = origin.y - dimensions.min_y;
+    } else if (dimensions.min_y < 0){
+        origin.y = Math.abs(dimensions.min_y);
+    }
+
+    _draw_shapes(temp_context, app_context.layer_data.layer_shapes[layer_id], origin);
+
+    return temp_canvas;
+}
+
+function _draw_shapes(context, shapes, origin) {
+        for (var i = 0; i < shapes.length; i++) {
+            var info = shapes[i];
+            var shape = info.shape;
+            var values = info.values;
+
+            var shape_layer = info.layer;
+
+            var color = 'black';
+            if (info.selected_shape) {
+                color = 'red';
+            }
+            if (shape === 'circle') {
+                draw_circle(context, origin, color, values.cx, values.cy, values.radius);
+            }
+            else if (shape === 'polygon') {
+                draw_polygon(context, origin, color, values.points);
+            }
+            else if (shape === 'line') {
+                draw_line(context, origin, color, values.points);
+            }
+            else if (shape === 'bezier') {
+                draw_bezier(context, origin, color, values.points);
+            }
+
+            info.coverage_area.overlaps = false;
+        }
+}
