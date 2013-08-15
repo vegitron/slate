@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <style>
 </style>
 
@@ -5,7 +7,7 @@
 
 <div id="canvas_container">
     <canvas id="artboard"></canvas>
-    <canvas id="draw_surface"></canvas>
+    <canvas id="draw_surface" style="border: 1px solid blue;" onclick="void(0)"></canvas>
 </div>
 <div id="scroller"></div>
 <div id="title">This is the title</div>
@@ -42,4 +44,5 @@
 <script src="{{STATIC_URL}}js/shapes.js"></script>
 
 {% include "handlebars/layer/sidebar.html" %}
-
+</body>
+</html>
