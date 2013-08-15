@@ -5,6 +5,22 @@ app_context.drawing_state = {
     points: []
 }
 
+function get_event_position(ev) {
+    var original_event = ev.originalEvent;
+
+    if (original_event.touches) {
+        return {
+            'x': original_event.touches[0].pageX,
+            'y': original_event.touches[0].pageY
+        };
+    }
+
+    return {
+        'x': original_event.pageX,
+        'y': original_event.pageY
+    };
+}
+
 function start_drawing(ev) {
     app_context.drawing_state.is_drawing = true;
     app_context.drawing_state.points = [];
@@ -12,22 +28,26 @@ function start_drawing(ev) {
 
     var action_type = $("input[name='board_actions']:checked").val();
 
+    var position = get_event_position(ev);
+
     if (action_type === "pan") {
         app_context.drawing_state.points.push({
-            x: ev.clientX,
-            y: ev.clientY,
+            x: position.x,
+            y: position.y,
         });
     }
     else if (action_type === "select") {
-        var shape = find_select_object(ev.clientX - origin.x, ev.clientY - origin.y);
+        var shape = find_select_object(position.x - origin.x, position.y - origin.y);
         select_shape(shape);
     }
     else {
         app_context.drawing_state.points.push({
-            x: ev.clientX - origin.x,
-            y: ev.clientY - origin.y,
+            x: position.x - origin.x,
+            y: position.y - origin.y,
         });
     }
+    event.preventDefault();
+    event.stopPropagation();
 }
 
 function _live_update_autoshape(ev) {
@@ -43,13 +63,15 @@ function _live_update_autoshape(ev) {
     context.moveTo(last_point.x + origin.x, last_point.y + origin.y);
     context.strokeStyle = 'black';
     context.lineWidth = 4;
-    context.lineTo(ev.clientX, ev.clientY);
+
+    var position = get_event_position(ev);
+    context.lineTo(position.x, position.y);
     context.stroke();
     context.restore();
 
     points.push({
-        x: ev.clientX - origin.x,
-        y: ev.clientY - origin.y
+        x: position.x - origin.x,
+        y: position.y - origin.y
     });
 }
 
@@ -64,8 +86,10 @@ function _live_update_rectangle(ev) {
     var last_point = points[points.length - 1];
     var x1 = last_point.x;
     var y1 = last_point.y;
-    var x2 = ev.clientX - origin.x;
-    var y2 = ev.clientY - origin.y;
+
+    var position = get_event_position(ev);
+    var x2 = position.x - origin.x;
+    var y2 = position.y - origin.y;
 
     draw_polygon(context, get_canvas_origin(), 'black', [
             { x: x1, y: y1 },
@@ -107,8 +131,10 @@ function update_display_origin(x, y) {
 
 function _live_update_panning(ev) {
     var first_point = app_context.drawing_state.points[0];
-    var d_x = ev.clientX - first_point.x;
-    var d_y = ev.clientY - first_point.y;
+
+    var position = get_event_position(ev);
+    var d_x = position.x - first_point.x;
+    var d_y = position.y - first_point.y;
 
     var new_origin_x = app_context.drawing_state.origin_x + d_x;
     var new_origin_y = app_context.drawing_state.origin_y + d_y;
@@ -116,8 +142,8 @@ function _live_update_panning(ev) {
     update_display_origin(new_origin_x, new_origin_y);
 
     app_context.drawing_state.points[0] = {
-        x: ev.clientX,
-        y: ev.clientY,
+        x: position.x,
+        y: position.y,
     };
 }
 
@@ -140,6 +166,9 @@ function live_update_drawing(ev) {
     else if (action_type === "pan") {
         _live_update_panning(ev);
     }
+
+    event.preventDefault();
+    event.stopPropagation();
 }
 
 function _finish_drawing_autoshape(ev) {
@@ -196,8 +225,10 @@ function _finish_drawing_rectangle(ev) {
     var last_point = points[points.length - 1];
     var x1 = last_point.x;
     var y1 = last_point.y;
-    var x2 = ev.clientX - origin.x;
-    var y2 = ev.clientY - origin.y;
+
+    var position = get_event_position(ev);
+    var x2 = position.x - origin.x;
+    var y2 = position.y - origin.y;
 
     var shape_type = 'polygon';
     var shape_values = { points: [
@@ -250,13 +281,20 @@ function finish_drawing(ev) {
         }
 
         app_context.drawing_state.points = [];
+
+        event.preventDefault();
+        event.stopPropagation();
     }
+
 }
 
 function add_drawing_events() {
     $("#draw_surface").on("mousedown", start_drawing);
     $(window).on("mousemove", live_update_drawing);
     $(window).on("mouseup", finish_drawing);
+    $("#draw_surface").on("touchstart", start_drawing);
+    $(window).on("touchmove", live_update_drawing);
+    $(window).on("touchend", finish_drawing);
 }
 
 function add_shape_to_artboard(info) {
