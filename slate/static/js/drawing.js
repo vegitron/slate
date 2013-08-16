@@ -315,9 +315,13 @@ function show_text_box(x, y) {
         text_input_blur();
     }
 
+    var matches = text_area.css("border").match(/([0-9]+)px/);
+    var border_width = +matches[1];
+
+    var offset = parseInt(text_area.css("padding")) + border_width;
     app_context.drawing_state.text_info = {
-        x: x,
-        y: y,
+        x: x+offset,
+        y: y+offset,
         font_size: TMP_TEXT_FONT_SIZE,
         font_family: TMP_TEXT_FONT_FACE,
         open_textarea: true
