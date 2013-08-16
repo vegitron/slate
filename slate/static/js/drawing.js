@@ -304,6 +304,7 @@ function show_text_box(x, y) {
         text_area.css("position", "absolute");
         text_area.css("display", "none");
         text_area.css("resize", "none");
+        text_area.css("line-height", "120%");
         $("body").append(text_area);
 
         text_area.keydown(text_input_change);
@@ -438,7 +439,9 @@ function draw_text(context, origin, color, info) {
     for (var i = 0; i < lines.length; i++) {
         // +1 because text is vertically aligned so the y position
         // is the bottom of the text.
-        var y = info.y + origin.y + (info.font_size * (i +1));
+
+        // Working with a line-height of 120%.  The first line though isn't offset by the 20%, so that needs to be taken off.
+        var y = info.y + origin.y + (1.2 * info.font_size * (i +1)) - info.font_size * 0.2;
         context.fillText(lines[i], x, y);
     }
     context.restore();
