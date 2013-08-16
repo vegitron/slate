@@ -91,6 +91,7 @@ function get_text_size(info) {
     var escaped_text = offscreen.text(info.text).html();
 
     var test_html = escaped_text.replace(/\n/g, "<br/>");
+    test_html = test_html.replace(/ /g, "&nbsp;");
     offscreen.html(test_html);
 
     offscreen.css("font-size", info.font_size);
