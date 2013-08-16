@@ -83,6 +83,9 @@ function get_invalid_area(shape) {
     else if (shape.shape === 'bezier') {
         return get_invalid_area_for_bezier(shape.values);
     }
+    else if (shape.shape === 'text') {
+        return get_invalid_area_for_text(shape.values);
+    }
 }
 
 function find_intersecting_shapes(rectangle) {
@@ -293,6 +296,9 @@ function _draw_shapes(context, shapes, origin) {
             }
             else if (shape === 'bezier') {
                 draw_bezier(context, origin, color, values.points);
+            }
+            else if (shape === 'text') {
+                draw_text(context, origin, color, values);
             }
 
             info.coverage_area.overlaps = false;

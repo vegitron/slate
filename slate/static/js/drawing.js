@@ -49,7 +49,7 @@ function start_drawing(ev) {
         select_shape(shape);
     }
     else if (action_type === "text") {
-        show_text_box(position.x - origin.x, position.y - origin.y);
+        show_text_box(position.x, position.y);
     }
     else {
         app_context.drawing_state.points.push({
@@ -279,7 +279,18 @@ function text_input_change(ev) {
 }
 
 function text_input_blur(ev) {
-    console.log("Add to canvas: ", $("#input_text_area").val());
+    $("#input_text_area").hide();
+    add_shape_to_artboard({
+        layer: get_active_layer(),
+        shape: 'text',
+        values: {
+            text: $("#input_text_area").val(),
+            font_face: app_context.drawing_state.text_info.font_family,
+            font_size: app_context.drawing_state.text_info.font_size,
+            x: app_context.drawing_state.text_info.x,
+            y: app_context.drawing_state.text_info.y
+        }
+    });
 
     app_context.drawing_state.text_info.open_textarea = false;
 }
@@ -412,6 +423,22 @@ function draw_line(context, origin, color, points) {
     context.stroke();
 }
 
+function draw_text(context, origin, color, info) {
+    context.save();
+    context.font = info.font_size+"px "+info.font_face;
+    context.fillStyle = color;
+
+    // fillText doesn't support multiple lines :(
+    var lines = info.text.split("\n");
+    var x = info.x + origin.x;
+    for (var i = 0; i < lines.length; i++) {
+        // +1 because text is vertically aligned so the y position
+        // is the bottom of the text.
+        var y = info.y + origin.y + (info.font_size * (i +1));
+        context.fillText(lines[i], x, y);
+    }
+    context.restore();
+}
 
 function draw_circle(context, origin, color, cx, cy, radius) {
     context.beginPath();
