@@ -292,6 +292,8 @@ function text_input_blur(ev) {
         }
     });
 
+    draw_layer_previews();
+
     app_context.drawing_state.text_info.open_textarea = false;
 }
 
