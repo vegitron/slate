@@ -1,8 +1,16 @@
+/*
+    XXX - make these user choices!
+*/
+
+TMP_TEXT_FONT_SIZE = 40;
+TMP_TEXT_FONT_FACE = "Verdana";
+
 app_context.drawing_state = {
     is_drawing: false,
     origin_x: 0,
     origin_y: 0,
-    points: []
+    points: [],
+    text_info: {}
 }
 
 function get_event_position(ev) {
@@ -39,6 +47,9 @@ function start_drawing(ev) {
     else if (action_type === "select") {
         var shape = find_select_object(position.x - origin.x, position.y - origin.y);
         select_shape(shape);
+    }
+    else if (action_type === "text") {
+        show_text_box(position.x - origin.x, position.y - origin.y);
     }
     else {
         app_context.drawing_state.points.push({
@@ -253,6 +264,65 @@ function _finish_panning(ev) {
 
     // XXX - maybe do something here w/ the drag speed,
     // and deccelarate instead of just stopping?
+}
+
+function text_input_change(ev) {
+    var text_area = $("#input_text_area");
+    var size = get_text_size({
+        text: text_area.val(),
+        font_size: app_context.drawing_state.text_info.font_size,
+        font_family: app_context.drawing_state.text_info.font_family
+    });
+
+    text_area.width(size.width + TMP_TEXT_FONT_SIZE);
+    text_area.height(size.height + TMP_TEXT_FONT_SIZE * 1.5);
+}
+
+function text_input_blur(ev) {
+    console.log("Add to canvas: ", $("#input_text_area").val());
+
+    app_context.drawing_state.text_info.open_textarea = false;
+}
+
+function show_text_box(x, y) {
+    var text_area = $("#input_text_area");
+
+    if (!text_area.length) {
+        text_area = $("<textarea id='input_text_area'></textarea>");
+        text_area.css("background-color", "rgba(0, 0, 0, 0)");
+        text_area.css("position", "absolute");
+        text_area.css("display", "none");
+        text_area.css("resize", "none");
+        $("body").append(text_area);
+
+        text_area.keydown(text_input_change);
+        text_area.keyup(text_input_change);
+        text_area.blur(text_input_blur);
+    }
+
+    if (app_context.drawing_state.text_info.open_textarea) {
+        text_input_blur();
+    }
+
+    app_context.drawing_state.text_info = {
+        x: x,
+        y: y,
+        font_size: TMP_TEXT_FONT_SIZE,
+        font_family: TMP_TEXT_FONT_FACE,
+        open_textarea: true
+    };
+
+    text_area.val("");
+    text_area.css("left", x+"px");
+    text_area.css("top", y+"px");
+    text_area.css("font-family", TMP_TEXT_FONT_FACE);
+    text_area.css("font-size", TMP_TEXT_FONT_SIZE);
+
+    // To set the initial size
+    text_input_change();
+
+    text_area.css("display", "inline");
+    text_area.focus();
 }
 
 function finish_drawing(ev) {

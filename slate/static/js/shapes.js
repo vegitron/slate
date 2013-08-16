@@ -73,3 +73,32 @@ function get_invalid_area_for_line(info) {
         height: height + (2 * INVALID_AREA_SLOP)
     };
 }
+
+function get_invalid_area_for_text(info) {
+    var size = get_text_size(info);
+
+    return {
+        x: info.x - INVALID_AREA_SLOP,
+        y: info.y - INVALID_AREA_SLOP,
+        width: size.width + (2 * INVALID_AREA_SLOP),
+        height: size.height + (2 * INVALID_AREA_SLOP)
+    };
+}
+
+function get_text_size(info) {
+    var offscreen = $("#offscreen_text_test");
+
+    var escaped_text = offscreen.text(info.text).html();
+
+    var test_html = escaped_text.replace(/\n/g, "<br/>");
+    offscreen.html(test_html);
+
+    offscreen.css("font-size", info.font_size);
+    offscreen.css("font-family", info.font_family);
+
+    return {
+        width: offscreen.width(),
+        height: offscreen.height()
+    };
+}
+

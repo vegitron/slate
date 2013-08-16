@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="initial-scale=0.08; user-scalable=no" />
+<meta name="viewport" content="initial-scale=0.08, user-scalable=no" />
 
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tech.css"/>
 </head>
@@ -18,6 +18,7 @@
         Actions<br />
         <input type="radio" name="board_actions" value="autoshape" checked="checked">Draw autoshape <br />
         <input type="radio" name="board_actions" value="rectangle">Draw rectangle <br />
+        <input type="radio" name="board_actions" value="text">Write something<br />
         ... <br />
         <input type="radio" name="board_actions" value="select">Select an object<br />
         <input type="radio" name="board_actions" value="pan">Move around canvas<br />
@@ -34,6 +35,9 @@
         Preview
     </div>
 </div>
+
+<!-- this span is for testing string lengths -->
+<span id="offscreen_text_test" style="visibility: hidden">TEST</span>
 
 <script src="{{STATIC_URL}}js/jquery-2.0.3.min.js"></script>
 <script src="{{STATIC_URL}}js/app.js"></script>
