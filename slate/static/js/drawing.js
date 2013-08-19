@@ -324,7 +324,12 @@ function show_text_box(x, y) {
         border_width = +matches[1];
     }
 
-    var offset = parseInt(text_area.css("padding")) + border_width;
+    var offset = border_width;
+
+    var padding = text_area.css("padding");
+    if (padding) {
+        offset += parseInt(padding);
+    }
     app_context.drawing_state.text_info = {
         x: x+offset,
         y: y+offset,
