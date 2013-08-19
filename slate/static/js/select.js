@@ -84,25 +84,56 @@ function show_selected_object_handles() {
     context.strokeStyle = 'grey';
     context.lineWidth = 2;
 
+    var corner_cursors = ['sw-resize', 'se-resize', 'ne-resize', 'nw-resize'];
+    var edge_cursors = ['w-resize', 's-resize', 'e-resize', 'n-resize'];
     var SELECT_SQUARE_SIZE = 6;
     for (var i = 1; i < corners.length; i++) {
         context.beginPath();
-        context.rect(corners[i].x - SELECT_SQUARE_SIZE / 2 + origin.x, corners[i].y - SELECT_SQUARE_SIZE / 2 + origin.y, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+
+        var x_pos = corners[i].x - SELECT_SQUARE_SIZE / 2 + origin.x;
+        var y_pos = corners[i].y - SELECT_SQUARE_SIZE / 2 + origin.y;
+        context.rect(x_pos, y_pos, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
         context.closePath();
         context.stroke();
         context.fill();
+
+        set_cursor_region({
+            x: x_pos,
+            y: y_pos,
+            width: SELECT_SQUARE_SIZE,
+            height: SELECT_SQUARE_SIZE
+        }, corner_cursors[i-1]);
 
         context.beginPath();
         var mid_x = (corners[i].x + corners[i - 1].x) / 2;
         var mid_y = (corners[i].y + corners[i - 1].y) / 2;
-        context.rect(mid_x - SELECT_SQUARE_SIZE / 2 + origin.x, mid_y - SELECT_SQUARE_SIZE / 2 + origin.y, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+
+        x_pos = mid_x - SELECT_SQUARE_SIZE / 2 + origin.x;
+        y_pos = mid_y - SELECT_SQUARE_SIZE / 2 + origin.y;
+        context.rect(x_pos, y_pos, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
         context.closePath();
 
         context.stroke();
         context.fill();
 
+        set_cursor_region({
+            x: x_pos,
+            y: y_pos,
+            width: SELECT_SQUARE_SIZE,
+            height: SELECT_SQUARE_SIZE
+        }, edge_cursors[i-1]);
+
+
     }
+
     context.restore();
+    // Add this last, so the corners get priority w/ the cursor
+    set_cursor_region({
+        x: corners[0].x,
+        y: corners[0].y,
+        width: corners[2].x - corners[0].x,
+        height: corners[2].y - corners[0].y
+    }, 'move');
 }
 
 function select_shape(shape) {

@@ -45,6 +45,8 @@ function start_drawing(ev) {
         });
     }
     else if (action_type === "select") {
+        clear_cursor_regions();
+        clear_click_regions();
         var shape = find_select_object(position.x - origin.x, position.y - origin.y);
         select_shape(shape);
     }
@@ -159,6 +161,9 @@ function _live_update_panning(ev) {
 }
 
 function live_update_drawing(ev) {
+    var position = get_event_position(ev);
+    handle_canvas_cursor_events(position.x, position.y);
+
     if (!app_context.drawing_state.is_drawing) {
         return;
     }
