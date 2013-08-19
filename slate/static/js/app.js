@@ -8,6 +8,18 @@ function resize_canvas_surfaces() {
 
     document.getElementById("draw_surface").width = $(window).width();
     document.getElementById("draw_surface").height = $(window).height();
+
+    var canvas = document.getElementById("artboard");
+    var origin = get_canvas_origin();
+
+    invalidate_rectangle({
+        x: -1 * origin.x - 10,
+        y: -1 * origin.y - 10,
+        width: canvas.width + 20,
+        height: canvas.height + 20
+    });
+    redraw_regions();
+
 }
 
 $(document).ready(function() {
