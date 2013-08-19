@@ -57,8 +57,8 @@ function start_drawing(ev) {
             y: position.y - origin.y,
         });
     }
-    event.preventDefault();
-    event.stopPropagation();
+    ev.preventDefault();
+    ev.stopPropagation();
 }
 
 function _live_update_autoshape(ev) {
@@ -178,8 +178,8 @@ function live_update_drawing(ev) {
         _live_update_panning(ev);
     }
 
-    event.preventDefault();
-    event.stopPropagation();
+    ev.preventDefault();
+    ev.stopPropagation();
 }
 
 function _finish_drawing_autoshape(ev) {
@@ -319,7 +319,10 @@ function show_text_box(x, y) {
     }
 
     var matches = text_area.css("border").match(/([0-9]+)px/);
-    var border_width = +matches[1];
+    var border_width = 0;
+    if (matches) {
+        border_width = +matches[1];
+    }
 
     var offset = parseInt(text_area.css("padding")) + border_width;
     app_context.drawing_state.text_info = {
@@ -370,8 +373,8 @@ function finish_drawing(ev) {
 
         app_context.drawing_state.points = [];
 
-        event.preventDefault();
-        event.stopPropagation();
+        ev.preventDefault();
+        ev.stopPropagation();
     }
 
 }

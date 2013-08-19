@@ -87,7 +87,7 @@ function show_selected_object_handles() {
     var SELECT_SQUARE_SIZE = 6;
     for (var i = 1; i < corners.length; i++) {
         context.beginPath();
-        context.rect(corners[i].x - SELECT_SQUARE_SIZE / 2, corners[i].y - SELECT_SQUARE_SIZE / 2, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+        context.rect(corners[i].x - SELECT_SQUARE_SIZE / 2 + origin.x, corners[i].y - SELECT_SQUARE_SIZE / 2 + origin.y, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
         context.closePath();
         context.stroke();
         context.fill();
@@ -95,7 +95,7 @@ function show_selected_object_handles() {
         context.beginPath();
         var mid_x = (corners[i].x + corners[i - 1].x) / 2;
         var mid_y = (corners[i].y + corners[i - 1].y) / 2;
-        context.rect(mid_x - SELECT_SQUARE_SIZE / 2, mid_y - SELECT_SQUARE_SIZE / 2, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+        context.rect(mid_x - SELECT_SQUARE_SIZE / 2 + origin.x, mid_y - SELECT_SQUARE_SIZE / 2 + origin.y, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
         context.closePath();
 
         context.stroke();
