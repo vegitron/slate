@@ -148,6 +148,8 @@ function redraw_regions() {
     });
     _draw_shapes(context, sorted_shapes, get_canvas_origin());
 
+    show_selected_object_handles();
+
     app_context.redraw_info.areas = [];
     app_context.redraw_info.shapes = [];
     context.restore();

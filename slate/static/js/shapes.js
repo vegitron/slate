@@ -1,5 +1,5 @@
 // Make this more reasonable - maybe based on line length
-var INVALID_AREA_SLOP = 5;
+var INVALID_AREA_SLOP = 8;
 function get_invalid_area_for_bezier(info) {
     return get_invalid_area_for_polygon(info);
 }
@@ -101,5 +101,17 @@ function get_text_size(info) {
         width: offscreen.width(),
         height: offscreen.height()
     };
+}
+
+// XXX - this needs to accomodate shape rotation
+function get_selection_highlight_corners(shape) {
+    var INSET_FROM_COVERAGE = 8;
+    return [
+        { x: shape.coverage_area.x + INSET_FROM_COVERAGE / 2, y: shape.coverage_area.y + INSET_FROM_COVERAGE / 2 },
+        { x: shape.coverage_area.x + INSET_FROM_COVERAGE / 2, y: shape.coverage_area.y + INSET_FROM_COVERAGE / 2 + shape.coverage_area.height - INSET_FROM_COVERAGE },
+        { x: shape.coverage_area.x + INSET_FROM_COVERAGE / 2 + shape.coverage_area.width - INSET_FROM_COVERAGE, y: shape.coverage_area.y + INSET_FROM_COVERAGE / 2 + shape.coverage_area.height - INSET_FROM_COVERAGE},
+        { x: shape.coverage_area.x + INSET_FROM_COVERAGE / 2 + shape.coverage_area.width - INSET_FROM_COVERAGE, y: shape.coverage_area.y + INSET_FROM_COVERAGE / 2 },
+        { x: shape.coverage_area.x + INSET_FROM_COVERAGE / 2, y: shape.coverage_area.y + INSET_FROM_COVERAGE / 2 }
+    ];
 }
 

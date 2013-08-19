@@ -48,6 +48,63 @@ function find_select_object(x, y) {
     redraw_regions();
 }
 
+function show_selected_object_handles() {
+    if (!app_context.select_state.selected_object) {
+        return;
+    }
+
+    var corners = get_selection_highlight_corners(app_context.select_state.selected_object);
+    var canvas = document.getElementById("artboard");
+    var context = canvas.getContext("2d");
+
+    var origin = get_canvas_origin();
+
+    context.save();
+    context.beginPath();
+    context.moveTo(corners[0].x + origin.x, corners[0].y + origin.y);
+    for (var i = 1; i < corners.length; i++) {
+        context.lineTo(corners[i].x + origin.x, corners[i].y + origin.y);
+    }
+
+    // Not implemented in all browsers, like firefox...
+    if (context.setLineDash) {
+        context.setLineDash([4, 4]);
+    }
+    context.strokeStyle = 'grey';
+    context.lineWidth = 1;
+
+    context.stroke();
+
+    context.restore();
+
+    // XXX - these squares should respect shape rotation when that's implemented
+
+    context.save();
+    context.fillStyle = 'white';
+    context.strokeStyle = 'grey';
+    context.lineWidth = 2;
+
+    var SELECT_SQUARE_SIZE = 6;
+    for (var i = 1; i < corners.length; i++) {
+        context.beginPath();
+        context.rect(corners[i].x - SELECT_SQUARE_SIZE / 2, corners[i].y - SELECT_SQUARE_SIZE / 2, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+        context.closePath();
+        context.stroke();
+        context.fill();
+
+        context.beginPath();
+        var mid_x = (corners[i].x + corners[i - 1].x) / 2;
+        var mid_y = (corners[i].y + corners[i - 1].y) / 2;
+        context.rect(mid_x - SELECT_SQUARE_SIZE / 2, mid_y - SELECT_SQUARE_SIZE / 2, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
+        context.closePath();
+
+        context.stroke();
+        context.fill();
+
+    }
+    context.restore();
+}
+
 function select_shape(shape) {
 }
 
