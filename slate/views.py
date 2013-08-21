@@ -61,7 +61,7 @@ def shape(request, url_token, shape_id=None):
         )
 
         if json_data["type"] == "text":
-            shape.search_content = json_data["shape_definition"]["text"]
+            shape.search_content = json_data["shape_definition"]["values"]["text"]
             shape.save()
 
     elif request.method == "PUT":
