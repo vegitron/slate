@@ -297,8 +297,6 @@ function text_input_blur(ev) {
         }
     });
 
-    draw_layer_previews();
-
     app_context.drawing_state.text_info.open_textarea = false;
 }
 
@@ -370,15 +368,12 @@ function finish_drawing(ev) {
 
         if (action_type === "autoshape") {
             _finish_drawing_autoshape(ev);
-            draw_layer_previews();
         }
         else if (action_type === "rectangle") {
             _finish_drawing_rectangle(ev);
-            draw_layer_previews();
         }
         else if (action_type === "pan") {
             _finish_panning(ev);
-            draw_layer_previews();
         }
 
         app_context.drawing_state.points = [];
@@ -398,21 +393,48 @@ function add_drawing_events() {
     $(window).on("touchend", finish_drawing);
 }
 
-function add_shape_to_artboard(info) {
+function add_shape_from_server(info) {
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
-    var shape = info.shape;
-    var values = info.values;
+    var shape = info.type;
+    var values = info.shape_definition;
+    // normalize this back to the js names
+    info.shape = info.type;
+    info.values = info.shape_definition;
 
-    info.coverage_area = get_invalid_area(info);
-    info.z_index = app_context.layer_data.layer_shapes[info.layer].length;
+    info.shape_definition.coverage_area = get_invalid_area(info.shape_definition);
 
-    app_context.layer_data.layer_shapes[info.layer].push(info);
+    app_context.layer_data.layer_shapes[info.layer_id].push(info.shape_definition);
 
-    invalidate_rectangle(info.coverage_area);
+    invalidate_rectangle(info.shape_definition.coverage_area);
 
     redraw_regions();
+}
+
+function add_shape_to_artboard(info) {
+    var save_data = {
+        type: info.shape,
+        layer_id: info.layer,
+        z_index: app_context.layer_data.layer_shapes[info.layer].length,
+        shape_definition: info
+    };
+
+    var csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value;
+    var post_args = {
+        type: "POST",
+        headers: {
+            "X-CSRFToken": csrf_value
+        },
+
+        data: JSON.stringify(save_data),
+        success: function(res) {
+            console.log("Success: ", res);
+        }
+    };
+
+    $.ajax('../rest/shape/'+artboard_url_token, post_args);
+
 }
 
 function get_canvas_origin() {

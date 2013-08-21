@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.urlresolvers import reverse
 from datetime import datetime
+import simplejson as json
 import random
 import hashlib
 import base64
@@ -81,7 +82,7 @@ class Shape(models.Model):
             'type': self.type,
             'layer_id': self.layer.pk,
             'z_index': self.z_index,
-            'shape_definition': self.json_definition,
+            'shape_definition': json.loads(self.json_definition),
         }
 
     def save(self, *args, **kwargs):

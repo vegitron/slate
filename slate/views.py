@@ -48,20 +48,20 @@ def shape(request, url_token, shape_id=None):
     if request.method == "POST":
         json_data = json.loads(request.raw_post_data)
 
-        layer = Layer.objects.get(pk = json_data.layer_id)
+        layer = Layer.objects.get(pk = json_data["layer_id"])
         if not (layer.artboard.pk == artboard.pk):
             raise("Invalid layer id for shape")
 
         shape = Shape.objects.create(
             artboard = artboard,
             layer = layer,
-            type = json_data.type,
-            z_index = json_data.z_index,
-            json_definition = json_data.shape_definition,
+            type = json_data["type"],
+            z_index = json_data["z_index"],
+            json_definition = json.dumps(json_data["shape_definition"]),
         )
 
-        if json_data.type == "text":
-            shape.search_content = json_data.text
+        if json_data["type"] == "text":
+            shape.search_content = json_data["shape_definition"]["text"]
             shape.save()
 
     elif request.method == "PUT":

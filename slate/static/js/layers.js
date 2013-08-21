@@ -261,7 +261,7 @@ function _draw_preview(layer_id) {
 //Determine the maximum dimensions of all content across given layer
 function get_drawing_dimensions(layer_id) {
     //Return 0 length dimensions of no shapes exist
-    if(app_context.layer_data.layer_shapes[1].length === 0){
+    if(app_context.layer_data.layer_shapes[layer_id].length === 0){
         return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0};
     }
     var starting_point = get_invalid_area(app_context.layer_data.layer_shapes[layer_id][0]);
