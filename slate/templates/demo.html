@@ -6,7 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tech.css"/>
 </head>
 <body>
-
+{% csrf_token %}
 <div id="canvas_container">
     <canvas id="artboard"></canvas>
     <canvas id="draw_surface" onclick="void(0)"></canvas>

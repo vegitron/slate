@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
+from datetime import datetime
 import random
 import hashlib
 import base64
@@ -27,7 +28,18 @@ class Layer(models.Model):
     name = models.CharField(max_length=150)
     z_index = models.IntegerField()
     artboard = models.ForeignKey(Artboard)
+    modification_date = models.DateTimeField(db_index = True)
 
+    def json_data(self):
+        return {
+            'name': self.name,
+            'z_index': self.z_index,
+        }
+
+
+    def save(self, *args, **kwargs):
+        self.modification_date = datetime.now()
+        super(Layer, self).save(*args, **kwargs)
 
 class Shape(models.Model):
     artboard = models.ForeignKey(Artboard)
@@ -36,5 +48,17 @@ class Shape(models.Model):
     z_index = models.IntegerField()
     search_content = models.CharField(max_length=1000)
     json_definition = models.TextField()
+    modification_date = models.DateTimeField(db_index = True)
 
+    def json_data(self):
+        return {
+            'type': self.type,
+            'layer_id': self.layer.pk,
+            'z_index': self.z_index,
+            'shape_definition': self.json_definition,
+        }
+
+    def save(self, *args, **kwargs):
+        self.modification_date = datetime.now()
+        super(Shape, self).save(*args, **kwargs)
 
