@@ -6,6 +6,7 @@ urlpatterns = patterns('',
     url(r'^board/(?P<url_token>.*)$', 'slate.views.whiteboard'),
 
     # These should probably be moved to socket.io!
+    url(r'^rest/artboard/(?P<url_token>.*)$', 'slate.views.artboard'),
 
     url(r'^rest/layer/(?P<url_token>.*)/(?P<layer_id>[0-9]+)$', 'slate.views.layer'),
     url(r'^rest/layer/(?P<url_token>.*)$', 'slate.views.layer'),

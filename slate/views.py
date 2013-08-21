@@ -100,3 +100,15 @@ def layer(request, url_token, layer_id=None):
 
     return HttpResponse(json.dumps(layer.json_data()), content_type="application/json")
 
+def artboard(request, url_token):
+    artboard = Artboard.objects.get(url_token = url_token)
+
+    if request.method == "POST":
+        pass
+
+    elif request.method == "PUT":
+        pass
+
+    elif request.method == "GET":
+        return HttpResponse(json.dumps(artboard.initial_json_data()), content_type="application/json")
+
