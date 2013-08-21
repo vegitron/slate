@@ -36,7 +36,7 @@ def create_whiteboard(request):
 def whiteboard(request, url_token):
     artboard = Artboard.objects.get(url_token = url_token)
 
-    return render_to_response("demo.html", {
+    return render_to_response("artboard.html", {
         "url_token": url_token,
     }, RequestContext(request))
 
