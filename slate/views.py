@@ -4,9 +4,6 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from slate.models import Artboard
 
-def demo(request):
-    return render_to_response("demo.html", {}, RequestContext(request))
-
 def home(request):
     artboards = Artboard.objects.all()
 
