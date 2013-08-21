@@ -30,6 +30,7 @@ function set_click_region(region, callback) {
 function handle_canvas_cursor_events(x, y) {
     var found_cursor = false;
     var set_cursor = 'auto';
+
     for (var i = 0; i < app_context.event_data.cursor_events.length; i++) {
         if (area_overlap(app_context.event_data.cursor_events[i].region, { x: x, y: y, width: 1, height: 1 })) {
             found_cursor = true;

@@ -1,0 +1,7 @@
+<h1>Make a whiteboard</h1>
+<form action="{% url slate.views.create_whiteboard %}" method="POST">
+    {% csrf_token %}
+    Name: <input type="text" name="name" />
+    <br />
+    <input type="submit" value="make it" />
+</form>

@@ -1,0 +1,9 @@
+
+<a href="{% url slate.views.create_whiteboard %}">New whiteboard</a>
+
+<ul>
+{% for artboard in artboards %}
+    <li><a href="{% url slate.views.whiteboard url_token=artboard.url_token %}">{{ artboard.name }}</a></li>
+{% endfor %}
+</ul>
+
