@@ -4,6 +4,11 @@
 <meta name="viewport" content="initial-scale=0.08, user-scalable=no" />
 
 <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/tech.css"/>
+
+<script>
+    artboard_url_token = "{{ url_token }}";
+</script>
+
 </head>
 <body>
 {% csrf_token %}
@@ -12,7 +17,7 @@
     <canvas id="draw_surface" onclick="void(0)"></canvas>
 </div>
 <div id="scroller"></div>
-<div id="title">This is the title</div>
+<div id="title">This is the title -- {{ name }}</div>
 <div id="sidebar">
     <div>
         Actions<br />
@@ -36,6 +41,10 @@
     </div>
 </div>
 
+<div style="position: absolute; left: 0px; top: 0px; bottom: 0px; right: 0px; background: white;" id="loading_cover">
+Loading...
+</div>
+
 <!-- this span is for testing string lengths -->
 <span id="offscreen_text_test" style="visibility: hidden">TEST</span>
 
@@ -44,6 +53,7 @@
 <script src="{{STATIC_URL}}js/handlebars.js"></script>
 <script src="{{STATIC_URL}}js/handlebars_util.js"></script>
 <script src="{{STATIC_URL}}js/autoshape.js"></script>
+<script src="{{STATIC_URL}}js/artboard.js"></script>
 <script src="{{STATIC_URL}}js/layers.js"></script>
 <script src="{{STATIC_URL}}js/drawing.js"></script>
 <script src="{{STATIC_URL}}js/select.js"></script>

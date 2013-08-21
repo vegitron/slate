@@ -55,6 +55,7 @@ class Layer(models.Model):
         return {
             'name': self.name,
             'z_index': self.z_index,
+            'id': self.pk,
         }
 
 

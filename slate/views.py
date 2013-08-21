@@ -82,10 +82,12 @@ def layer(request, url_token, layer_id=None):
     if request.method == "POST":
         json_data = json.loads(request.raw_post_data)
 
+        print "JS: ", json_data
+
         layer = Layer.objects.create(
             artboard = artboard,
-            name = json_data.name,
-            z_index = json_data.z_index,
+            name = json_data["name"],
+            z_index = json_data["z_index"],
         )
 
     elif request.method == "PUT":

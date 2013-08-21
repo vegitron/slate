@@ -23,14 +23,9 @@ function resize_canvas_surfaces() {
 }
 
 $(document).ready(function() {
-    add_new_layer();
-
-    $("#add_layer").on("click", add_new_layer);
-
-    add_drawing_events();
-
-    resize_canvas_surfaces();
-    $(window).on("resize", resize_canvas_surfaces);
+    $.ajax('../rest/artboard/'+artboard_url_token, {
+        success: post_artboard_data
+    })
 });
 
 
