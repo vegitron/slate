@@ -447,7 +447,7 @@ function add_shape_to_artboard(info) {
         success: add_shape_success
     };
 
-    $.ajax('../rest/shape/'+artboard_url_token, post_args);
+    $.ajax(slate_home+'/rest/shape/'+artboard_url_token, post_args);
 
 }
 

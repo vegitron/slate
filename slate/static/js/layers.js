@@ -65,7 +65,6 @@ function add_layer_from_server(data) {
 
 function add_new_layer() {
     var layer_id = app_context.layer_data.next_layer_id;
-    app_context.layer_data.next_layer_id++;
 
     var csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value;
     var post_args = {
@@ -78,7 +77,7 @@ function add_new_layer() {
         success: add_layer_from_server
     };
 
-    $.ajax('../rest/layer/'+artboard_url_token, post_args);
+    $.ajax(slate_home+'/rest/layer/'+artboard_url_token, post_args);
 }
 
 function select_layer(id) {

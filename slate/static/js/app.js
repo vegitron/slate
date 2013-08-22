@@ -23,7 +23,7 @@ function resize_canvas_surfaces() {
 }
 
 $(document).ready(function() {
-    $.ajax('../rest/artboard/'+artboard_url_token, {
+    $.ajax(slate_home+'/rest/artboard/'+artboard_url_token, {
         success: post_artboard_data
     })
 });
