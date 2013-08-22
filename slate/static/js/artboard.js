@@ -1,3 +1,5 @@
+app_context.periodic_update_data = {};
+
 function update_origin_from_url() {
     var test_match = [slate_home, "\/board\/", artboard_url_token, "\/([\-0-9]+),([\-0-9]+)"].join("")
 
@@ -9,8 +11,14 @@ function update_origin_from_url() {
     }
 }
 
+function run_periodic_update() {
+    $.ajax(slate_home+'/rest/artboard/'+artboard_url_token+"/from/"+app_context.periodic_update_data.last_check_date, {
+        success: post_artboard_data
+    })
+}
+
 function post_artboard_data(data) {
-    update_origin_from_url();
+    app_context.periodic_update_data.last_check_date = data.date;
 
     for (var i = 0; i < data.layers.length; i++) {
         add_layer_from_server(data.layers[i]);
@@ -23,12 +31,7 @@ function post_artboard_data(data) {
     draw_layer_previews();
     redraw_regions();
 
-    $("#add_layer").on("click", add_new_layer);
-    add_drawing_events();
 
-    resize_canvas_surfaces();
-    $(window).on("resize", resize_canvas_surfaces);
-
-    $("#loading_cover").hide();
+    window.setTimeout(run_periodic_update, 2000);
 }
 

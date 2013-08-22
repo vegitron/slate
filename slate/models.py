@@ -16,6 +16,7 @@ class Artboard(models.Model):
         test_date = datetime.now()
 
         data = {
+            "date": test_date.isoformat(),
             "name": self.name,
             "layers": [],
             "shapes": [],
@@ -31,6 +32,28 @@ class Artboard(models.Model):
 
 
         return data
+
+    def json_data_after_date(self, test_date):
+        new_test_date = datetime.now()
+        data = {
+            "date": new_test_date.isoformat(),
+            "name": self.name,
+            "layers": [],
+            "shapes": [],
+        }
+
+        layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
+        for layer in layers:
+            data["layers"].append(layer.json_data())
+
+        shapes = Shape.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
+        for shape in shapes:
+            data["shapes"].append(shape.json_data())
+
+
+        return data
+
+
 
     def save(self, *args, **kwargs):
         if not self.url_token:

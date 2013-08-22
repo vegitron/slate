@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect, HttpResponse
 import simplejson as json
+import dateutil.parser
 from slate.models import Artboard, Layer, Shape
 
 def home(request):
@@ -119,4 +120,10 @@ def artboard(request, url_token):
 
     elif request.method == "GET":
         return HttpResponse(json.dumps(artboard.initial_json_data()), content_type="application/json")
+
+def artboard_updates(request, url_token, date_from):
+    artboard = Artboard.objects.get(url_token = url_token)
+    date = dateutil.parser.parse(date_from)
+
+    return HttpResponse(json.dumps(artboard.json_data_after_date(date)), content_type="application/json")
 

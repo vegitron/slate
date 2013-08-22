@@ -22,9 +22,23 @@ function resize_canvas_surfaces() {
 
 }
 
+function initialize_application(data) {
+    update_origin_from_url();
+
+    resize_canvas_surfaces();
+    $(window).on("resize", resize_canvas_surfaces);
+
+    $("#add_layer").on("click", add_new_layer);
+    add_drawing_events();
+
+    post_artboard_data(data);
+
+    $("#loading_cover").hide();
+}
+
 $(document).ready(function() {
     $.ajax(slate_home+'/rest/artboard/'+artboard_url_token, {
-        success: post_artboard_data
+        success: initialize_application
     })
 });
 
