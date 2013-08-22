@@ -34,6 +34,12 @@ function show_hide_layer(ev) {
 function add_layer_from_server(data) {
     var layer_id = data.id;
 
+    // So we can add the layer from the response to the POST,
+    // and not worry about the periodic update
+    if (app_context.layer_data.layers[layer_id]) {
+        return;
+    }
+
     var new_display_div = document.createElement("div");
     new_display_div.innerHTML = load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
 
@@ -69,32 +75,10 @@ function add_new_layer() {
         },
 
         data: JSON.stringify({ name: "Layer "+layer_id, z_index: layer_id }),
-        success: function(res) {
-            console.log("Success: ", res);
-        }
+        success: add_layer_from_server
     };
 
     $.ajax('../rest/layer/'+artboard_url_token, post_args);
-    /*
-    var new_display_div = document.createElement("div");
-    new_display_div.innerHTML = load_template("layer_sidebar")({ layer_id: layer_id });
-
-    app_context.layer_data.layers[layer_id] = {
-        id: layer_id,
-        z_index: layer_id,
-        visible: true
-    };
-
-    app_context.layer_data.layer_shapes[layer_id] = [];
-
-    document.getElementById("layers_sidebar").appendChild(new_display_div);
-
-    $("#show_layer_"+layer_id).on("click", show_hide_layer);
-    $("#layer_sidebar_"+layer_id).on("click", function() {
-        select_layer(layer_id);
-    });
-    select_layer(layer_id);
-    */
 }
 
 function select_layer(id) {

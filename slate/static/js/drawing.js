@@ -10,7 +10,8 @@ app_context.drawing_state = {
     origin_x: 0,
     origin_y: 0,
     points: [],
-    text_info: {}
+    text_info: {},
+    added_shape_ids: {}
 }
 
 function get_event_position(ev) {
@@ -394,6 +395,15 @@ function add_drawing_events() {
 }
 
 function add_shape_from_server(info) {
+    var server_id = info.id;
+
+    // So we can add the shape from the response to the POST,
+    // and not worry about the periodic update
+    if (app_context.drawing_state.added_shape_ids[server_id]) {
+        return;
+    }
+    app_context.drawing_state.added_shape_ids[server_id] = true;
+
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
@@ -409,6 +419,12 @@ function add_shape_from_server(info) {
 
     invalidate_rectangle(info.shape_definition.coverage_area);
 
+}
+
+function add_shape_success(info) {
+    add_shape_from_server(info);
+
+    draw_layer_previews();
     redraw_regions();
 }
 
@@ -428,9 +444,7 @@ function add_shape_to_artboard(info) {
         },
 
         data: JSON.stringify(save_data),
-        success: function(res) {
-            console.log("Success: ", res);
-        }
+        success: add_shape_success
     };
 
     $.ajax('../rest/shape/'+artboard_url_token, post_args);

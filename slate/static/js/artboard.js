@@ -8,6 +8,7 @@ function post_artboard_data(data) {
     }
 
     draw_layer_previews();
+    redraw_regions();
 
     $("#add_layer").on("click", add_new_layer);
     add_drawing_events();

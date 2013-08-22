@@ -83,6 +83,7 @@ class Shape(models.Model):
             'layer_id': self.layer.pk,
             'z_index': self.z_index,
             'shape_definition': json.loads(self.json_definition),
+            'id': self.pk,
         }
 
     def save(self, *args, **kwargs):
