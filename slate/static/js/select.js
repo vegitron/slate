@@ -104,13 +104,6 @@ function show_selected_object_handles() {
             height: SELECT_SQUARE_SIZE
         }, corner_cursors[i-1]);
 
-        set_click_region({
-            x: x_pos,
-            y: y_pos,
-            width: SELECT_SQUARE_SIZE,
-            height: SELECT_SQUARE_SIZE
-        }, start_shape_resize, [app_context.select_state.selected_object]);
-
 
         context.beginPath();
         var mid_x = (corners[i].x + corners[i - 1].x) / 2;
@@ -131,13 +124,6 @@ function show_selected_object_handles() {
             height: SELECT_SQUARE_SIZE
         }, edge_cursors[i-1]);
 
-        set_click_region({
-            x: x_pos,
-            y: y_pos,
-            width: SELECT_SQUARE_SIZE,
-            height: SELECT_SQUARE_SIZE
-        }, start_shape_resize, [app_context.select_state.selected_object]);
-
     }
 
     context.restore();
@@ -148,13 +134,6 @@ function show_selected_object_handles() {
         width: corners[2].x - corners[0].x,
         height: corners[2].y - corners[0].y
     }, 'move');
-
-    set_click_region({
-        x: corners[0].x,
-        y: corners[0].y,
-        width: corners[2].x - corners[0].x,
-        height: corners[2].y - corners[0].y
-    }, start_shape_move, [app_context.select_state.selected_object]);
 
 }
 

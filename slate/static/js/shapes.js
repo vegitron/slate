@@ -95,7 +95,7 @@ function get_text_size(info) {
     offscreen.html(test_html);
 
     offscreen.css("font-size", info.font_size);
-    offscreen.css("font-family", info.font_family);
+    offscreen.css("font-family", info.font_face);
 
     return {
         width: offscreen.width(),
