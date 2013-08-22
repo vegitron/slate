@@ -1,5 +1,9 @@
 
 <a href="{% url slate.views.create_whiteboard %}">New whiteboard</a>
+<form action="{% url slate.views.search %}" method="GET">
+    Search: <input type="text" name="q" />
+    <input type="submit" value="Go">
+</form>
 
 <ul>
 {% for artboard in artboards %}

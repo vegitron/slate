@@ -1,0 +1,15 @@
+<h1>Search Results</h1>
+
+{% for result in results %}
+<a href="{{ result.url }}">{{result.name}}</a> <br />
+    {% if result.shape_value %}
+        <span>{{ result.shape_value }}</span>
+        <br />
+    {% endif %}
+    <br />
+{% endfor %}
+
+{% if not results %}
+No matches found.
+{% endif %}
+

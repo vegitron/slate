@@ -3,7 +3,9 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('',
     url(r'^$', 'slate.views.home'),
     url(r'^new$', 'slate.views.create_whiteboard'),
+    url(r'^search$', 'slate.views.search'),
     url(r'^board/(?P<url_token>[^/]+)', 'slate.views.whiteboard'),
+    url(r'^board/(?P<url_token>[^/]+)/(?P<x_pos>[\-0-9]+),(?P<y_pos>[\-0-9]+)', 'slate.views.whiteboard'),
 
     # These should probably be moved to socket.io!
     url(r'^rest/artboard/(?P<url_token>.*)$', 'slate.views.artboard'),

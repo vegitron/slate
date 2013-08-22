@@ -33,7 +33,12 @@ def create_whiteboard(request):
 
     return render_to_response("create.html", {}, RequestContext(request))
 
-def whiteboard(request, url_token):
+def search(request):
+    results = Artboard.search(request.GET["q"])
+
+    return render_to_response("search_results.html", { 'results': results }, RequestContext(request))
+
+def whiteboard(request, url_token, x_pos=0, y_pos=0):
     artboard = Artboard.objects.get(url_token = url_token)
 
     return render_to_response("artboard.html", {
@@ -63,6 +68,8 @@ def shape(request, url_token, shape_id=None):
 
         if json_data["type"] == "text":
             shape.search_content = json_data["shape_definition"]["values"]["text"]
+            shape.search_content_xpos = json_data["shape_definition"]["values"]["x"]
+            shape.search_content_ypos = json_data["shape_definition"]["values"]["y"]
             shape.save()
 
     elif request.method == "PUT":
@@ -82,8 +89,6 @@ def layer(request, url_token, layer_id=None):
 
     if request.method == "POST":
         json_data = json.loads(request.raw_post_data)
-
-        print "JS: ", json_data
 
         layer = Layer.objects.create(
             artboard = artboard,
