@@ -153,6 +153,7 @@ function _live_update_panning(ev) {
     var new_origin_x = app_context.drawing_state.origin_x + d_x;
     var new_origin_y = app_context.drawing_state.origin_y + d_y;
 
+    update_url_with_origin(new_origin_x, new_origin_y);
     update_display_origin(new_origin_x, new_origin_y);
 
     app_context.drawing_state.points[0] = {
