@@ -334,9 +334,11 @@ function show_text_box(x, y) {
     if (padding) {
         offset += parseInt(padding);
     }
+
+    var origin = get_canvas_origin();
     app_context.drawing_state.text_info = {
-        x: x+offset,
-        y: y+offset,
+        x: x + offset - origin.x,
+        y: y + offset - origin.y,
         font_size: TMP_TEXT_FONT_SIZE,
         font_family: TMP_TEXT_FONT_FACE,
         open_textarea: true
