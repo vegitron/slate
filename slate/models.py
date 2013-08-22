@@ -32,7 +32,7 @@ class Artboard(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.url_token:
-            token_base = "%s--%s" % (random.random(), self.name)
+            token_base = "%s--%s--%s" % (random.random(), datetime.now(), self.name)
 
             hashed = hashlib.sha1(token_base).digest()
 
