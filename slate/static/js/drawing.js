@@ -303,8 +303,9 @@ function text_input_change(ev) {
         font_family: app_context.drawing_state.text_info.font_family
     });
 
-    text_area.width(size.width + TMP_TEXT_FONT_SIZE);
-    text_area.height(size.height + TMP_TEXT_FONT_SIZE * 1.5);
+    var font_size = app_context.drawing_state.text_info.font_size;
+    text_area.width(size.width + font_size);
+    text_area.height(size.height + font_size * 1.5);
 }
 
 function text_input_blur(ev) {
@@ -316,6 +317,7 @@ function text_input_blur(ev) {
             text: $("#input_text_area").val(),
             font_face: app_context.drawing_state.text_info.font_family,
             font_size: app_context.drawing_state.text_info.font_size,
+            color: app_context.drawing_state.text_info.color,
             x: app_context.drawing_state.text_info.x,
             y: app_context.drawing_state.text_info.y
         }
@@ -359,19 +361,17 @@ function show_text_box(x, y) {
     }
 
     var origin = get_canvas_origin();
-    app_context.drawing_state.text_info = {
-        x: x + offset - origin.x,
-        y: y + offset - origin.y,
-        font_size: TMP_TEXT_FONT_SIZE,
-        font_family: TMP_TEXT_FONT_FACE,
-        open_textarea: true
-    };
+    app_context.drawing_state.text_info.x = x + offset - origin.x;
+    app_context.drawing_state.text_info.y = y + offset - origin.y;
+    app_context.drawing_state.text_info.open_textarea = true;
+    app_context.drawing_state.text_info.font_family = TMP_TEXT_FONT_FACE;
 
     text_area.val("");
     text_area.css("left", x+"px");
     text_area.css("top", y+"px");
     text_area.css("font-family", TMP_TEXT_FONT_FACE);
-    text_area.css("font-size", TMP_TEXT_FONT_SIZE);
+    text_area.css("font-size", app_context.drawing_state.text_info.font_size);
+    text_area.css("color", app_context.drawing_state.text_info.color);
 
     // To set the initial size
     text_input_change();
