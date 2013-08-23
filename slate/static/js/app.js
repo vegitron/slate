@@ -30,6 +30,7 @@ function initialize_application(data) {
 
     $("#add_layer").on("click", add_new_layer);
     add_drawing_events();
+    add_attribute_events();
 
     post_artboard_data(data);
 

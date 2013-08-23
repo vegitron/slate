@@ -11,7 +11,10 @@ app_context.drawing_state = {
     origin_y: 0,
     points: [],
     text_info: {},
-    added_shape_ids: {}
+    added_shape_ids: {},
+    fill_color: '',
+    border_color: '',
+    border_width: ''
 }
 
 function get_event_position(ev) {
@@ -75,8 +78,8 @@ function _live_update_autoshape(ev) {
     context.save();
     context.beginPath();
     context.moveTo(last_point.x + origin.x, last_point.y + origin.y);
-    context.strokeStyle = 'black';
-    context.lineWidth = 4;
+    context.strokeStyle = app_context.drawing_state.border_color;
+    context.lineWidth = app_context.drawing_state.border_width;
 
     var position = get_event_position(ev);
     context.lineTo(position.x, position.y);
@@ -105,7 +108,11 @@ function _live_update_rectangle(ev) {
     var x2 = position.x - origin.x;
     var y2 = position.y - origin.y;
 
-    draw_polygon(context, get_canvas_origin(), 'black', [
+    var border_width = app_context.drawing_state.border_width;
+    var border_color = app_context.drawing_state.border_color;
+    var fill_color = app_context.drawing_state.fill_color;
+
+    draw_polygon(context, get_canvas_origin(), border_width, border_color, fill_color, [
             { x: x1, y: y1 },
             { x: x1, y: y2 },
             { x: x2, y: y2 },
@@ -228,6 +235,17 @@ function _finish_drawing_autoshape(ev) {
         }
     }
 
+
+    if (shape_type === "line" || shape_type === "bezier") {
+        shape_values.border_width = app_context.drawing_state.border_width;
+        shape_values.border_color = app_context.drawing_state.border_color;
+    }
+    else {
+        shape_values.border_width = app_context.drawing_state.border_width;
+        shape_values.border_color = app_context.drawing_state.border_color;
+        shape_values.fill_color = app_context.drawing_state.fill_color;
+    }
+
     add_shape_to_artboard({
         layer: get_active_layer(),
         shape: shape_type,
@@ -255,6 +273,11 @@ function _finish_drawing_rectangle(ev) {
             { x: x2, y: y1 },
             { x: x1, y: y1 }
         ] };
+
+
+    shape_values.border_width = app_context.drawing_state.border_width;
+    shape_values.border_color = app_context.drawing_state.border_color;
+    shape_values.fill_color = app_context.drawing_state.fill_color;
 
     add_shape_to_artboard({
         layer: get_active_layer(),
@@ -460,23 +483,34 @@ function get_canvas_origin() {
     };
 }
 
-function draw_polygon(context, origin, color,  points) {
+function draw_polygon(context, origin, border_width, border_color, fill_color, points) {
+    context.save();
+    context.beginPath();
+
+    context.moveTo(points[0].x + origin.x, points[0].y + origin.y);
     for (var i = 0; i < points.length-1; i++) {
-        context.beginPath();
-        context.moveTo(points[i].x + origin.x, points[i].y + origin.y);
-        context.lineWidth = 5;
-        context.lineCap = 'round';
-        context.strokeStyle= color;
         context.lineTo(points[i+1].x + origin.x, points[i+1].y + origin.y);
-        context.stroke();
     }
+
+    context.lineWidth = border_width;
+    context.lineCap = 'round';
+    context.strokeStyle= border_color;
+
+    if (fill_color !== null) {
+        context.closePath();
+        context.fillStyle = fill_color;
+        context.fill();
+    }
+    context.stroke();
+    context.restore();
+
 }
 
-function draw_line(context, origin, color, points) {
+function draw_line(context, origin, border_width, border_color, points) {
     context.beginPath();
     context.moveTo(points[0].x + origin.x, points[0].y + origin.y);
-    context.strokeStyle = color;
-    context.lineWidth = 3;
+    context.strokeStyle = border_color;
+    context.lineWidth = border_width;
     context.lineTo(points[1].x + origin.x, points[1].y + origin.y);
     context.stroke();
 }
@@ -500,17 +534,23 @@ function draw_text(context, origin, color, info) {
     context.restore();
 }
 
-function draw_circle(context, origin, color, cx, cy, radius) {
+function draw_circle(context, origin, border_width, border_color, fill_color, cx, cy, radius) {
+    context.save();
     context.beginPath();
     context.arc(cx + origin.x, cy + origin.y, radius, 0, 2 * Math.PI, false);
-    context.lineWidth = 3;
-    context.strokeStyle = color;
+    context.lineWidth = border_width;
+    context.strokeStyle = border_color;
     context.stroke();
+    if (fill_color !== null) {
+        context.fillStyle = fill_color;
+        context.fill();
+    }
+    context.restore();
 }
 
 // Obviously not really bezier yet :(
-function draw_bezier(context, origin, color, points) {
-    draw_polygon(context, origin, color, points);
+function draw_bezier(context, origin, border_width, border_color, points) {
+    draw_polygon(context, origin, border_width, border_color, null, points);
 }
 
 

@@ -308,24 +308,31 @@ function _draw_shapes(context, shapes, origin) {
 
             var shape_layer = info.layer;
 
-            var color = 'black';
-            if (info.selected_shape) {
-                color = 'red';
+            var text_color, fill_color, border_color;
+
+            if (shape === "text") {
+                text_color = values.color || "black";
             }
+            else {
+                border_color = values.border_color || "black";
+                border_width = values.border_width || 4;
+                fill_color = values.fill_color || "rgba(0, 0, 0, 0)";
+            }
+
             if (shape === 'circle') {
-                draw_circle(context, origin, color, values.cx, values.cy, values.radius);
+                draw_circle(context, origin, border_width, border_color, fill_color, values.cx, values.cy, values.radius);
             }
             else if (shape === 'polygon') {
-                draw_polygon(context, origin, color, values.points);
+                draw_polygon(context, origin, border_width, border_color, fill_color, values.points);
             }
             else if (shape === 'line') {
-                draw_line(context, origin, color, values.points);
+                draw_line(context, origin, border_width, border_color, values.points);
             }
             else if (shape === 'bezier') {
-                draw_bezier(context, origin, color, values.points);
+                draw_bezier(context, origin, border_width, border_color, values.points);
             }
             else if (shape === 'text') {
-                draw_text(context, origin, color, values);
+                draw_text(context, origin, text_color, values);
             }
 
             info.coverage_area.overlaps = false;

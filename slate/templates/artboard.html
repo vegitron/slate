@@ -18,8 +18,27 @@
     <canvas id="artboard"></canvas>
     <canvas id="draw_surface" onclick="void(0)"></canvas>
 </div>
-<div id="scroller"></div>
+
 <div id="title">This is the title -- {{ name }}</div>
+<div id="demo_control_panel_container" style="position: absolute; left: 500px; top: 0px; background: white; border: 1px solid green;">
+    <div id="shape_controls">
+    Shape controls:
+        <br />
+        Line width:
+            <br /><label><input type="radio" name="shape_line_width" value="1">Thin</label>
+            <br /><label><input type="radio" name="shape_line_width" value="4" checked="checked">Medium</label>
+            <br /><label><input type="radio" name="shape_line_width" value="10">Thick</label>
+
+        <Br />
+        <label>Border color: <input type="text" name="shape_border_color" value="black"/></label>
+        <br />
+        <label>Fill color: <input type="text" name="shape_fill_color" value="black"/></label>
+    </div>
+    <div id="text_controls">
+    Text controls:
+    </div>
+</div>
+
 <div id="sidebar">
     <div>
         Actions<br />
@@ -61,6 +80,7 @@ Loading...
 <script src="{{STATIC_URL}}js/select.js"></script>
 <script src="{{STATIC_URL}}js/shapes.js"></script>
 <script src="{{STATIC_URL}}js/events.js"></script>
+<script src="{{STATIC_URL}}js/attributes.js"></script>
 
 {% include "handlebars/layer/sidebar.html" %}
 </body>
