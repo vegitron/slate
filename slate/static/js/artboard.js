@@ -28,7 +28,9 @@ function post_artboard_data(data) {
         add_shape_from_server(data.shapes[i]);
     }
 
-    draw_layer_previews();
+    if (data.shapes.length) {
+        draw_layer_previews();
+    }
     redraw_regions();
 
 
