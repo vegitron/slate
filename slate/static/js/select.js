@@ -61,6 +61,7 @@ function deselect_current_object() {
 
     app_context.select_state.selected_object = null;
     load_attributes_for_new_object();
+    hide_shape_attribute_controls();
 
     redraw_regions();
 }

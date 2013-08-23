@@ -21,8 +21,22 @@ function handle_text_size_change () {
 
 function handle_new_board_action_selection() {
     var selected_action = $("input[name='board_actions']:checked").val();
+    hide_shape_attribute_controls();
+
     if (selected_action !== "select") {
         deselect_current_object();
+    }
+
+    if (selected_action === "text") {
+        var panel = $("#text_controls");
+        panel.addClass("new_content_attributes_panel");
+        panel.show();
+    }
+
+    if ((selected_action === "rectangle") || (selected_action  === "autoshape")) {
+        var panel = $("#shape_controls");
+        panel.addClass("new_content_attributes_panel");
+        panel.show();
     }
 }
 
@@ -42,10 +56,23 @@ function add_attribute_events() {
     handle_text_color_change();
 }
 
+function hide_shape_attribute_controls() {
+    reset_attribute_panel($("#shape_controls"));
+    reset_attribute_panel($("#text_controls"));
+}
+
+function reset_attribute_panel(panel) {
+    panel.hide();
+    panel.removeClass("new_content_attributes_panel");
+    panel.css("left", '');
+    panel.css("top", '');
+}
 
 function load_attributes_for_shape(shape) {
     // Just to reset all attribute panels
     load_attributes_for_new_object();
+    hide_shape_attribute_controls();
+
     var type = shape.shape;
 
     if (type === "text") {
@@ -53,6 +80,8 @@ function load_attributes_for_shape(shape) {
             size: shape.values.font_size || 24,
             color: shape.values.color || 'black'
         });
+
+        var panel = $("#text_controls");
     }
     else {
         _set_shape_attribute_display({
@@ -60,7 +89,17 @@ function load_attributes_for_shape(shape) {
             border: shape.values.border_color || 'black',
             thickness: shape.values.border_width || 4
         });
+
+        var panel = $("#shape_controls");
     }
+
+    var origin = get_canvas_origin();
+    var window_width = $(window).width();
+    var window_height = $(window).height();
+
+    panel.css("top", shape.coverage_area.y + origin.y - panel.height());
+    panel.css("left", shape.coverage_area.x + origin.x);
+    panel.show();
 }
 
 function _set_shape_attribute_display(values) {
