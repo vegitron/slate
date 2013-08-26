@@ -1,6 +1,11 @@
 
 function handle_shape_fill_color_change() {
-    app_context.drawing_state.fill_color = $("input[name='shape_fill_color']").val();
+    if (app_context.select_state.selected_object) {
+        console.log("Selected: ", app_context.select_state.selected_object);
+    }
+    else {
+        app_context.drawing_state.fill_color = $("input[name='shape_fill_color']").val();
+    }
 }
 
 function handle_shape_border_color_change() {
@@ -16,7 +21,16 @@ function handle_text_color_change () {
 }
 
 function handle_text_size_change () {
-    app_context.drawing_state.text_info.font_size = parseInt($("input[name='text_font_size']:checked").val());
+    var new_size = parseInt($("input[name='text_font_size']:checked").val());
+    if (app_context.select_state.selected_object) {
+        var object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        object_copy.values.font_size = new_size;
+
+        update_shape_on_artboard(object_copy);
+    }
+    else {
+        app_context.drawing_state.text_info.font_size = new_size;
+    }
 }
 
 function handle_new_board_action_selection() {

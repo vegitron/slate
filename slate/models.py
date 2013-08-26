@@ -40,15 +40,23 @@ class Artboard(models.Model):
             "name": self.name,
             "layers": [],
             "shapes": [],
+            "modified_layers": [],
+            "modified_shapes": [],
         }
 
         layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
         for layer in layers:
-            data["layers"].append(layer.json_data())
+            if layer.creation_date > test_date:
+                data["layers"].append(layer.json_data())
+            else:
+                data["modified_layers"].append(layer.json_data())
 
         shapes = Shape.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
         for shape in shapes:
-            data["shapes"].append(shape.json_data())
+            if shape.creation_date > test_date:
+                data["shapes"].append(shape.json_data())
+            else:
+                data["modified_shapes"].append(shape.json_data())
 
 
         return data

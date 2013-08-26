@@ -12,6 +12,7 @@ app_context.drawing_state = {
     points: [],
     text_info: {},
     added_shape_ids: {},
+    all_shapes: {},
     fill_color: '',
     border_color: '',
     border_width: ''
@@ -428,15 +429,10 @@ function add_shape_from_server(info) {
         return;
     }
     app_context.drawing_state.added_shape_ids[server_id] = true;
+    app_context.drawing_state.all_shapes[server_id] = info;
 
-    var canvas = document.getElementById("artboard");
-    var context = canvas.getContext("2d");
-
-    var shape = info.type;
-    var values = info.shape_definition;
-    // normalize this back to the js names
-    info.shape = info.type;
-    info.values = info.shape_definition;
+    info.shape_definition.id = server_id;
+    info.shape_definition.z_index = info.z_index;
 
     info.shape_definition.coverage_area = get_invalid_area(info.shape_definition);
 
@@ -446,11 +442,67 @@ function add_shape_from_server(info) {
 
 }
 
+function update_shape_from_server(info) {
+    var server_id = info.id;
+
+    var original_shape = app_context.drawing_state.all_shapes[info.id];
+    var original_invalid_area = get_invalid_area(original_shape.shape_definition);
+
+    var new_invalid_area = get_invalid_area(info.shape_definition);
+    info.shape_definition.coverage_area = new_invalid_area;
+
+    // Do this in pieces, so the references all get updated
+    // XXX - If z-index or the layer are changed...
+    var reference_values = app_context.drawing_state.all_shapes[server_id].shape_definition.values;
+    for (var key in info.shape_definition.values) {
+        if (info.shape_definition.values.hasOwnProperty(key)) {
+            reference_values[key] = info.shape_definition.values[key];
+        }
+    }
+
+    app_context.drawing_state.all_shapes[server_id].shape_definition.coverage_area = new_invalid_area;
+
+    invalidate_rectangle(original_invalid_area);
+    invalidate_rectangle(new_invalid_area);
+
+    show_selected_object_handles();
+}
+
+function update_shape_success(info) {
+    update_shape_from_server(info);
+
+    draw_layer_previews();
+    redraw_regions();
+}
+
 function add_shape_success(info) {
     add_shape_from_server(info);
 
     draw_layer_previews();
     redraw_regions();
+}
+
+function update_shape_on_artboard(info) {
+    var save_data = {
+        type: info.shape,
+        layer_id: info.layer,
+        z_index: info.z_index,
+        shape_definition: info
+    };
+
+    var csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value;
+    var post_args = {
+        type: "PUT",
+        headers: {
+            "X-CSRFToken": csrf_value
+        },
+
+        data: JSON.stringify(save_data),
+        success: update_shape_success
+    };
+
+    $.ajax(slate_home+'/rest/shape/'+artboard_url_token+'/'+info.id, post_args);
+
 }
 
 function add_shape_to_artboard(info) {

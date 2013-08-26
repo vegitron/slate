@@ -74,6 +74,26 @@ def shape(request, url_token, shape_id=None):
             shape.save()
 
     elif request.method == "PUT":
+        shape = Shape.objects.get(pk = shape_id)
+        json_data = json.loads(request.raw_post_data)
+
+        if not (shape.artboard.pk == artboard.pk):
+            raise("Invalid artboard id for shape")
+
+        layer = Layer.objects.get(pk = json_data["layer_id"])
+        if not (layer.artboard.pk == artboard.pk):
+            raise("Invalid layer id for shape")
+
+        shape.layer = layer
+        shape.z_index = json_data["z_index"]
+        shape.json_definition = json.dumps(json_data["shape_definition"])
+
+        if json_data["type"] == "text":
+            shape.search_content = json_data["shape_definition"]["values"]["text"]
+            shape.search_content_xpos = json_data["shape_definition"]["values"]["x"]
+            shape.search_content_ypos = json_data["shape_definition"]["values"]["y"]
+
+        shape.save()
         pass
 
     else:

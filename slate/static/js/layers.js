@@ -149,7 +149,6 @@ function redraw_regions() {
     for (var i = 0; i < app_context.redraw_info.areas.length; i++) {
         var region = app_context.redraw_info.areas[i];
         context.rect(region.x + origin.x, region.y + origin.y, region.width, region.height);
-
     }
     context.clip();
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -171,6 +170,7 @@ function redraw_regions() {
 
         return 0;
     });
+
     _draw_shapes(context, sorted_shapes, get_canvas_origin());
 
     show_selected_object_handles();
