@@ -1,23 +1,48 @@
 
 function handle_shape_fill_color_change() {
+    var new_color = $("input[name='shape_fill_color']").val();
     if (app_context.select_state.selected_object) {
-        console.log("Selected: ", app_context.select_state.selected_object);
+        var object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        object_copy.values.fill_color = new_color;
+        update_shape_on_artboard(object_copy);
     }
     else {
-        app_context.drawing_state.fill_color = $("input[name='shape_fill_color']").val();
+        app_context.drawing_state.fill_color = new_color;
     }
 }
 
 function handle_shape_border_color_change() {
-    app_context.drawing_state.border_color = $("input[name='shape_border_color']").val();
+    var new_color = $("input[name='shape_border_color']").val();
+    if (app_context.select_state.selected_object) {
+        var object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        object_copy.values.border_color = new_color;
+        update_shape_on_artboard(object_copy);
+    }
+    app_context.drawing_state.border_color = new_color;
 }
 
 function handle_shape_line_width_change() {
-    app_context.drawing_state.border_width = parseInt($("input[name='shape_line_width']:checked").val());
+    var new_width = parseInt($("input[name='shape_line_width']:checked").val());
+    if (app_context.select_state.selected_object) {
+        var object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        object_copy.values.border_width = new_width;
+        update_shape_on_artboard(object_copy);
+    }
+    else {
+        app_context.drawing_state.border_width = new_width
+    }
 }
 
 function handle_text_color_change () {
-    app_context.drawing_state.text_info.color = $("input[name='text_color']").val();
+    var new_color = $("input[name='text_color']").val();
+    if (app_context.select_state.selected_object) {
+        var object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        object_copy.values.color = new_color;
+        update_shape_on_artboard(object_copy);
+    }
+    else {
+        app_context.drawing_state.text_info.color = new_color;
+    }
 }
 
 function handle_text_size_change () {
