@@ -28,6 +28,12 @@ function post_artboard_data(data) {
         add_shape_from_server(data.shapes[i]);
     }
 
+    if (data.modified_shapes) {
+        for (var i = 0; i < data.modified_shapes.length; i++) {
+            update_shape_from_server(data.modified_shapes[i]);
+        }
+    }
+
     if (data.shapes.length) {
         draw_layer_previews();
     }
