@@ -115,3 +115,65 @@ function get_selection_highlight_corners(shape) {
     ];
 }
 
+function move_polygon_display_xy(shape, dx, dy) {
+    for (var i = 0; i < shape.values.points.length; i++) {
+        var point = shape.values.points[i];
+        point.x += dx;
+        point.y += dy;
+    }
+}
+
+function move_text_display_xy(shape, dx, dy) {
+    shape.values.x += dx;
+    shape.values.y += dy;
+}
+
+function move_circle_display_xy(shape, dx, dy) {
+    shape.values.cx += dx;
+    shape.values.cy += dy;
+}
+
+function move_line_display_xy(shape, dx, dy) {
+    // lines use the same position rep that polygons do.
+    move_polygon_display_xy(shape, dx, dy);
+}
+
+function move_bezier_display_xy(shape, dx, dy) {
+    // beziers use the same position rep that polygons do.
+    move_polygon_display_xy(shape, dx, dy);
+}
+
+function move_display_xy(shape, dx, dy) {
+    shape.coverage_area.x += dx;
+    shape.coverage_area.y += dy;
+
+    if (shape.shape === 'circle') {
+        return move_circle_display_xy(shape, dx, dy);
+    }
+    else if (shape.shape === 'polygon') {
+        return move_polygon_display_xy(shape, dx, dy);
+    }
+    else if (shape.shape === 'line') {
+        return move_line_display_xy(shape, dx, dy);
+    }
+    else if (shape.shape === 'bezier') {
+        return move_bezier_display_xy(shape, dx, dy);
+    }
+    else if (shape.shape === 'text') {
+        return move_text_display_xy(shape, dx, dy);
+    }
+    else {
+        throw("Don't know how to set xy for "+shape.shape);
+    }
+}
+
+function set_movement_proxy_display(shape) {
+    if (shape.shape === 'text') {
+        shape.values.color = 'rgba(0, 0, 0, .7)';
+    }
+    else {
+        shape.values.border_color = 'rgba(0, 0, 0, .7)';
+        shape.values.fill_color = 'rgba(0, 0, 0, .2)';
+    }
+}
+

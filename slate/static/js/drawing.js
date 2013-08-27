@@ -35,6 +35,9 @@ function get_event_position(ev) {
 }
 
 function start_drawing(ev) {
+    var position = get_event_position(ev);
+    handle_canvas_mousedown_events(position.x, position.y);
+
     app_context.drawing_state.is_drawing = true;
     app_context.drawing_state.points = [];
     var origin = get_canvas_origin();
@@ -51,7 +54,7 @@ function start_drawing(ev) {
     }
     else if (action_type === "select") {
         clear_cursor_regions();
-        clear_click_regions();
+        clear_mousedown_regions();
         var shape = find_select_object(position.x - origin.x, position.y - origin.y);
         select_shape(shape);
     }
@@ -466,6 +469,10 @@ function update_shape_from_server(info) {
     invalidate_rectangle(new_invalid_area);
 
     show_selected_object_handles();
+    var selected_shape = app_context.select_state.selected_object;
+    if (selected_shape) {
+        load_attributes_for_shape(selected_shape);
+    }
 }
 
 function update_shape_success(info) {
