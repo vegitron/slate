@@ -211,6 +211,16 @@ function start_selected_shape_move(x, y) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         _draw_shapes(context, [movement_proxy], origin);
+
+        clear_cursor_regions();
+        set_cursor_region({
+            x: 0,
+            y: 0,
+            width: canvas.width,
+            height: canvas.height
+        }, 'move')
+        clear_mousedown_regions();
+
     }
 
     function handle_mouse_up(ev) {
@@ -222,6 +232,8 @@ function start_selected_shape_move(x, y) {
 
         $(window).unbind("mousemove", handle_mouse_move);
         $(window).unbind("mouseup", handle_mouse_up);
+
+        show_selected_object_handles();
     }
 
     $(window).on("mousemove", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_move);
