@@ -36,7 +36,9 @@ function get_event_position(ev) {
 
 function start_drawing(ev) {
     var position = get_event_position(ev);
-    handle_canvas_mousedown_events(position.x, position.y);
+    if (handle_canvas_mousedown_events(position.x, position.y) === false) {
+        return;
+    }
 
     app_context.drawing_state.is_drawing = true;
     app_context.drawing_state.points = [];

@@ -234,11 +234,16 @@ function start_selected_shape_move(x, y) {
         $(window).unbind("mouseup", handle_mouse_up);
 
         show_selected_object_handles();
+
+        var canvas = document.getElementById("draw_surface");
+        var context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
     }
 
     $(window).on("mousemove", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_move);
     $(window).on("mouseup", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_up);
-    return;
+
+    return false;
 }
 
 

@@ -34,7 +34,7 @@ function handle_canvas_mousedown_events(x, y) {
         if (area_overlap(possible_event.region, { x: x, y: y, width: 1, height: 1 })) {
             var ev_val = possible_event.callback.apply(undefined, [x, y]);
             if (ev_val === false) {
-                break;
+                return false;
             }
         }
     }
