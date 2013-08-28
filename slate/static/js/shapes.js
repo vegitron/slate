@@ -167,6 +167,65 @@ function move_display_xy(shape, dx, dy) {
     }
 }
 
+function resize_circle_display(shape, width_scale, height_scale) {
+}
+
+function resize_polygon_display(shape, width_scale, height_scale) {
+
+    // Unlike most things, this actually needs to be based on the
+    // real left/top of the shape, otherwise the anchor points move
+    var left_pos = Number.MAX_VALUE, top_pos = Number.MAX_VALUE;
+    for (var i = 0; i < shape.values.points.length; i++) {
+        var point = shape.values.points[i];
+        if (point.x < left_pos) {
+            left_pos = point.x;
+        }
+        if (point.y < top_pos) {
+            top_pos = point.y;
+        }
+    }
+
+    for (var i = 0; i < shape.values.points.length; i++) {
+        var point = shape.values.points[i];
+        var new_x = left_pos + ((point.x - left_pos) * width_scale);
+        point.x = new_x;
+        point.y = top_pos + ((point.y - top_pos) * height_scale);
+    }
+}
+
+function resize_line_display(shape, width_scale, height_scale) {
+    return resize_polygon_display(shape, width_scale, height_scale);
+}
+
+function resize_bezier_display(shape, width_scale, height_scale) {
+    return resize_polygon_display(shape, width_scale, height_scale);
+}
+
+function resize_text_display(shape, width_scale, height_scale) {
+}
+
+function resize_shape(shape, width_scale, height_scale) {
+    if (shape.shape === 'circle') {
+        return resize_circle_display(shape, width_scale, height_scale);
+    }
+    else if (shape.shape === 'polygon') {
+        return resize_polygon_display(shape, width_scale, height_scale);
+    }
+    else if (shape.shape === 'line') {
+        return resize_line_display(shape, width_scale, height_scale);
+    }
+    else if (shape.shape === 'bezier') {
+        return resize_bezier_display(shape, width_scale, height_scale);
+    }
+    else if (shape.shape === 'text') {
+        return resize_text_display(shape, width_scale, height_scale);
+    }
+    else {
+        throw("Don't know how to resize "+shape.shape);
+    }
+
+}
+
 function set_movement_proxy_display(shape) {
     if (shape.shape === 'text') {
         shape.values.color = 'rgba(0, 0, 0, .7)';

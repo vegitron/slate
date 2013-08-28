@@ -107,6 +107,21 @@ function show_selected_object_handles() {
 
     var corner_cursors = ['sw-resize', 'se-resize', 'ne-resize', 'nw-resize'];
     var edge_cursors = ['w-resize', 's-resize', 'e-resize', 'n-resize'];
+
+    var corner_event_data = [
+        { select: { left: true, bottom: true }, cursor: 'sw-resize' },
+        { select: { right: true, bottom: true }, cursor: 'se-resize' },
+        { select: { right: true, top: true }, cursor: 'ne-resize' },
+        { select: { left: true, top: true }, cursor: 'nw-resize' }
+    ];
+
+    var edge_event_data = [
+        { select: { left: true }, cursor: 'w-resize' },
+        { select: { bottom: true }, cursor: 's-resize' },
+        { select: { right: true }, cursor: 'e-resize' },
+        { select: { top: true }, cursor: 'n-resize' }
+    ];
+
     var SELECT_SQUARE_SIZE = 6;
     for (var i = 1; i < corners.length; i++) {
         context.beginPath();
@@ -125,6 +140,12 @@ function show_selected_object_handles() {
             height: SELECT_SQUARE_SIZE
         }, corner_cursors[i-1]);
 
+        set_mousedown_region({
+            x: x_pos,
+            y: y_pos,
+            width: SELECT_SQUARE_SIZE,
+            height: SELECT_SQUARE_SIZE
+        }, start_shape_resize, [ corner_event_data[i - 1] ]);
 
         context.beginPath();
         var mid_x = (corners[i].x + corners[i - 1].x) / 2;
@@ -144,6 +165,14 @@ function show_selected_object_handles() {
             width: SELECT_SQUARE_SIZE,
             height: SELECT_SQUARE_SIZE
         }, edge_cursors[i-1]);
+
+        set_mousedown_region({
+            x: x_pos,
+            y: y_pos,
+            width: SELECT_SQUARE_SIZE,
+            height: SELECT_SQUARE_SIZE
+        }, start_shape_resize, [ edge_event_data[i-1] ]);
+
 
     }
 
@@ -166,84 +195,6 @@ function show_selected_object_handles() {
 }
 
 function select_shape(shape) {
-}
-
-function start_selected_shape_move(x, y) {
-    var obj_x = app_context.select_state.selected_object.coverage_area.x;
-    var obj_y = app_context.select_state.selected_object.coverage_area.y;
-
-    var origin = get_canvas_origin();
-
-    var screen_x = obj_x + origin.x;
-    var screen_y = obj_y + origin.y;
-
-    var movement_proxy;
-
-    function get_position_differential(shape, ev) {
-        var new_x = ev.clientX - ev.data.x_offset;
-        var new_y = ev.clientY - ev.data.y_offset;
-
-        var old_x = shape.coverage_area.x;
-        var old_y = shape.coverage_area.y;
-
-        var dx = new_x - old_x;
-        var dy = new_y - old_y;
-
-        return {
-            dx: dx,
-            dy: dy
-        };
-    }
-
-    function handle_mouse_move(ev) {
-        if (!movement_proxy) {
-            movement_proxy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
-            set_movement_proxy_display(movement_proxy);
-        }
-
-        var diff = get_position_differential(movement_proxy, ev);
-
-        move_display_xy(movement_proxy, diff.dx, diff.dy);
-        var canvas = document.getElementById("draw_surface");
-        var context = canvas.getContext("2d");
-        var origin = get_canvas_origin();
-
-        context.clearRect(0, 0, canvas.width, canvas.height);
-
-        _draw_shapes(context, [movement_proxy], origin);
-
-        clear_cursor_regions();
-        set_cursor_region({
-            x: 0,
-            y: 0,
-            width: canvas.width,
-            height: canvas.height
-        }, 'move')
-        clear_mousedown_regions();
-
-    }
-
-    function handle_mouse_up(ev) {
-        var save_obj = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
-        var diff = get_position_differential(save_obj, ev);
-
-        move_display_xy(save_obj, diff.dx, diff.dy);
-        update_shape_on_artboard(save_obj);
-
-        $(window).unbind("mousemove", handle_mouse_move);
-        $(window).unbind("mouseup", handle_mouse_up);
-
-        show_selected_object_handles();
-
-        var canvas = document.getElementById("draw_surface");
-        var context = canvas.getContext("2d");
-        context.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    $(window).on("mousemove", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_move);
-    $(window).on("mouseup", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_up);
-
-    return false;
 }
 
 

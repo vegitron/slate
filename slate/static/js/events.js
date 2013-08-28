@@ -20,10 +20,11 @@ function set_cursor_region(region, cursor) {
     });
 }
 
-function set_mousedown_region(region, callback) {
+function set_mousedown_region(region, callback, args) {
     app_context.event_data.mousedown_events.push({
         region: region,
-        callback: callback
+        callback: callback,
+        args: args
     });
 }
 
@@ -32,7 +33,10 @@ function handle_canvas_mousedown_events(x, y) {
         var possible_event = app_context.event_data.mousedown_events[i];
 
         if (area_overlap(possible_event.region, { x: x, y: y, width: 1, height: 1 })) {
-            var ev_val = possible_event.callback.apply(undefined, [x, y]);
+            var passed_args = [x, y];
+            var args = possible_event.args || [];
+            passed_args = passed_args.concat(args);
+            var ev_val = possible_event.callback.apply(undefined, passed_args);
             if (ev_val === false) {
                 return false;
             }
