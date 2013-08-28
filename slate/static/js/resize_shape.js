@@ -5,19 +5,37 @@ function start_shape_resize(x, y, box_data) {
         bottom_pos = -1 * Number.MAX_VALUE;
 
     var shape = app_context.select_state.selected_object;
-    for (var i = 0; i < shape.values.points.length; i++) {
-        var point = shape.values.points[i];
-        if (point.x < left_pos) {
-            left_pos = point.x;
-        }
-        if (point.x > right_pos) {
-            right_pos = point.x;
-        }
-        if (point.y < top_pos) {
-            top_pos = point.y;
-        }
-        if (point.y > bottom_pos) {
-            bottom_pos = point.y;
+
+    if (shape.shape === "text") {
+        left_pos = shape.values.x;
+        top_pos = shape.values.y;
+
+        var size_test_text = shape.values.reflowed_text || shape.values.text;
+
+        var text_size = get_text_size({
+            text: size_test_text,
+            font_size: shape.values.font_size,
+            font_face: shape.values.font_face
+        });
+
+        right_pos = left_pos + text_size.width;
+        bottom_pos = top_pos + text_size.height;
+    }
+    else {
+        for (var i = 0; i < shape.values.points.length; i++) {
+            var point = shape.values.points[i];
+            if (point.x < left_pos) {
+                left_pos = point.x;
+            }
+            if (point.x > right_pos) {
+                right_pos = point.x;
+            }
+            if (point.y < top_pos) {
+                top_pos = point.y;
+            }
+            if (point.y > bottom_pos) {
+                bottom_pos = point.y;
+            }
         }
     }
 

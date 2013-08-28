@@ -306,7 +306,7 @@ function text_input_change(ev) {
     var size = get_text_size({
         text: text_area.val(),
         font_size: app_context.drawing_state.text_info.font_size,
-        font_family: app_context.drawing_state.text_info.font_family
+        font_face: app_context.drawing_state.text_info.font_face
     });
 
     var font_size = app_context.drawing_state.text_info.font_size;
@@ -321,7 +321,7 @@ function text_input_blur(ev) {
         shape: 'text',
         values: {
             text: $("#input_text_area").val(),
-            font_face: app_context.drawing_state.text_info.font_family,
+            font_face: app_context.drawing_state.text_info.font_face,
             font_size: app_context.drawing_state.text_info.font_size,
             color: app_context.drawing_state.text_info.color,
             x: app_context.drawing_state.text_info.x,
@@ -370,7 +370,7 @@ function show_text_box(x, y) {
     app_context.drawing_state.text_info.x = x + offset - origin.x;
     app_context.drawing_state.text_info.y = y + offset - origin.y;
     app_context.drawing_state.text_info.open_textarea = true;
-    app_context.drawing_state.text_info.font_family = TMP_TEXT_FONT_FACE;
+    app_context.drawing_state.text_info.font_face= TMP_TEXT_FONT_FACE;
 
     text_area.val("");
     text_area.css("left", x+"px");
@@ -582,7 +582,8 @@ function draw_text(context, origin, color, info) {
     context.fillStyle = color;
 
     // fillText doesn't support multiple lines :(
-    var lines = info.text.split("\n");
+    var text = info.reflowed_text || info.text;
+    var lines = text.split("\n");
     var x = info.x + origin.x;
     for (var i = 0; i < lines.length; i++) {
         // +1 because text is vertically aligned so the y position
