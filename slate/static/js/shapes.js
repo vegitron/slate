@@ -245,6 +245,10 @@ function resize_text_display(shape, width_scale, height_scale) {
     function get_reflowed_line(line, width) {
         var words = line.split(/ /);
 
+        return get_reflowed_words(words, width);
+    }
+
+    function get_reflowed_words(words, width) {
         if (words.length === 1) {
             return [words[0]];
         }
@@ -262,8 +266,7 @@ function resize_text_display(shape, width_scale, height_scale) {
                 reflowed.push(test_string);
 
                 if (i < words.length) {
-                    var new_test_string = words.slice(i).join(" ");
-                    var new_matches = get_reflowed_line(new_test_string, width);
+                    var new_matches = get_reflowed_words(words.slice(i), width);
                     reflowed = reflowed.concat(new_matches);
                 }
 
@@ -276,7 +279,7 @@ function resize_text_display(shape, width_scale, height_scale) {
 
         if (words.length > 1) {
             var remaining = words.slice(1).join(" ");
-            reflowed = reflowed.concat(get_reflowed_line(remaining, width));
+            reflowed = reflowed.concat(get_reflowed_words(words.slice(1), width));
         }
         return reflowed;
     }
