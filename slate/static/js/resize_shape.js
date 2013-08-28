@@ -1,8 +1,30 @@
 function start_shape_resize(x, y, box_data) {
-    var obj_x = app_context.select_state.selected_object.coverage_area.x;
-    var obj_y = app_context.select_state.selected_object.coverage_area.y;
-    var obj_width = app_context.select_state.selected_object.coverage_area.width;
-    var obj_height = app_context.select_state.selected_object.coverage_area.height;
+    var left_pos = Number.MAX_VALUE,
+        top_pos = Number.MAX_VALUE,
+        right_pos = -1 * Number.MAX_VALUE,
+        bottom_pos = -1 * Number.MAX_VALUE;
+
+    var shape = app_context.select_state.selected_object;
+    for (var i = 0; i < shape.values.points.length; i++) {
+        var point = shape.values.points[i];
+        if (point.x < left_pos) {
+            left_pos = point.x;
+        }
+        if (point.x > right_pos) {
+            right_pos = point.x;
+        }
+        if (point.y < top_pos) {
+            top_pos = point.y;
+        }
+        if (point.y > bottom_pos) {
+            bottom_pos = point.y;
+        }
+    }
+
+    var obj_x = left_pos;
+    var obj_y = top_pos;
+    var obj_width = right_pos - left_pos;
+    var obj_height = bottom_pos - top_pos;
 
     var origin = get_canvas_origin();
     var screen_x = obj_x + origin.x;
@@ -17,6 +39,13 @@ function start_shape_resize(x, y, box_data) {
         width: canvas.width,
         height: canvas.height
     }, cursor)
+
+
+    // For resizing left/top, we need the differential between
+    // the coverage area and the actual shape area, since moving
+    // the shape uses coverage area.
+    var move_differential_x = app_context.select_state.selected_object.coverage_area.x - left_pos;
+    var move_differential_y = app_context.select_state.selected_object.coverage_area.y - top_pos;
 
     function update_shape_data(shape, ev) {
         var width_scale = 1.0;
@@ -53,11 +82,11 @@ function start_shape_resize(x, y, box_data) {
 
         if (box_data.select.left) {
             var diff = get_position_differential(shape, ev);
-            move_display_xy(shape, diff.dx, 0);
+            move_display_xy(shape, diff.dx + move_differential_y, 0);
         }
         if (box_data.select.top) {
             var diff = get_position_differential(shape, ev);
-            move_display_xy(shape, 0, diff.dy);
+            move_display_xy(shape, 0, diff.dy + move_differential_y);
         }
     }
 
