@@ -122,7 +122,7 @@ function show_selected_object_handles() {
         { select: { top: true }, cursor: 'n-resize' }
     ];
 
-    var SELECT_SQUARE_SIZE = 6;
+    var SELECT_SQUARE_SIZE = 5;
     for (var i = 1; i < corners.length; i++) {
         context.beginPath();
 
