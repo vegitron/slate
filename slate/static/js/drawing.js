@@ -8,7 +8,7 @@ app_context.drawing_state = {
     fill_color: '',
     border_color: '',
     border_width: ''
-}
+};
 
 Slate.Drawing = (function ($) {
     "use strict";
@@ -38,28 +38,23 @@ Slate.Drawing = (function ($) {
 
         app_context.drawing_state.is_drawing = true;
         app_context.drawing_state.points = [];
-        var origin = Slate.Artboard.get_canvas_origin();
 
-        var action_type = $("input[name='board_actions']:checked").val();
-
-        var position = get_event_position(ev);
+        var origin = Slate.Artboard.get_canvas_origin(),
+            action_type = $("input[name='board_actions']:checked").val();
 
         if (action_type === "pan") {
             app_context.drawing_state.points.push({
                 x: position.x,
                 y: position.y,
             });
-        }
-        else if (action_type === "select") {
+        } else if (action_type === "select") {
             clear_cursor_regions();
             clear_mousedown_regions();
             var shape = find_select_object(position.x - origin.x, position.y - origin.y);
             select_shape(shape);
-        }
-        else if (action_type === "text") {
+        } else if (action_type === "text") {
             show_text_box(position.x, position.y);
-        }
-        else {
+        } else {
             app_context.drawing_state.points.push({
                 x: position.x - origin.x,
                 y: position.y - origin.y,
@@ -69,13 +64,12 @@ Slate.Drawing = (function ($) {
         ev.stopPropagation();
     }
 
-    function _live_update_autoshape(ev) {
-        var canvas = document.getElementById("draw_surface");
-        var context = canvas.getContext("2d");
-
-        var points = app_context.drawing_state.points;
-        var origin = Slate.Artboard.get_canvas_origin();
-        var last_point = points[points.length - 1];
+    function live_update_autoshape(ev) {
+        var canvas = document.getElementById("draw_surface"),
+            context = canvas.getContext("2d"),
+            points = app_context.drawing_state.points,
+            origin = Slate.Artboard.get_canvas_origin(),
+            last_point = points[points.length - 1];
 
         context.save();
         context.beginPath();
@@ -94,43 +88,43 @@ Slate.Drawing = (function ($) {
         });
     }
 
-    function _live_update_rectangle(ev) {
-        var canvas = document.getElementById("draw_surface");
-        var context = canvas.getContext("2d");
-        var origin = Slate.Artboard.get_canvas_origin();
+    function live_update_rectangle(ev) {
+        var canvas = document.getElementById("draw_surface"),
+            context = canvas.getContext("2d"),
+            origin = Slate.Artboard.get_canvas_origin(),
+
+            points = app_context.drawing_state.points,
+            last_point = points[points.length - 1],
+            x1 = last_point.x,
+            y1 = last_point.y,
+
+            position = get_event_position(ev),
+            x2 = position.x - origin.x,
+            y2 = position.y - origin.y,
+
+            border_width = app_context.drawing_state.border_width,
+            border_color = app_context.drawing_state.border_color,
+            fill_color = app_context.drawing_state.fill_color;
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        var points = app_context.drawing_state.points;
-        var last_point = points[points.length - 1];
-        var x1 = last_point.x;
-        var y1 = last_point.y;
-
-        var position = get_event_position(ev);
-        var x2 = position.x - origin.x;
-        var y2 = position.y - origin.y;
-
-        var border_width = app_context.drawing_state.border_width;
-        var border_color = app_context.drawing_state.border_color;
-        var fill_color = app_context.drawing_state.fill_color;
-
-        draw_polygon(context, Slate.Artboard.get_canvas_origin(), border_width, border_color, fill_color, [
+        draw_polygon(context, Slate.Artboard.get_canvas_origin(), border_width, border_color, fill_color,
+            [
                 { x: x1, y: y1 },
                 { x: x1, y: y2 },
                 { x: x2, y: y2 },
                 { x: x2, y: y1 },
                 { x: x1, y: y1 }
-            ]
-        );
+            ]);
     }
 
     function update_display_origin(x, y) {
-        var canvas = document.getElementById("artboard");
-        var context = canvas.getContext("2d");
+        var canvas = document.getElementById("artboard"),
+            context = canvas.getContext("2d"),
 
-        var last_origin = Slate.Artboard.get_canvas_origin();
-        var origin_x = last_origin.x;
-        var origin_y = last_origin.y;
+            last_origin = Slate.Artboard.get_canvas_origin(),
+            origin_x = last_origin.x,
+            origin_y = last_origin.y;
 
         Slate.Artboard.set_canvas_origin(x, y);
 
@@ -152,17 +146,17 @@ Slate.Drawing = (function ($) {
     */
     }
 
-    function _live_update_panning(ev) {
-        var first_point = app_context.drawing_state.points[0];
+    function live_update_panning(ev) {
+        var first_point = app_context.drawing_state.points[0],
 
-        var position = get_event_position(ev);
-        var d_x = position.x - first_point.x;
-        var d_y = position.y - first_point.y;
+            position = get_event_position(ev),
+            d_x = position.x - first_point.x,
+            d_y = position.y - first_point.y,
 
-        var origin = Slate.Artboard.get_canvas_origin();
+            origin = Slate.Artboard.get_canvas_origin(),
 
-        var new_origin_x = origin.x + d_x;
-        var new_origin_y = origin.y + d_y;
+            new_origin_x = origin.x + d_x,
+            new_origin_y = origin.y + d_y;
 
         update_display_origin(new_origin_x, new_origin_y);
 
@@ -184,27 +178,24 @@ Slate.Drawing = (function ($) {
 
 
         if (action_type === "autoshape") {
-            _live_update_autoshape(ev);
-        }
-
-        else if (action_type === "rectangle") {
-            _live_update_rectangle(ev);
-        }
-
-        else if (action_type === "pan") {
-            _live_update_panning(ev);
+            live_update_autoshape(ev);
+        } else if (action_type === "rectangle") {
+            live_update_rectangle(ev);
+        } else if (action_type === "pan") {
+            live_update_panning(ev);
         }
 
         ev.preventDefault();
         ev.stopPropagation();
     }
 
-    function _finish_drawing_autoshape(ev) {
+    function finish_drawing_autoshape(ev) {
         // need to send autoshape coordinates that aren't offset by the origin - wacky
         // things happen when the canvas is in the negative area
-        var autoshape_points = [];
-        var origin = Slate.Artboard.get_canvas_origin();
-        for (var i = 0; i < app_context.drawing_state.points.length; i++) {
+        var autoshape_points = [],
+            origin = Slate.Artboard.get_canvas_origin(),
+            i;
+        for (i = 0; i < app_context.drawing_state.points.length; i++) {
             autoshape_points.push({
                 x: app_context.drawing_state.points[i].x + origin.x,
                 y: app_context.drawing_state.points[i].y + origin.y
@@ -220,17 +211,14 @@ Slate.Drawing = (function ($) {
         if (shape_type === "circle") {
             shape_values.cx -= origin.x;
             shape_values.cy -= origin.y;
-        }
-        else if (shape_type === "bezier") {
+        } else if (shape_type === "bezier") {
             shape_values = { points: app_context.drawing_state.points };
-        }
-        else if (shape_type === "line") {
+        } else if (shape_type === "line") {
             for (var i = 0; i < shape_values.points.length; i++) {
                 shape_values.points[i].x -= origin.x;
                 shape_values.points[i].y -= origin.y;
             }
-        }
-        else if (shape_type === "polygon") {
+        } else if (shape_type === "polygon") {
             // The last element in this array is a reference to the first, so don't
             // offset it twice
             for (var i = 0; i < shape_values.points.length-1; i++) {
@@ -243,8 +231,7 @@ Slate.Drawing = (function ($) {
         if (shape_type === "line" || shape_type === "bezier") {
             shape_values.border_width = app_context.drawing_state.border_width;
             shape_values.border_color = app_context.drawing_state.border_color;
-        }
-        else {
+        } else {
             shape_values.border_width = app_context.drawing_state.border_width;
             shape_values.border_color = app_context.drawing_state.border_color;
             shape_values.fill_color = app_context.drawing_state.fill_color;
@@ -257,7 +244,7 @@ Slate.Drawing = (function ($) {
         });
     }
 
-    function _finish_drawing_rectangle(ev) {
+    function finish_drawing_rectangle(ev) {
         var points = app_context.drawing_state.points;
         var origin = Slate.Artboard.get_canvas_origin();
 
@@ -292,8 +279,8 @@ Slate.Drawing = (function ($) {
 
     function square(x) { return x * x; }
 
-    function _finish_panning(ev) {
-        _live_update_panning(ev);
+    function finish_panning(ev) {
+        live_update_panning(ev);
 
         // XXX - maybe do something here w/ the drag speed,
         // and deccelarate instead of just stopping?
@@ -397,13 +384,11 @@ Slate.Drawing = (function ($) {
             var shape_type, shape_values, add_shape;
 
             if (action_type === "autoshape") {
-                _finish_drawing_autoshape(ev);
-            }
-            else if (action_type === "rectangle") {
-                _finish_drawing_rectangle(ev);
-            }
-            else if (action_type === "pan") {
-                _finish_panning(ev);
+                finish_drawing_autoshape(ev);
+            } else if (action_type === "rectangle") {
+                finish_drawing_rectangle(ev);
+            } else if (action_type === "pan") {
+                finish_panning(ev);
             }
 
             app_context.drawing_state.points = [];
