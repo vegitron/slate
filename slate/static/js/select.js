@@ -80,7 +80,7 @@ function show_selected_object_handles() {
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
-    var origin = get_canvas_origin();
+    var origin = Slate.Artboard.get_canvas_origin();
 
     context.save();
     context.beginPath();

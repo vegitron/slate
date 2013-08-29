@@ -145,7 +145,7 @@ function redraw_regions() {
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
-    var origin = get_canvas_origin();
+    var origin = Slate.Artboard.get_canvas_origin();
     context.save();
     context.beginPath();
     for (var i = 0; i < app_context.redraw_info.areas.length; i++) {
@@ -173,7 +173,7 @@ function redraw_regions() {
         return 0;
     });
 
-    _draw_shapes(context, sorted_shapes, get_canvas_origin());
+    _draw_shapes(context, sorted_shapes, Slate.Artboard.get_canvas_origin());
 
     show_selected_object_handles();
 
@@ -322,19 +322,19 @@ function _draw_shapes(context, shapes, origin) {
             }
 
             if (shape === 'circle') {
-                draw_circle(context, origin, border_width, border_color, fill_color, values.cx, values.cy, values.radius);
+                Slate.Drawing.draw_circle(context, origin, border_width, border_color, fill_color, values.cx, values.cy, values.radius);
             }
             else if (shape === 'polygon') {
-                draw_polygon(context, origin, border_width, border_color, fill_color, values.points);
+                Slate.Drawing.draw_polygon(context, origin, border_width, border_color, fill_color, values.points);
             }
             else if (shape === 'line') {
-                draw_line(context, origin, border_width, border_color, values.points);
+                Slate.Drawing.draw_line(context, origin, border_width, border_color, values.points);
             }
             else if (shape === 'bezier') {
-                draw_bezier(context, origin, border_width, border_color, values.points);
+                Slate.Drawing.draw_bezier(context, origin, border_width, border_color, values.points);
             }
             else if (shape === 'text') {
-                draw_text(context, origin, text_color, values);
+                Slate.Drawing.draw_text(context, origin, text_color, values);
             }
 
             info.coverage_area.overlaps = false;

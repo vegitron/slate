@@ -7,7 +7,7 @@ Slate.Attributes = (function ($) {
         if (app_context.select_state.selected_object) {
             object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             object_copy.values.fill_color = new_color;
-            update_shape_on_artboard(object_copy);
+            Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
             app_context.drawing_state.fill_color = new_color;
         }
@@ -20,7 +20,7 @@ Slate.Attributes = (function ($) {
         if (app_context.select_state.selected_object) {
             object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             object_copy.values.border_color = new_color;
-            update_shape_on_artboard(object_copy);
+            Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
             app_context.drawing_state.border_color = new_color;
         }
@@ -33,7 +33,7 @@ Slate.Attributes = (function ($) {
         if (app_context.select_state.selected_object) {
             object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             object_copy.values.border_width = new_width;
-            update_shape_on_artboard(object_copy);
+            Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
             app_context.drawing_state.border_width = new_width
         }
@@ -45,7 +45,7 @@ Slate.Attributes = (function ($) {
         if (app_context.select_state.selected_object) {
             object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             object_copy.values.color = new_color;
-            update_shape_on_artboard(object_copy);
+            Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
             app_context.drawing_state.text_info.color = new_color;
         }
@@ -59,7 +59,7 @@ Slate.Attributes = (function ($) {
             object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             object_copy.values.font_size = new_size;
 
-            update_shape_on_artboard(object_copy);
+            Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
             app_context.drawing_state.text_info.font_size = new_size;
         }
@@ -143,7 +143,7 @@ Slate.Attributes = (function ($) {
             panel = $("#shape_controls");
         }
 
-        origin = get_canvas_origin();
+        origin = Slate.Artboard.get_canvas_origin();
         window_width = $(window).width();
         window_height = $(window).height();
 

@@ -2,7 +2,7 @@ function start_selected_shape_move(x, y) {
     var obj_x = app_context.select_state.selected_object.coverage_area.x;
     var obj_y = app_context.select_state.selected_object.coverage_area.y;
 
-    var origin = get_canvas_origin();
+    var origin = Slate.Artboard.get_canvas_origin();
 
     var screen_x = obj_x + origin.x;
     var screen_y = obj_y + origin.y;
@@ -22,7 +22,7 @@ function start_selected_shape_move(x, y) {
         move_display_xy(movement_proxy, diff.dx, diff.dy);
         var canvas = document.getElementById("draw_surface");
         var context = canvas.getContext("2d");
-        var origin = get_canvas_origin();
+        var origin = Slate.Artboard.get_canvas_origin();
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -44,7 +44,7 @@ function start_selected_shape_move(x, y) {
         var diff = get_position_differential(save_obj, ev);
 
         move_display_xy(save_obj, diff.dx, diff.dy);
-        update_shape_on_artboard(save_obj);
+        Slate.Drawing.update_shape_on_artboard(save_obj);
 
         $(window).unbind("mousemove", handle_mouse_move);
         $(window).unbind("mouseup", handle_mouse_up);
@@ -64,7 +64,7 @@ function start_selected_shape_move(x, y) {
 
 
 function get_position_differential(shape, ev) {
-    var origin = get_canvas_origin();
+    var origin = Slate.Artboard.get_canvas_origin();
     var new_x = ev.clientX - ev.data.x_offset;
     var new_y = ev.clientY - ev.data.y_offset;
 

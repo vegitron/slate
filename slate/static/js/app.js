@@ -14,7 +14,7 @@ var Slate = {};
         document.getElementById("draw_surface").height = $(window).height();
 
         var canvas = document.getElementById("artboard"),
-            origin = get_canvas_origin();
+            origin = Slate.Artboard.get_canvas_origin();
 
         invalidate_rectangle({
             x: -1 * origin.x - 10,
@@ -33,7 +33,7 @@ var Slate = {};
         $(window).on("resize", resize_canvas_surfaces);
 
         $("#add_layer").on("click", add_new_layer);
-        add_drawing_events();
+        Slate.Drawing.add_drawing_events();
         Slate.Attributes.add_attribute_events();
 
         Slate.Artboard.post_artboard_data(data);

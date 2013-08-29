@@ -50,7 +50,7 @@ function start_shape_resize(x, y, box_data) {
     var obj_width = right_pos - left_pos;
     var obj_height = bottom_pos - top_pos;
 
-    var origin = get_canvas_origin();
+    var origin = Slate.Artboard.get_canvas_origin();
     var screen_x = obj_x + origin.x;
     var screen_y = obj_y + origin.y;
 
@@ -75,7 +75,7 @@ function start_shape_resize(x, y, box_data) {
         var width_scale = null;
         var height_scale = null;
 
-        var origin = get_canvas_origin();
+        var origin = Slate.Artboard.get_canvas_origin();
         var canvas_x = ev.clientX - origin.x;
         var canvas_y = ev.clientY - origin.y;
 
@@ -159,7 +159,7 @@ function start_shape_resize(x, y, box_data) {
 
         var canvas = document.getElementById("draw_surface");
         var context = canvas.getContext("2d");
-        var origin = get_canvas_origin();
+        var origin = Slate.Artboard.get_canvas_origin();
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -170,7 +170,7 @@ function start_shape_resize(x, y, box_data) {
         var save_obj = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
 
         update_shape_data(save_obj, ev);
-        update_shape_on_artboard(save_obj);
+        Slate.Drawing.update_shape_on_artboard(save_obj);
 
         var canvas = document.getElementById("draw_surface");
         var context = canvas.getContext("2d");

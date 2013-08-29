@@ -25,12 +25,12 @@ Slate.Artboard = (function ($) {
         }
 
         for (i = 0; i < data.shapes.length; i++) {
-            add_shape_from_server(data.shapes[i]);
+            Slate.Drawing.add_shape_from_server(data.shapes[i]);
         }
 
         if (data.modified_shapes) {
             for (i = 0; i < data.modified_shapes.length; i++) {
-                update_shape_from_server(data.modified_shapes[i]);
+                Slate.Drawing.update_shape_from_server(data.modified_shapes[i]);
             }
         }
 
@@ -49,8 +49,22 @@ Slate.Artboard = (function ($) {
         });
     }
 
+    function get_canvas_origin() {
+        return {
+            x: app_context.drawing_state.origin_x,
+            y: app_context.drawing_state.origin_y,
+        };
+    }
+
+    function set_canvas_origin(x, y) {
+        app_context.drawing_state.origin_x = x;
+        app_context.drawing_state.origin_y = y;
+    }
+
     return {
         post_artboard_data: post_artboard_data,
-        update_origin_from_url: update_origin_from_url
+        update_origin_from_url: update_origin_from_url,
+        get_canvas_origin: get_canvas_origin,
+        set_canvas_origin: set_canvas_origin
     };
 })(jQuery);
