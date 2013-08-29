@@ -116,12 +116,14 @@ function get_invalid_area(shape) {
 function find_intersecting_shapes(rectangle) {
     var intersecting_shapes = [];
     for (var layer_id in app_context.layer_data.layer_shapes) {
-        if (app_context.layer_data.layer_shapes.hasOwnProperty(layer_id)) {
-            var layer_shapes = app_context.layer_data.layer_shapes[layer_id];
-            for (var i = 0; i < layer_shapes.length; i++) {
-                var info = layer_shapes[i];
-                if (area_overlap(rectangle, info.coverage_area)) {
-                    intersecting_shapes.push(info);
+        if (app_context.layer_data.layers[layer_id].visible) {
+            if (app_context.layer_data.layer_shapes.hasOwnProperty(layer_id)) {
+                var layer_shapes = app_context.layer_data.layer_shapes[layer_id];
+                for (var i = 0; i < layer_shapes.length; i++) {
+                    var info = layer_shapes[i];
+                    if (area_overlap(rectangle, info.coverage_area)) {
+                        intersecting_shapes.push(info);
+                    }
                 }
             }
         }
