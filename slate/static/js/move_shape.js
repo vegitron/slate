@@ -63,14 +63,15 @@ function start_selected_shape_move(x, y) {
 
 
 function get_position_differential(shape, ev) {
+    var origin = get_canvas_origin();
     var new_x = ev.clientX - ev.data.x_offset;
     var new_y = ev.clientY - ev.data.y_offset;
 
     var old_x = shape.coverage_area.x;
     var old_y = shape.coverage_area.y;
 
-    var dx = new_x - old_x;
-    var dy = new_y - old_y;
+    var dx = new_x - old_x - origin.x;
+    var dy = new_y - old_y - origin.y;
 
     return {
         dx: dx,
