@@ -174,6 +174,24 @@ function move_display_xy(shape, dx, dy) {
 }
 
 function resize_circle_display(shape, width_scale, height_scale) {
+    var original_radius = shape.values.radius;
+    if (width_scale !== null) {
+        shape.values.radius *= width_scale;
+    }
+    else {
+        shape.values.radius *= height_scale;
+    }
+
+    if (shape.values.radius < 0) {
+        shape.values.radius *= -1;
+    }
+
+    if (width_scale) {
+        shape.values.cx += shape.values.radius - original_radius;
+    }
+    if (height_scale) {
+        shape.values.cy += shape.values.radius - original_radius;
+    }
 }
 
 function resize_polygon_display(shape, width_scale, height_scale) {

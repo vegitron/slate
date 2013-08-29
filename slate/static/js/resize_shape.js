@@ -21,6 +21,12 @@ function start_shape_resize(x, y, box_data) {
         right_pos = left_pos + text_size.width;
         bottom_pos = top_pos + text_size.height;
     }
+    else if (shape.shape === "circle") {
+        left_pos = shape.values.cx - shape.values.radius;
+        right_pos = shape.values.cx + shape.values.radius;
+        top_pos = shape.values.cy - shape.values.radius;
+        bottom_pos = shape.values.cy + shape.values.radius;
+    }
     else {
         for (var i = 0; i < shape.values.points.length; i++) {
             var point = shape.values.points[i];
@@ -66,8 +72,8 @@ function start_shape_resize(x, y, box_data) {
     var move_differential_y = app_context.select_state.selected_object.coverage_area.y - top_pos;
 
     function update_shape_data(shape, ev) {
-        var width_scale = 1.0;
-        var height_scale = 1.0;
+        var width_scale = null;
+        var height_scale = null;
 
         var origin = get_canvas_origin();
         var canvas_x = ev.clientX - origin.x;
@@ -96,15 +102,47 @@ function start_shape_resize(x, y, box_data) {
             height_scale = new_height / obj_height;
         }
 
+        var original_radius;
+        if (shape.shape === "circle") {
+            original_radius = shape.values.radius;
+            // XXX - this should probably allow circles to deform into an oval
+            if (height_scale !== null && width_scale !== null) {
+                if (height_scale > width_scale) {
+                    height_scale = width_scale;
+                }
+                else {
+                    width_scale = height_scale;
+                }
+            }
+        }
+        else {
+            if (height_scale === null) {
+                height_scale = 1.0;
+            }
+            if (width_scale === null) {
+                width_scale = 1.0;
+            }
+        }
+
         resize_shape(shape, width_scale, height_scale);
 
-        if (box_data.select.left) {
-            var diff = get_position_differential(shape, ev);
-            move_display_xy(shape, diff.dx + move_differential_y, 0);
+        if (shape.shape === "circle") {
+            if (box_data.select.left) {
+                move_display_xy(shape,  (original_radius - shape.values.radius) * 2, 0);
+            }
+            if (box_data.select.top) {
+                move_display_xy(shape, 0, (original_radius - shape.values.radius) * 2);
+            }
         }
-        if (box_data.select.top) {
-            var diff = get_position_differential(shape, ev);
-            move_display_xy(shape, 0, diff.dy + move_differential_y);
+        else {
+            if (box_data.select.left) {
+                var diff = get_position_differential(shape, ev);
+                move_display_xy(shape, diff.dx + move_differential_y, 0);
+            }
+            if (box_data.select.top) {
+                var diff = get_position_differential(shape, ev);
+                move_display_xy(shape, 0, diff.dy + move_differential_y);
+            }
         }
     }
 
