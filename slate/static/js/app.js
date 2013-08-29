@@ -27,7 +27,7 @@ var Slate = {};
     }
 
     function initialize_application(data) {
-        update_origin_from_url();
+        Slate.Artboard.update_origin_from_url();
 
         resize_canvas_surfaces();
         $(window).on("resize", resize_canvas_surfaces);
@@ -36,7 +36,7 @@ var Slate = {};
         add_drawing_events();
         add_attribute_events();
 
-        post_artboard_data(data);
+        Slate.Artboard.post_artboard_data(data);
 
         $("#loading_cover").hide();
     }
