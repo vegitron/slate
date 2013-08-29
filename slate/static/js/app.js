@@ -2,7 +2,7 @@ var app_context = {};
 
 var Slate = {};
 
-(function() {
+(function ($) {
     "use strict";
     function resize_canvas_surfaces() {
         // Doing this, because $().width() with set a style - but that scales the
@@ -13,8 +13,8 @@ var Slate = {};
         document.getElementById("draw_surface").width = $(window).width();
         document.getElementById("draw_surface").height = $(window).height();
 
-        var canvas = document.getElementById("artboard");
-        var origin = get_canvas_origin();
+        var canvas = document.getElementById("artboard"),
+            origin = get_canvas_origin();
 
         invalidate_rectangle({
             x: -1 * origin.x - 10,
@@ -41,10 +41,10 @@ var Slate = {};
         $("#loading_cover").hide();
     }
 
-    $(document).ready(function() {
-        $.ajax(slate_home+'/rest/artboard/'+artboard_url_token, {
+    $(document).ready(function () {
+        $.ajax(window.slate_home + '/rest/artboard/' + window.artboard_url_token, {
             success: initialize_application
-        })
+        });
     });
-})();
+})(jQuery);
 
