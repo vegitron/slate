@@ -11,6 +11,7 @@ function start_selected_shape_move(x, y) {
 
 
     function handle_mouse_move(ev) {
+        document.getSelection().removeAllRanges();
         if (!movement_proxy) {
             movement_proxy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
             set_movement_proxy_display(movement_proxy);
