@@ -16,13 +16,13 @@ var Slate = {};
         var canvas = document.getElementById("artboard"),
             origin = Slate.Artboard.get_canvas_origin();
 
-        invalidate_rectangle({
+        Slate.Layer.invalidate_rectangle({
             x: -1 * origin.x - 10,
             y: -1 * origin.y - 10,
             width: canvas.width + 20,
             height: canvas.height + 20
         });
-        redraw_regions();
+        Slate.Layer.redraw_regions();
 
     }
 
@@ -32,7 +32,7 @@ var Slate = {};
         resize_canvas_surfaces();
         $(window).on("resize", resize_canvas_surfaces);
 
-        $("#add_layer").on("click", add_new_layer);
+        $("#add_layer").on("click", Slate.Layer.add_new_layer);
         Slate.Drawing.add_drawing_events();
         Slate.Attributes.add_attribute_events();
 

@@ -26,7 +26,7 @@ function start_selected_shape_move(x, y) {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        _draw_shapes(context, [movement_proxy], origin);
+        Slate.Layer.draw_shapes(context, [movement_proxy], origin);
 
         Slate.Event.clear_cursor_regions();
         Slate.Event.set_cursor_region({

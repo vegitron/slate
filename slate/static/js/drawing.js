@@ -130,14 +130,14 @@ Slate.Drawing = (function ($) {
 
         // XXX - drop these constants, fill in the image w/ image data, invalidate
         // only the areas that actually need re-drawing
-        invalidate_rectangle({
+        Slate.Layer.invalidate_rectangle({
             x: -1 * origin_x - 10,
             y: -1 * origin_y - 10,
             width: canvas.width + 20,
             height: canvas.height + 20
         });
 
-        redraw_regions();
+        Slate.Layer.redraw_regions();
 
     /*
         var image_data = context.getImageData(0, 0, canvas.width, canvas.height);
@@ -238,7 +238,7 @@ Slate.Drawing = (function ($) {
         }
 
         add_shape_to_artboard({
-            layer: get_active_layer(),
+            layer: Slate.Layer.get_active_layer(),
             shape: shape_type,
             values: shape_values
         });
@@ -271,7 +271,7 @@ Slate.Drawing = (function ($) {
         shape_values.fill_color = app_context.drawing_state.fill_color;
 
         add_shape_to_artboard({
-            layer: get_active_layer(),
+            layer: Slate.Layer.get_active_layer(),
             shape: shape_type,
             values: shape_values
         });
@@ -302,7 +302,7 @@ Slate.Drawing = (function ($) {
     function text_input_blur(ev) {
         $("#input_text_area").hide();
         add_shape_to_artboard({
-            layer: get_active_layer(),
+            layer: Slate.Layer.get_active_layer(),
             shape: 'text',
             values: {
                 text: $("#input_text_area").val(),
@@ -422,11 +422,11 @@ Slate.Drawing = (function ($) {
         info.shape_definition.id = server_id;
         info.shape_definition.z_index = info.z_index;
 
-        info.shape_definition.coverage_area = get_invalid_area(info.shape_definition);
+        info.shape_definition.coverage_area = Slate.Layer.get_invalid_area(info.shape_definition);
 
         app_context.layer_data.layer_shapes[info.layer_id].push(info.shape_definition);
 
-        invalidate_rectangle(info.shape_definition.coverage_area);
+        Slate.Layer.invalidate_rectangle(info.shape_definition.coverage_area);
 
     }
 
@@ -434,9 +434,9 @@ Slate.Drawing = (function ($) {
         var server_id = info.id;
 
         var original_shape = app_context.drawing_state.all_shapes[info.id];
-        var original_invalid_area = get_invalid_area(original_shape.shape_definition);
+        var original_invalid_area = Slate.Layer.get_invalid_area(original_shape.shape_definition);
 
-        var new_invalid_area = get_invalid_area(info.shape_definition);
+        var new_invalid_area = Slate.Layer.get_invalid_area(info.shape_definition);
         info.shape_definition.coverage_area = new_invalid_area;
 
         // Do this in pieces, so the references all get updated
@@ -450,8 +450,8 @@ Slate.Drawing = (function ($) {
 
         app_context.drawing_state.all_shapes[server_id].shape_definition.coverage_area = new_invalid_area;
 
-        invalidate_rectangle(original_invalid_area);
-        invalidate_rectangle(new_invalid_area);
+        Slate.Layer.invalidate_rectangle(original_invalid_area);
+        Slate.Layer.invalidate_rectangle(new_invalid_area);
 
         show_selected_object_handles();
         var selected_shape = app_context.select_state.selected_object;
@@ -463,15 +463,15 @@ Slate.Drawing = (function ($) {
     function update_shape_success(info) {
         update_shape_from_server(info);
 
-        draw_layer_previews();
-        redraw_regions();
+        Slate.Layer.draw_layer_previews();
+        Slate.Layer.redraw_regions();
     }
 
     function add_shape_success(info) {
         add_shape_from_server(info);
 
-        draw_layer_previews();
-        redraw_regions();
+        Slate.Layer.draw_layer_previews();
+        Slate.Layer.redraw_regions();
     }
 
     function update_shape_on_artboard(info) {

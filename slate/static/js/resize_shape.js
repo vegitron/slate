@@ -163,7 +163,7 @@ function start_shape_resize(x, y, box_data) {
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        _draw_shapes(context, [movement_proxy], origin);
+        Slate.Layer.draw_shapes(context, [movement_proxy], origin);
     }
 
     function handle_mouse_up(ev) {

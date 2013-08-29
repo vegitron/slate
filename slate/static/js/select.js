@@ -6,7 +6,7 @@ function find_select_object(x, y) {
     // Find the thing in the "highest" layer - lowest id, with the highest
     // z-index
 
-    var intersecting_shapes = find_intersecting_shapes({ x: x, y: y, width: 1, height: 1 });
+    var intersecting_shapes = Slate.Layer.find_intersecting_shapes({ x: x, y: y, width: 1, height: 1 });
 
     var min_layer = Number.MAX_VALUE;
     var max_zindex = 0;
@@ -33,17 +33,17 @@ function find_select_object(x, y) {
         var last_selected = app_context.select_state.selected_object;
 
         if (last_selected) {
-            invalidate_rectangle(last_selected.coverage_area);
+            Slate.Layer.invalidate_rectangle(last_selected.coverage_area);
             last_selected.selected_shape = false;
         }
 
-        invalidate_rectangle(selected_shape.coverage_area);
+        Slate.Layer.invalidate_rectangle(selected_shape.coverage_area);
         selected_shape.selected_shape = true;
         app_context.select_state.selected_object = selected_shape;
 
         Slate.Attributes.load_attributes_for_shape(selected_shape);
 
-        redraw_regions();
+        Slate.Layer.redraw_regions();
     }
     else {
         deselect_current_object();
@@ -55,7 +55,7 @@ function deselect_current_object() {
     var last_selected = app_context.select_state.selected_object;
 
     if (last_selected) {
-        invalidate_rectangle(last_selected.coverage_area);
+        Slate.Layer.invalidate_rectangle(last_selected.coverage_area);
         last_selected.selected_shape = false;
     }
 
@@ -65,7 +65,7 @@ function deselect_current_object() {
     Slate.Attributes.load_attributes_for_new_object();
     Slate.Attributes.hide_shape_attribute_controls();
 
-    redraw_regions();
+    Slate.Layer.redraw_regions();
 }
 
 function show_selected_object_handles() {

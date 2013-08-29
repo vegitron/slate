@@ -24,7 +24,7 @@ Slate.Artboard = (function ($) {
         periodic_update_data.last_check_date = data.date;
 
         for (i = 0; i < data.layers.length; i++) {
-            add_layer_from_server(data.layers[i]);
+            Slate.Layer.add_layer_from_server(data.layers[i]);
         }
 
         for (i = 0; i < data.shapes.length; i++) {
@@ -38,9 +38,9 @@ Slate.Artboard = (function ($) {
         }
 
         if (data.shapes.length) {
-            draw_layer_previews();
+            Slate.Layer.draw_layer_previews();
         }
-        redraw_regions();
+        Slate.Layer.redraw_regions();
 
 
         window.setTimeout(run_periodic_update, 2000);

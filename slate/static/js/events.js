@@ -37,7 +37,7 @@ Slate.Event = (function ($) {
         for (i = 0; i < mousedown_events.length; i++) {
             var possible_event = mousedown_events[i];
 
-            if (area_overlap(possible_event.region, { x: x, y: y, width: 1, height: 1 })) {
+            if (Slate.Layer.area_overlap(possible_event.region, { x: x, y: y, width: 1, height: 1 })) {
                 passed_args = [x, y];
                 args = possible_event.args || [];
                 passed_args = passed_args.concat(args);
@@ -55,7 +55,7 @@ Slate.Event = (function ($) {
             i;
 
         for (i = 0; i < cursor_events.length; i++) {
-            if (area_overlap(cursor_events[i].region, { x: x, y: y, width: 1, height: 1 })) {
+            if (Slate.Layer.area_overlap(cursor_events[i].region, { x: x, y: y, width: 1, height: 1 })) {
                 found_cursor = true;
                 set_cursor = cursor_events[i].cursor;
                 break;
