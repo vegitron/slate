@@ -1,6 +1,9 @@
 Slate.Artboard = (function ($) {
     "use strict";
-    var periodic_update_data = {};
+    var periodic_update_data = {},
+        canvas_origin_x = 0,
+        canvas_origin_y = 0;
+
     function update_origin_from_url() {
         var test_match = [window.slate_home, "/board/", window.artboard_url_token, "/([-0-9]+),([-0-9]+)"].join(""),
             matches = window.location.href.match(test_match),
@@ -51,14 +54,14 @@ Slate.Artboard = (function ($) {
 
     function get_canvas_origin() {
         return {
-            x: app_context.drawing_state.origin_x,
-            y: app_context.drawing_state.origin_y,
+            x: canvas_origin_x,
+            y: canvas_origin_y
         };
     }
 
     function set_canvas_origin(x, y) {
-        app_context.drawing_state.origin_x = x;
-        app_context.drawing_state.origin_y = y;
+        canvas_origin_x = x;
+        canvas_origin_y = y;
     }
 
     return {

@@ -1,8 +1,6 @@
 
 app_context.drawing_state = {
     is_drawing: false,
-    origin_x: 0,
-    origin_y: 0,
     points: [],
     text_info: {},
     added_shape_ids: {},
