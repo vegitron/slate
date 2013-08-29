@@ -59,6 +59,8 @@ function deselect_current_object() {
         last_selected.selected_shape = false;
     }
 
+    clear_mousedown_regions();
+    clear_cursor_regions();
     app_context.select_state.selected_object = null;
     load_attributes_for_new_object();
     hide_shape_attribute_controls();
