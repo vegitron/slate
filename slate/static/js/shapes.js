@@ -182,16 +182,13 @@ function resize_circle_display(shape, width_scale, height_scale) {
         shape.values.radius *= height_scale;
     }
 
-    if (shape.values.radius < 0) {
-        shape.values.radius *= -1;
-    }
-
     if (width_scale) {
         shape.values.cx += shape.values.radius - original_radius;
     }
     if (height_scale) {
         shape.values.cy += shape.values.radius - original_radius;
     }
+
 }
 
 function resize_polygon_display(shape, width_scale, height_scale) {

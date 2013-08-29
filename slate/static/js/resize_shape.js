@@ -133,6 +133,10 @@ function start_shape_resize(x, y, box_data) {
             if (box_data.select.top) {
                 move_display_xy(shape, 0, (original_radius - shape.values.radius) * 2);
             }
+
+            if (shape.values.radius < 0) {
+                shape.values.radius *= -1;
+            }
         }
         else {
             if (box_data.select.left) {
