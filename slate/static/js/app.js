@@ -34,7 +34,7 @@ var Slate = {};
 
         $("#add_layer").on("click", add_new_layer);
         add_drawing_events();
-        add_attribute_events();
+        Slate.Attributes.add_attribute_events();
 
         Slate.Artboard.post_artboard_data(data);
 

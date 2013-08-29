@@ -41,7 +41,7 @@ function find_select_object(x, y) {
         selected_shape.selected_shape = true;
         app_context.select_state.selected_object = selected_shape;
 
-        load_attributes_for_shape(selected_shape);
+        Slate.Attributes.load_attributes_for_shape(selected_shape);
 
         redraw_regions();
     }
@@ -62,8 +62,8 @@ function deselect_current_object() {
     clear_mousedown_regions();
     clear_cursor_regions();
     app_context.select_state.selected_object = null;
-    load_attributes_for_new_object();
-    hide_shape_attribute_controls();
+    Slate.Attributes.load_attributes_for_new_object();
+    Slate.Attributes.hide_shape_attribute_controls();
 
     redraw_regions();
 }

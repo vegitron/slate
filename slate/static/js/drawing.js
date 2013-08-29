@@ -473,7 +473,7 @@ function update_shape_from_server(info) {
     show_selected_object_handles();
     var selected_shape = app_context.select_state.selected_object;
     if (selected_shape) {
-        load_attributes_for_shape(selected_shape);
+        Slate.Attributes.load_attributes_for_shape(selected_shape);
     }
 }
 
