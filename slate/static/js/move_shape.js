@@ -28,14 +28,14 @@ function start_selected_shape_move(x, y) {
 
         _draw_shapes(context, [movement_proxy], origin);
 
-        clear_cursor_regions();
-        set_cursor_region({
+        Slate.Event.clear_cursor_regions();
+        Slate.Event.set_cursor_region({
             x: 0,
             y: 0,
             width: canvas.width,
             height: canvas.height
         }, 'move')
-        clear_mousedown_regions();
+        Slate.Event.clear_mousedown_regions();
 
     }
 

@@ -32,7 +32,7 @@ Slate.Drawing = (function ($) {
 
     function start_drawing(ev) {
         var position = get_event_position(ev);
-        if (handle_canvas_mousedown_events(position.x, position.y) === false) {
+        if (Slate.Event.handle_canvas_mousedown_events(position.x, position.y) === false) {
             return;
         }
 
@@ -48,8 +48,8 @@ Slate.Drawing = (function ($) {
                 y: position.y,
             });
         } else if (action_type === "select") {
-            clear_cursor_regions();
-            clear_mousedown_regions();
+            Slate.Event.clear_cursor_regions();
+            Slate.Event.clear_mousedown_regions();
             var shape = find_select_object(position.x - origin.x, position.y - origin.y);
             select_shape(shape);
         } else if (action_type === "text") {
@@ -168,7 +168,7 @@ Slate.Drawing = (function ($) {
 
     function live_update_drawing(ev) {
         var position = get_event_position(ev);
-        handle_canvas_cursor_events(position.x, position.y);
+        Slate.Event.handle_canvas_cursor_events(position.x, position.y);
 
         if (!app_context.drawing_state.is_drawing) {
             return;

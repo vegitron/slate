@@ -56,13 +56,13 @@ function start_shape_resize(x, y, box_data) {
 
     var cursor = box_data.cursor;
     var canvas = document.getElementById("draw_surface");
-    clear_cursor_regions();
-    set_cursor_region({
+    Slate.Event.clear_cursor_regions();
+    Slate.Event.set_cursor_region({
         x: 0,
         y: 0,
         width: canvas.width,
         height: canvas.height
-    }, cursor)
+    }, cursor);
 
 
     // For resizing left/top, we need the differential between

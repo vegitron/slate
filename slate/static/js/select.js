@@ -59,8 +59,8 @@ function deselect_current_object() {
         last_selected.selected_shape = false;
     }
 
-    clear_mousedown_regions();
-    clear_cursor_regions();
+    Slate.Event.clear_mousedown_regions();
+    Slate.Event.clear_cursor_regions();
     app_context.select_state.selected_object = null;
     Slate.Attributes.load_attributes_for_new_object();
     Slate.Attributes.hide_shape_attribute_controls();
@@ -73,8 +73,8 @@ function show_selected_object_handles() {
         return;
     }
 
-    clear_mousedown_regions();
-    clear_cursor_regions();
+    Slate.Event.clear_mousedown_regions();
+    Slate.Event.clear_cursor_regions();
 
     var corners = get_selection_highlight_corners(app_context.select_state.selected_object);
     var canvas = document.getElementById("artboard");
@@ -135,14 +135,14 @@ function show_selected_object_handles() {
         context.stroke();
         context.fill();
 
-        set_cursor_region({
+        Slate.Event.set_cursor_region({
             x: x_pos,
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
             height: SELECT_SQUARE_SIZE
         }, corner_cursors[i-1]);
 
-        set_mousedown_region({
+        Slate.Event.set_mousedown_region({
             x: x_pos,
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
@@ -161,14 +161,14 @@ function show_selected_object_handles() {
         context.stroke();
         context.fill();
 
-        set_cursor_region({
+        Slate.Event.set_cursor_region({
             x: x_pos,
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
             height: SELECT_SQUARE_SIZE
         }, edge_cursors[i-1]);
 
-        set_mousedown_region({
+        Slate.Event.set_mousedown_region({
             x: x_pos,
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
@@ -180,14 +180,14 @@ function show_selected_object_handles() {
 
     context.restore();
     // Add this last, so the corners get priority w/ the cursor
-    set_cursor_region({
+    Slate.Event.set_cursor_region({
         x: corners[0].x + origin.x,
         y: corners[0].y + origin.y,
         width: corners[2].x - corners[0].x,
         height: corners[2].y - corners[0].y
     }, 'move');
 
-    set_mousedown_region({
+    Slate.Event.set_mousedown_region({
         x: corners[0].x + origin.x,
         y: corners[0].y + origin.y,
         width: corners[2].x - corners[0].x,
