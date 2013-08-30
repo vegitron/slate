@@ -60,6 +60,7 @@ Slate.Layer = (function ($) {
         $("#layer_sidebar_" + layer_id).on("click", function () {
             select_layer(layer_id);
         });
+        $("#delete_layer_" + layer_id).on("click", delete_layer);
         select_layer(layer_id);
 
         app_context.layer_data.next_layer_id++;
@@ -368,6 +369,42 @@ Slate.Layer = (function ($) {
         draw_layer_previews: draw_layer_previews,
         redraw_regions: redraw_regions,
         invalidate_rectangle: invalidate_rectangle
+    }
+
+    function delete_layer(ev) {
+        var target = ev.target,
+            layer_id = target.value,
+            origin = Slate.Artboard.get_canvas_origin(),
+            canvas = document.getElementById("artboard"),
+            csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value,
+            post_args = {
+                type: "DELETE",
+                headers: {
+                    "X-CSRFToken": csrf_value
+                },
+            };
+
+        ev.stopPropagation();
+        delete app_context.layer_data.layer_shapes[layer_id];
+        delete app_context.layer_data.layers[layer_id];
+        
+        invalidate_rectangle({
+            x: -1 * origin.x - 10,
+            y: -1 * origin.y - 10,
+            width: canvas.width + 20,
+            height: canvas.height + 20
+        });
+        redraw_regions();
+        $("#layer_sidebar_" + layer_id).remove();
+        
+        for (layer in app_context.layer_data.layers) {
+            if (app_context.layer_data.layers.hasOwnProperty(layer)){
+                select_layer(layer);
+                break;
+            }
+        }
+
+        $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
 
 })(jQuery);

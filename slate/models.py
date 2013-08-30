@@ -22,11 +22,11 @@ class Artboard(models.Model):
             "shapes": [],
         }
 
-        layers = Layer.objects.filter(artboard = self, creation_date__lt=test_date)
+        layers = Layer.objects.filter(artboard = self, creation_date__lt=test_date, is_deleted = False)
         for layer in layers:
             data["layers"].append(layer.json_data())
 
-        shapes = Shape.objects.filter(artboard = self, creation_date__lt=test_date)
+        shapes = Shape.objects.filter(artboard = self, creation_date__lt=test_date, layer__is_deleted = False)
         for shape in shapes:
             data["shapes"].append(shape.json_data())
 
@@ -44,7 +44,7 @@ class Artboard(models.Model):
             "modified_shapes": [],
         }
 
-        layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
+        layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date, is_deleted = False)
         for layer in layers:
             if layer.creation_date > test_date:
                 data["layers"].append(layer.json_data())
@@ -111,6 +111,7 @@ class Layer(models.Model):
     artboard = models.ForeignKey(Artboard)
     modification_date = models.DateTimeField(db_index = True)
     creation_date = models.DateTimeField(db_index = True)
+    is_deleted = models.BooleanField()
 
     def json_data(self):
         return {
@@ -126,6 +127,11 @@ class Layer(models.Model):
             self.creation_date = datetime.now()
 
         super(Layer, self).save(*args, **kwargs)
+
+    def delete (self, *args, **kwargs):
+        self.modification_date = datetime.now()
+        self.is_deleted = True
+        self.save()
 
 class Shape(models.Model):
     artboard = models.ForeignKey(Artboard)

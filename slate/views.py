@@ -126,6 +126,9 @@ def layer(request, url_token, layer_id=None):
     if not (layer.artboard.pk == artboard.pk):
         raise("Invalid url_token for layer")
 
+    if request.method == "DELETE":
+        layer.delete()
+        return HttpResponse('', content_type="application/json", status=204)
 
     return HttpResponse(json.dumps(layer.json_data()), content_type="application/json")
 
