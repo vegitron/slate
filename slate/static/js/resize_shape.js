@@ -1,4 +1,5 @@
 Slate.ResizeShape = (function ($) {
+    "use strict";
     function start_shape_resize(x, y, box_data) {
         var left_pos = Number.MAX_VALUE,
             top_pos = Number.MAX_VALUE,

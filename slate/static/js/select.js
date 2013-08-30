@@ -3,6 +3,7 @@ app_context.select_state = {
 };
 
 Slate.Select = (function ($) {
+    "use strict";
     function find_select_object(x, y) {
         // Find the thing in the "highest" layer - lowest id, with the highest
         // z-index

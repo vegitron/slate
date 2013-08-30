@@ -1,4 +1,5 @@
 Slate.MoveShape = (function ($) {
+    "use strict";
     function start_selected_shape_move(x, y) {
         var obj_x = app_context.select_state.selected_object.coverage_area.x,
             obj_y = app_context.select_state.selected_object.coverage_area.y,

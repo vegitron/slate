@@ -11,6 +11,7 @@ app_context.redraw_info = {
 };
 
 Slate.Layer = (function ($) {
+    "use strict";
     function show_hide_layer(ev) {
         var target = ev.target,
             layer_id = target.value,
@@ -43,7 +44,7 @@ Slate.Layer = (function ($) {
         }
 
         new_display_div = document.createElement("div");
-        new_display_div.innerHTML = load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
+        new_display_div.innerHTML = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
 
         app_context.layer_data.layers[layer_id] = {
             id: layer_id,
@@ -251,10 +252,10 @@ Slate.Layer = (function ($) {
             max_y = starting_point.y + starting_point.height,
             min_y = starting_point.y;
 
-        layer_shapes = app_context.layer_data.layer_shapes[layer_id]
+        var layer_shapes = app_context.layer_data.layer_shapes[layer_id]
         if (layer_shapes !== undefined){
             $.each(layer_shapes, function (shape_id, shape){
-                shape_area = Slate.Shape.get_invalid_area(shape);
+                var shape_area = Slate.Shape.get_invalid_area(shape);
                 if (shape_area.x + shape_area.width > max_x) {
                     max_x = shape_area.x + shape_area.width;
                 } else if (shape_area.x < min_x) {
@@ -320,7 +321,7 @@ Slate.Layer = (function ($) {
             }
             else {
                 border_color = values.border_color || "black";
-                border_width = values.border_width || 4;
+                var border_width = values.border_width || 4;
                 fill_color = values.fill_color || "rgba(0, 0, 0, 0)";
             }
 

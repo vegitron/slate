@@ -1,7 +1,7 @@
 var INVALID_AREA_SLOP = 8;
 
 Slate.Shape = (function ($) {
-
+    "use strict";
     // XXX - this needs to accomodate shape rotation
     function get_selection_highlight_corners(shape) {
         var INSET_FROM_COVERAGE = 8;
