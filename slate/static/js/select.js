@@ -192,7 +192,7 @@ function show_selected_object_handles() {
         y: corners[0].y + origin.y,
         width: corners[2].x - corners[0].x,
         height: corners[2].y - corners[0].y
-    }, start_selected_shape_move);
+    }, Slate.MoveShape.start_selected_shape_move);
 
 }
 

@@ -140,11 +140,11 @@ function start_shape_resize(x, y, box_data) {
         }
         else {
             if (box_data.select.left) {
-                var diff = get_position_differential(shape, ev);
+                var diff = Slate.MoveShape.get_position_differential(shape, ev);
                 move_display_xy(shape, diff.dx + move_differential_y, 0);
             }
             if (box_data.select.top) {
-                var diff = get_position_differential(shape, ev);
+                var diff = Slate.MoveShape.get_position_differential(shape, ev);
                 move_display_xy(shape, 0, diff.dy + move_differential_y);
             }
         }
