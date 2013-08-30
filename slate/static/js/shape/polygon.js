@@ -1,13 +1,14 @@
 Slate.Shape.Polygon = (function ($) {
     "use strict";
     function get_invalid_area(info) {
-        var min_x = Number.MAX_VALUE;
-        var min_y = Number.MAX_VALUE;
-        var max_x = -1 * Number.MAX_VALUE;
-        var max_y = -1 * Number.MAX_VALUE;
+        var min_x = Number.MAX_VALUE,
+            min_y = Number.MAX_VALUE,
+            max_x = -1 * Number.MAX_VALUE,
+            max_y = -1 * Number.MAX_VALUE,
+            points = info.points,
+            i;
 
-        var points = info.points;
-        for (var i = 0; i < points.length; i++) {
+        for (i = 0; i < points.length; i++) {
             if (points[i].x < min_x) {
                 min_x = points[i].x;
             }
@@ -31,8 +32,10 @@ Slate.Shape.Polygon = (function ($) {
     }
 
     function move(shape, dx, dy) {
-        for (var i = 0; i < shape.values.points.length; i++) {
-            var point = shape.values.points[i];
+        var i,
+            point;
+        for (i = 0; i < shape.values.points.length; i++) {
+            point = shape.values.points[i];
             point.x += dx;
             point.y += dy;
         }
@@ -42,9 +45,13 @@ Slate.Shape.Polygon = (function ($) {
 
         // Unlike most things, this actually needs to be based on the
         // real left/top of the shape, otherwise the anchor points move
-        var left_pos = Number.MAX_VALUE, top_pos = Number.MAX_VALUE;
-        for (var i = 0; i < shape.values.points.length; i++) {
-            var point = shape.values.points[i];
+        var left_pos = Number.MAX_VALUE,
+            top_pos = Number.MAX_VALUE,
+            i,
+            point,
+            new_x;
+        for (i = 0; i < shape.values.points.length; i++) {
+            point = shape.values.points[i];
             if (point.x < left_pos) {
                 left_pos = point.x;
             }
@@ -53,9 +60,9 @@ Slate.Shape.Polygon = (function ($) {
             }
         }
 
-        for (var i = 0; i < shape.values.points.length; i++) {
-            var point = shape.values.points[i];
-            var new_x = left_pos + ((point.x - left_pos) * width_scale);
+        for (i = 0; i < shape.values.points.length; i++) {
+            point = shape.values.points[i];
+            new_x = left_pos + ((point.x - left_pos) * width_scale);
             point.x = new_x;
             point.y = top_pos + ((point.y - top_pos) * height_scale);
         }

@@ -9,8 +9,7 @@ Slate.Shape.Line = (function ($) {
         if (points[0].x < points[1].x) {
             x = points[0].x;
             width = points[1].x - points[0].x;
-        }
-        else {
+        } else {
             x = points[1].x;
             width = points[0].x - points[1].x;
         }
@@ -18,8 +17,7 @@ Slate.Shape.Line = (function ($) {
         if (points[0].y < points[1].y) {
             y = points[0].y;
             height = points[1].y - points[0].y;
-        }
-        else {
+        } else {
             y = points[1].y;
             height = points[0].y - points[1].y;
         }

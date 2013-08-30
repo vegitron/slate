@@ -19,8 +19,7 @@ Slate.Shape.Circle = (function ($) {
         var original_radius = shape.values.radius;
         if (width_scale !== null) {
             shape.values.radius *= width_scale;
-        }
-        else {
+        } else {
             shape.values.radius *= height_scale;
         }
 
