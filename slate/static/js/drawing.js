@@ -50,8 +50,7 @@ Slate.Drawing = (function ($) {
         } else if (action_type === "select") {
             Slate.Event.clear_cursor_regions();
             Slate.Event.clear_mousedown_regions();
-            var shape = find_select_object(position.x - origin.x, position.y - origin.y);
-            select_shape(shape);
+            Slate.Select.find_select_object(position.x - origin.x, position.y - origin.y);
         } else if (action_type === "text") {
             show_text_box(position.x, position.y);
         } else {
@@ -453,7 +452,7 @@ Slate.Drawing = (function ($) {
         Slate.Layer.invalidate_rectangle(original_invalid_area);
         Slate.Layer.invalidate_rectangle(new_invalid_area);
 
-        show_selected_object_handles();
+        Slate.Select.show_selected_object_handles();
         var selected_shape = app_context.select_state.selected_object;
         if (selected_shape) {
             Slate.Attributes.load_attributes_for_shape(selected_shape);

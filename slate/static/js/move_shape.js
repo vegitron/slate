@@ -49,7 +49,7 @@ Slate.MoveShape = (function ($) {
             $(window).unbind("mousemove", handle_mouse_move);
             $(window).unbind("mouseup", handle_mouse_up);
 
-            show_selected_object_handles();
+            Slate.Select.show_selected_object_handles();
 
             context.clearRect(0, 0, canvas.width, canvas.height);
         }

@@ -71,7 +71,7 @@ Slate.Attributes = (function ($) {
         hide_shape_attribute_controls();
 
         if (selected_action !== "select") {
-            deselect_current_object();
+            Slate.Select.deselect_current_object();
         }
 
         if (selected_action === "text") {
