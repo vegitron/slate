@@ -147,7 +147,7 @@ function show_selected_object_handles() {
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
             height: SELECT_SQUARE_SIZE
-        }, start_shape_resize, [ corner_event_data[i - 1] ]);
+        }, Slate.ResizeShape.start_shape_resize, [ corner_event_data[i - 1] ]);
 
         context.beginPath();
         var mid_x = (corners[i].x + corners[i - 1].x) / 2;
@@ -173,7 +173,7 @@ function show_selected_object_handles() {
             y: y_pos,
             width: SELECT_SQUARE_SIZE,
             height: SELECT_SQUARE_SIZE
-        }, start_shape_resize, [ edge_event_data[i-1] ]);
+        }, Slate.ResizeShape.start_shape_resize, [ edge_event_data[i-1] ]);
 
 
     }
