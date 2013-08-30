@@ -10,7 +10,7 @@ Slate.Attributes = (function ($) {
             object_copy.values.fill_color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
-            app_context.drawing_state.fill_color = new_color;
+            Slate.Drawing.set_fill_color(new_color);
         }
     }
 
@@ -24,7 +24,7 @@ Slate.Attributes = (function ($) {
             object_copy.values.border_color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
-            app_context.drawing_state.border_color = new_color;
+            Slate.Drawing.set_border_color(new_color);
         }
     }
 
@@ -38,7 +38,7 @@ Slate.Attributes = (function ($) {
             object_copy.values.border_width = new_width;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
-            app_context.drawing_state.border_width = new_width
+            Slate.Drawing.set_border_width(new_width);
         }
     }
 
@@ -51,7 +51,7 @@ Slate.Attributes = (function ($) {
             object_copy.values.color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
-            app_context.drawing_state.text_info.color = new_color;
+            Slate.Drawing.set_text_color(new_color);
         }
     }
 
@@ -66,7 +66,7 @@ Slate.Attributes = (function ($) {
 
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
-            app_context.drawing_state.text_info.font_size = new_size;
+            Slate.Drawing.set_text_size(new_size);
         }
     }
 
@@ -189,15 +189,15 @@ Slate.Attributes = (function ($) {
 
     function load_attributes_for_new_object() {
         set_shape_attribute_display({
-            fill: app_context.drawing_state.fill_color,
-            border: app_context.drawing_state.border_color,
-            thickness: app_context.drawing_state.border_width,
+            fill: Slate.Drawing.get_fill_color(),
+            border: Slate.Drawing.get_border_color(),
+            thickness: Slate.Drawing.get_border_width()
         });
 
 
         set_text_attribute_display({
-            color: app_context.drawing_state.text_info.color,
-            size: app_context.drawing_state.text_info.font_size
+            color: Slate.Drawing.get_text_color(),
+            size: Slate.Drawing.get_text_size()
         });
 
     }

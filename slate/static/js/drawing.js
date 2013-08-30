@@ -1,18 +1,18 @@
-
-app_context.drawing_state = {
-    is_drawing: false,
-    points: [],
-    text_info: {},
-    added_shape_ids: {},
-    all_shapes: {},
-    fill_color: '',
-    border_color: '',
-    border_width: ''
-};
-
 Slate.Drawing = (function ($) {
     "use strict";
     var TMP_TEXT_FONT_FACE = "Verdana";
+
+    var drawing_state = {
+        is_drawing: false,
+        points: [],
+        text_info: {},
+        added_shape_ids: {},
+        all_shapes: {},
+        fill_color: '',
+        border_color: '',
+        border_width: ''
+    };
+
 
     function get_event_position(ev) {
         var original_event = ev.originalEvent;
@@ -36,14 +36,14 @@ Slate.Drawing = (function ($) {
             return;
         }
 
-        app_context.drawing_state.is_drawing = true;
-        app_context.drawing_state.points = [];
+        drawing_state.is_drawing = true;
+        drawing_state.points = [];
 
         var origin = Slate.Artboard.get_canvas_origin(),
             action_type = $("input[name='board_actions']:checked").val();
 
         if (action_type === "pan") {
-            app_context.drawing_state.points.push({
+            drawing_state.points.push({
                 x: position.x,
                 y: position.y,
             });
@@ -54,7 +54,7 @@ Slate.Drawing = (function ($) {
         } else if (action_type === "text") {
             show_text_box(position.x, position.y);
         } else {
-            app_context.drawing_state.points.push({
+            drawing_state.points.push({
                 x: position.x - origin.x,
                 y: position.y - origin.y,
             });
@@ -66,15 +66,15 @@ Slate.Drawing = (function ($) {
     function live_update_autoshape(ev) {
         var canvas = document.getElementById("draw_surface"),
             context = canvas.getContext("2d"),
-            points = app_context.drawing_state.points,
+            points = drawing_state.points,
             origin = Slate.Artboard.get_canvas_origin(),
             last_point = points[points.length - 1];
 
         context.save();
         context.beginPath();
         context.moveTo(last_point.x + origin.x, last_point.y + origin.y);
-        context.strokeStyle = app_context.drawing_state.border_color;
-        context.lineWidth = app_context.drawing_state.border_width;
+        context.strokeStyle = drawing_state.border_color;
+        context.lineWidth = drawing_state.border_width;
 
         var position = get_event_position(ev);
         context.lineTo(position.x, position.y);
@@ -92,7 +92,7 @@ Slate.Drawing = (function ($) {
             context = canvas.getContext("2d"),
             origin = Slate.Artboard.get_canvas_origin(),
 
-            points = app_context.drawing_state.points,
+            points = drawing_state.points,
             last_point = points[points.length - 1],
             x1 = last_point.x,
             y1 = last_point.y,
@@ -101,9 +101,9 @@ Slate.Drawing = (function ($) {
             x2 = position.x - origin.x,
             y2 = position.y - origin.y,
 
-            border_width = app_context.drawing_state.border_width,
-            border_color = app_context.drawing_state.border_color,
-            fill_color = app_context.drawing_state.fill_color;
+            border_width = drawing_state.border_width,
+            border_color = drawing_state.border_color,
+            fill_color = drawing_state.fill_color;
 
         context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -146,7 +146,7 @@ Slate.Drawing = (function ($) {
     }
 
     function live_update_panning(ev) {
-        var first_point = app_context.drawing_state.points[0],
+        var first_point = drawing_state.points[0],
 
             position = get_event_position(ev),
             d_x = position.x - first_point.x,
@@ -159,7 +159,7 @@ Slate.Drawing = (function ($) {
 
         update_display_origin(new_origin_x, new_origin_y);
 
-        app_context.drawing_state.points[0] = {
+        drawing_state.points[0] = {
             x: position.x,
             y: position.y,
         };
@@ -169,7 +169,7 @@ Slate.Drawing = (function ($) {
         var position = get_event_position(ev);
         Slate.Event.handle_canvas_cursor_events(position.x, position.y);
 
-        if (!app_context.drawing_state.is_drawing) {
+        if (!drawing_state.is_drawing) {
             return;
         }
 
@@ -194,10 +194,10 @@ Slate.Drawing = (function ($) {
         var autoshape_points = [],
             origin = Slate.Artboard.get_canvas_origin(),
             i;
-        for (i = 0; i < app_context.drawing_state.points.length; i++) {
+        for (i = 0; i < drawing_state.points.length; i++) {
             autoshape_points.push({
-                x: app_context.drawing_state.points[i].x + origin.x,
-                y: app_context.drawing_state.points[i].y + origin.y
+                x: drawing_state.points[i].x + origin.x,
+                y: drawing_state.points[i].y + origin.y
             });
         }
 
@@ -211,7 +211,7 @@ Slate.Drawing = (function ($) {
             shape_values.cx -= origin.x;
             shape_values.cy -= origin.y;
         } else if (shape_type === "bezier") {
-            shape_values = { points: app_context.drawing_state.points };
+            shape_values = { points: drawing_state.points };
         } else if (shape_type === "line") {
             for (var i = 0; i < shape_values.points.length; i++) {
                 shape_values.points[i].x -= origin.x;
@@ -228,12 +228,12 @@ Slate.Drawing = (function ($) {
 
 
         if (shape_type === "line" || shape_type === "bezier") {
-            shape_values.border_width = app_context.drawing_state.border_width;
-            shape_values.border_color = app_context.drawing_state.border_color;
+            shape_values.border_width = drawing_state.border_width;
+            shape_values.border_color = drawing_state.border_color;
         } else {
-            shape_values.border_width = app_context.drawing_state.border_width;
-            shape_values.border_color = app_context.drawing_state.border_color;
-            shape_values.fill_color = app_context.drawing_state.fill_color;
+            shape_values.border_width = drawing_state.border_width;
+            shape_values.border_color = drawing_state.border_color;
+            shape_values.fill_color = drawing_state.fill_color;
         }
 
         add_shape_to_artboard({
@@ -244,7 +244,7 @@ Slate.Drawing = (function ($) {
     }
 
     function finish_drawing_rectangle(ev) {
-        var points = app_context.drawing_state.points;
+        var points = drawing_state.points;
         var origin = Slate.Artboard.get_canvas_origin();
 
         var last_point = points[points.length - 1];
@@ -265,9 +265,9 @@ Slate.Drawing = (function ($) {
             ] };
 
 
-        shape_values.border_width = app_context.drawing_state.border_width;
-        shape_values.border_color = app_context.drawing_state.border_color;
-        shape_values.fill_color = app_context.drawing_state.fill_color;
+        shape_values.border_width = drawing_state.border_width;
+        shape_values.border_color = drawing_state.border_color;
+        shape_values.fill_color = drawing_state.fill_color;
 
         add_shape_to_artboard({
             layer: Slate.Layer.get_active_layer(),
@@ -289,11 +289,11 @@ Slate.Drawing = (function ($) {
         var text_area = $("#input_text_area");
         var size = Slate.Shape.Text.get_text_size({
             text: text_area.val(),
-            font_size: app_context.drawing_state.text_info.font_size,
-            font_face: app_context.drawing_state.text_info.font_face
+            font_size: drawing_state.text_info.font_size,
+            font_face: drawing_state.text_info.font_face
         });
 
-        var font_size = app_context.drawing_state.text_info.font_size;
+        var font_size = drawing_state.text_info.font_size;
         text_area.width(size.width + font_size);
         text_area.height(size.height + font_size * 1.5);
     }
@@ -305,15 +305,15 @@ Slate.Drawing = (function ($) {
             shape: 'text',
             values: {
                 text: $("#input_text_area").val(),
-                font_face: app_context.drawing_state.text_info.font_face,
-                font_size: app_context.drawing_state.text_info.font_size,
-                color: app_context.drawing_state.text_info.color,
-                x: app_context.drawing_state.text_info.x,
-                y: app_context.drawing_state.text_info.y
+                font_face: drawing_state.text_info.font_face,
+                font_size: drawing_state.text_info.font_size,
+                color: drawing_state.text_info.color,
+                x: drawing_state.text_info.x,
+                y: drawing_state.text_info.y
             }
         });
 
-        app_context.drawing_state.text_info.open_textarea = false;
+        drawing_state.text_info.open_textarea = false;
     }
 
     function show_text_box(x, y) {
@@ -333,7 +333,7 @@ Slate.Drawing = (function ($) {
             text_area.blur(text_input_blur);
         }
 
-        if (app_context.drawing_state.text_info.open_textarea) {
+        if (drawing_state.text_info.open_textarea) {
             text_input_blur();
         }
 
@@ -351,17 +351,17 @@ Slate.Drawing = (function ($) {
         }
 
         var origin = Slate.Artboard.get_canvas_origin();
-        app_context.drawing_state.text_info.x = x + offset - origin.x;
-        app_context.drawing_state.text_info.y = y + offset - origin.y;
-        app_context.drawing_state.text_info.open_textarea = true;
-        app_context.drawing_state.text_info.font_face = TMP_TEXT_FONT_FACE;
+        drawing_state.text_info.x = x + offset - origin.x;
+        drawing_state.text_info.y = y + offset - origin.y;
+        drawing_state.text_info.open_textarea = true;
+        drawing_state.text_info.font_face = TMP_TEXT_FONT_FACE;
 
         text_area.val("");
         text_area.css("left", x+"px");
         text_area.css("top", y+"px");
         text_area.css("font-family", TMP_TEXT_FONT_FACE);
-        text_area.css("font-size", app_context.drawing_state.text_info.font_size);
-        text_area.css("color", app_context.drawing_state.text_info.color);
+        text_area.css("font-size", drawing_state.text_info.font_size);
+        text_area.css("color", drawing_state.text_info.color);
 
         // To set the initial size
         text_input_change();
@@ -371,8 +371,8 @@ Slate.Drawing = (function ($) {
     }
 
     function finish_drawing(ev) {
-        if (app_context.drawing_state.is_drawing) {
-            app_context.drawing_state.is_drawing = false;
+        if (drawing_state.is_drawing) {
+            drawing_state.is_drawing = false;
 
             var canvas = document.getElementById("draw_surface");
             var context = canvas.getContext("2d");
@@ -390,7 +390,7 @@ Slate.Drawing = (function ($) {
                 finish_panning(ev);
             }
 
-            app_context.drawing_state.points = [];
+            drawing_state.points = [];
 
             ev.preventDefault();
             ev.stopPropagation();
@@ -412,11 +412,11 @@ Slate.Drawing = (function ($) {
 
         // So we can add the shape from the response to the POST,
         // and not worry about the periodic update
-        if (app_context.drawing_state.added_shape_ids[server_id]) {
+        if (drawing_state.added_shape_ids[server_id]) {
             return;
         }
-        app_context.drawing_state.added_shape_ids[server_id] = true;
-        app_context.drawing_state.all_shapes[server_id] = info;
+        drawing_state.added_shape_ids[server_id] = true;
+        drawing_state.all_shapes[server_id] = info;
 
         info.shape_definition.id = server_id;
         info.shape_definition.z_index = info.z_index;
@@ -432,7 +432,7 @@ Slate.Drawing = (function ($) {
     function update_shape_from_server(info) {
         var server_id = info.id;
 
-        var original_shape = app_context.drawing_state.all_shapes[info.id];
+        var original_shape = drawing_state.all_shapes[info.id];
         var original_invalid_area = Slate.Shape.get_invalid_area(original_shape.shape_definition);
 
         var new_invalid_area = Slate.Shape.get_invalid_area(info.shape_definition);
@@ -440,14 +440,14 @@ Slate.Drawing = (function ($) {
 
         // Do this in pieces, so the references all get updated
         // XXX - If z-index or the layer are changed...
-        var reference_values = app_context.drawing_state.all_shapes[server_id].shape_definition.values;
+        var reference_values = drawing_state.all_shapes[server_id].shape_definition.values;
         for (var key in info.shape_definition.values) {
             if (info.shape_definition.values.hasOwnProperty(key)) {
                 reference_values[key] = info.shape_definition.values[key];
             }
         }
 
-        app_context.drawing_state.all_shapes[server_id].shape_definition.coverage_area = new_invalid_area;
+        drawing_state.all_shapes[server_id].shape_definition.coverage_area = new_invalid_area;
 
         Slate.Layer.invalidate_rectangle(original_invalid_area);
         Slate.Layer.invalidate_rectangle(new_invalid_area);
@@ -590,7 +590,57 @@ Slate.Drawing = (function ($) {
         draw_polygon(context, origin, border_width, border_color, null, points);
     }
 
+    function set_fill_color(color) {
+        drawing_state.fill_color = color;
+    }
+
+    function set_border_color(color) {
+        drawing_state.border_color = color;
+    }
+
+    function set_border_width(width) {
+        drawing_state.border_width = width;
+    }
+
+    function set_text_color(color) {
+        drawing_state.text_info.color = color;
+    }
+
+    function set_text_size(size) {
+        drawing_state.text_info.font_size = size;
+    }
+
+    function get_fill_color() {
+        return drawing_state.fill_color;
+    }
+
+    function get_border_color() {
+        return drawing_state.border_color;
+    }
+
+    function get_border_width() {
+        return drawing_state.border_width;
+    }
+
+    function get_text_color() {
+        return drawing_state.text_info.color;
+    }
+
+    function get_text_size() {
+        return drawing_state.text_info.size;
+    }
+
     return {
+        set_fill_color: set_fill_color,
+        set_border_color: set_border_color,
+        set_border_width: set_border_width,
+        set_text_color: set_text_color,
+        set_text_size: set_text_size,
+        get_fill_color: get_fill_color,
+        get_border_color: get_border_color,
+        get_border_width: get_border_width,
+        get_text_color: get_text_color,
+        get_text_size: get_text_size,
         add_drawing_events: add_drawing_events,
         add_shape_from_server: add_shape_from_server,
         update_shape_on_artboard: update_shape_on_artboard,
