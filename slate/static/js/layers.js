@@ -1,17 +1,19 @@
-app_context.layer_data = {
-    layers: [],
-    layer_shapes: [],
-    selected_layer: null,
-    next_layer_id: 1
-};
-
-app_context.redraw_info = {
-    areas: [],
-    shapes: []
-};
-
 Slate.Layer = (function ($) {
     "use strict";
+
+    var redraw_info = {
+        areas: [],
+        shapes: []
+    },
+
+    layer_data = {
+        layers: [],
+        layer_shapes: [],
+        selected_layer: null,
+        next_layer_id: 1
+    };
+
+
     function show_hide_layer(ev) {
         var target = ev.target,
             layer_id = target.value,
@@ -21,13 +23,13 @@ Slate.Layer = (function ($) {
         ev.stopPropagation();
 
         if (checked) {
-            app_context.layer_data.layers[layer_id].visible = true;
+            layer_data.layers[layer_id].visible = true;
         } else {
-            app_context.layer_data.layers[layer_id].visible = false;
+            layer_data.layers[layer_id].visible = false;
         }
 
-        for (i = 0; i < app_context.layer_data.layer_shapes[layer_id].length; i++) {
-            invalidate_rectangle(app_context.layer_data.layer_shapes[layer_id][i].coverage_area);
+        for (i = 0; i < layer_data.layer_shapes[layer_id].length; i++) {
+            invalidate_rectangle(layer_data.layer_shapes[layer_id][i].coverage_area);
         }
 
         redraw_regions();
@@ -39,21 +41,21 @@ Slate.Layer = (function ($) {
 
         // So we can add the layer from the response to the POST,
         // and not worry about the periodic update
-        if (app_context.layer_data.layers[layer_id]) {
+        if (layer_data.layers[layer_id]) {
             return;
         }
 
         new_display_div = document.createElement("div");
         new_display_div.innerHTML = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
 
-        app_context.layer_data.layers[layer_id] = {
+        layer_data.layers[layer_id] = {
             id: layer_id,
             z_index: layer_id,
             visible: true,
             name: data.name
         };
 
-        app_context.layer_data.layer_shapes[layer_id] = [];
+        layer_data.layer_shapes[layer_id] = [];
 
         document.getElementById("layers_sidebar").appendChild(new_display_div);
 
@@ -64,11 +66,11 @@ Slate.Layer = (function ($) {
         $("#delete_layer_" + layer_id).on("click", delete_layer);
         select_layer(layer_id);
 
-        app_context.layer_data.next_layer_id++;
+        layer_data.next_layer_id++;
     }
 
     function add_new_layer() {
-        var layer_id = app_context.layer_data.next_layer_id,
+        var layer_id = layer_data.next_layer_id,
             csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value,
 
             post_args = {
@@ -85,18 +87,18 @@ Slate.Layer = (function ($) {
     }
 
     function select_layer(id) {
-        var last_selected = app_context.layer_data.selected_layer;
+        var last_selected = layer_data.selected_layer;
         if (last_selected) {
             $("#layer_sidebar_" + last_selected).removeClass("selected");
         }
 
-        app_context.layer_data.selected_layer = id;
+        layer_data.selected_layer = id;
 
         $("#layer_sidebar_" + id).addClass("selected");
     }
 
     function get_active_layer() {
-        return app_context.layer_data.selected_layer;
+        return layer_data.selected_layer;
     }
 
     function find_intersecting_shapes(rectangle) {
@@ -106,11 +108,11 @@ Slate.Layer = (function ($) {
             layer_shapes,
             info;
 
-        for (layer_id in app_context.layer_data.layer_shapes) {
-            if (app_context.layer_data.layer_shapes.hasOwnProperty(layer_id)) {
-                if (app_context.layer_data.layers[layer_id].visible) {
-                    if (app_context.layer_data.layer_shapes.hasOwnProperty(layer_id)) {
-                        layer_shapes = app_context.layer_data.layer_shapes[layer_id];
+        for (layer_id in layer_data.layer_shapes) {
+            if (layer_data.layer_shapes.hasOwnProperty(layer_id)) {
+                if (layer_data.layers[layer_id].visible) {
+                    if (layer_data.layer_shapes.hasOwnProperty(layer_id)) {
+                        layer_shapes = layer_data.layer_shapes[layer_id];
                         for (i = 0; i < layer_shapes.length; i++) {
                             info = layer_shapes[i];
                             if (area_overlap(rectangle, info.coverage_area)) {
@@ -126,12 +128,12 @@ Slate.Layer = (function ($) {
     }
 
     function invalidate_rectangle(rectangle) {
-        app_context.redraw_info.areas.push(rectangle);
+        redraw_info.areas.push(rectangle);
 
         var intersecting_shapes = find_intersecting_shapes(rectangle),
             i;
         for (i = 0; i < intersecting_shapes.length; i++) {
-            app_context.redraw_info.shapes.push(intersecting_shapes[i]);
+            redraw_info.shapes.push(intersecting_shapes[i]);
         }
     }
 
@@ -145,14 +147,14 @@ Slate.Layer = (function ($) {
 
         context.save();
         context.beginPath();
-        for (i = 0; i < app_context.redraw_info.areas.length; i++) {
-            region = app_context.redraw_info.areas[i];
+        for (i = 0; i < redraw_info.areas.length; i++) {
+            region = redraw_info.areas[i];
             context.rect(region.x + origin.x, region.y + origin.y, region.width, region.height);
         }
         context.clip();
         context.clearRect(0, 0, canvas.width, canvas.height);
 
-        sorted_shapes = app_context.redraw_info.shapes.sort(function (a, b) {
+        sorted_shapes = redraw_info.shapes.sort(function (a, b) {
             if (a.layer < b.layer) {
                 return -1;
             }
@@ -174,8 +176,8 @@ Slate.Layer = (function ($) {
 
         Slate.Select.show_selected_object_handles();
 
-        app_context.redraw_info.areas = [];
-        app_context.redraw_info.shapes = [];
+        redraw_info.areas = [];
+        redraw_info.shapes = [];
         context.restore();
     }
 
@@ -209,8 +211,8 @@ Slate.Layer = (function ($) {
     }
 
     function draw_layer_previews() {
-        $(app_context.layer_data.layers).each(function (idx, value){
-            if(value !== undefined && app_context.layer_data.layer_shapes[value.id].length > 0){
+        $(layer_data.layers).each(function (idx, value){
+            if(value !== undefined && layer_data.layer_shapes[value.id].length > 0){
                 _draw_preview(value.id);
             }
         });
@@ -243,16 +245,16 @@ Slate.Layer = (function ($) {
     //Determine the maximum dimensions of all content across given layer
     function get_drawing_dimensions(layer_id) {
         //Return 0 length dimensions of no shapes exist
-        if(app_context.layer_data.layer_shapes[layer_id].length === 0){
+        if(layer_data.layer_shapes[layer_id].length === 0){
             return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0};
         }
-        var starting_point = Slate.Shape.get_invalid_area(app_context.layer_data.layer_shapes[layer_id][0]);
+        var starting_point = Slate.Shape.get_invalid_area(layer_data.layer_shapes[layer_id][0]);
         var max_x = starting_point.x + starting_point.width,
             min_x = starting_point.x,
             max_y = starting_point.y + starting_point.height,
             min_y = starting_point.y;
 
-        var layer_shapes = app_context.layer_data.layer_shapes[layer_id]
+        var layer_shapes = layer_data.layer_shapes[layer_id]
         if (layer_shapes !== undefined){
             $.each(layer_shapes, function (shape_id, shape){
                 var shape_area = Slate.Shape.get_invalid_area(shape);
@@ -294,7 +296,7 @@ Slate.Layer = (function ($) {
             origin.y = Math.abs(dimensions.min_y);
         }
 
-        draw_shapes(temp_context, app_context.layer_data.layer_shapes[layer_id], origin);
+        draw_shapes(temp_context, layer_data.layer_shapes[layer_id], origin);
 
         return temp_canvas;
     }
@@ -345,18 +347,6 @@ Slate.Layer = (function ($) {
         }
     }
 
-    return {
-        add_new_layer: add_new_layer,
-        add_layer_from_server: add_layer_from_server,
-        draw_shapes: draw_shapes,
-        get_active_layer: get_active_layer,
-        find_intersecting_shapes: find_intersecting_shapes,
-        area_overlap: area_overlap,
-        draw_layer_previews: draw_layer_previews,
-        redraw_regions: redraw_regions,
-        invalidate_rectangle: invalidate_rectangle
-    }
-
     function delete_layer(ev) {
         var target = ev.target,
             layer_id = target.value,
@@ -368,11 +358,12 @@ Slate.Layer = (function ($) {
                 headers: {
                     "X-CSRFToken": csrf_value
                 },
-            };
+            },
+            layer;
 
         ev.stopPropagation();
-        delete app_context.layer_data.layer_shapes[layer_id];
-        delete app_context.layer_data.layers[layer_id];
+        delete layer_data.layer_shapes[layer_id];
+        delete layer_data.layers[layer_id];
         
         invalidate_rectangle({
             x: -1 * origin.x - 10,
@@ -383,8 +374,8 @@ Slate.Layer = (function ($) {
         redraw_regions();
         $("#layer_sidebar_" + layer_id).remove();
         
-        for (layer in app_context.layer_data.layers) {
-            if (app_context.layer_data.layers.hasOwnProperty(layer)){
+        for (layer in layer_data.layers) {
+            if (layer_data.layers.hasOwnProperty(layer)){
                 select_layer(layer);
                 break;
             }
@@ -392,5 +383,29 @@ Slate.Layer = (function ($) {
 
         $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
+
+    function get_shape_count_for_layer(layer_id) {
+        return layer_data.layer_shapes[layer_id].length;
+    }
+
+    function add_shape_to_layer(layer_id, shape) {
+        layer_data.layer_shapes[layer_id].push(shape);
+    }
+
+    return {
+        add_new_layer: add_new_layer,
+        add_layer_from_server: add_layer_from_server,
+        draw_shapes: draw_shapes,
+        get_active_layer: get_active_layer,
+        find_intersecting_shapes: find_intersecting_shapes,
+        area_overlap: area_overlap,
+        draw_layer_previews: draw_layer_previews,
+        redraw_regions: redraw_regions,
+        invalidate_rectangle: invalidate_rectangle,
+        get_shape_count_for_layer: get_shape_count_for_layer,
+        add_shape_to_layer: add_shape_to_layer
+    }
+
+
 
 })(jQuery);

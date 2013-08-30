@@ -1,5 +1,3 @@
-var app_context = {};
-
 var Slate = {};
 
 (function ($) {

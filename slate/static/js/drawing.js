@@ -423,7 +423,7 @@ Slate.Drawing = (function ($) {
 
         info.shape_definition.coverage_area = Slate.Shape.get_invalid_area(info.shape_definition);
 
-        app_context.layer_data.layer_shapes[info.layer_id].push(info.shape_definition);
+        Slate.Layer.add_shape_to_layer(info.layer_id, info.shape_definition);
 
         Slate.Layer.invalidate_rectangle(info.shape_definition.coverage_area);
 
@@ -500,7 +500,7 @@ Slate.Drawing = (function ($) {
         var save_data = {
             type: info.shape,
             layer_id: info.layer,
-            z_index: app_context.layer_data.layer_shapes[info.layer].length,
+            z_index: Slate.Layer.get_shape_count_for_layer(info.layer),
             shape_definition: info
         };
 
