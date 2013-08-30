@@ -98,20 +98,6 @@ Slate.Layer = (function ($) {
         return app_context.layer_data.selected_layer;
     }
 
-    function get_invalid_area(shape) {
-        if (shape.shape === 'circle') {
-            return get_invalid_area_for_circle(shape.values);
-        } else if (shape.shape === 'polygon') {
-            return get_invalid_area_for_polygon(shape.values);
-        } else if (shape.shape === 'line') {
-            return get_invalid_area_for_line(shape.values);
-        } else if (shape.shape === 'bezier') {
-            return get_invalid_area_for_bezier(shape.values);
-        } else if (shape.shape === 'text') {
-            return get_invalid_area_for_text(shape.values);
-        }
-    }
-
     function find_intersecting_shapes(rectangle) {
         var intersecting_shapes = [],
             layer_id,
@@ -259,7 +245,7 @@ Slate.Layer = (function ($) {
         if(app_context.layer_data.layer_shapes[layer_id].length === 0){
             return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0};
         }
-        var starting_point = get_invalid_area(app_context.layer_data.layer_shapes[layer_id][0]);
+        var starting_point = Slate.Shape.get_invalid_area(app_context.layer_data.layer_shapes[layer_id][0]);
         var max_x = starting_point.x + starting_point.width,
             min_x = starting_point.x,
             max_y = starting_point.y + starting_point.height,
@@ -268,7 +254,7 @@ Slate.Layer = (function ($) {
         layer_shapes = app_context.layer_data.layer_shapes[layer_id]
         if (layer_shapes !== undefined){
             $.each(layer_shapes, function (shape_id, shape){
-                shape_area = get_invalid_area(shape);
+                shape_area = Slate.Shape.get_invalid_area(shape);
                 if (shape_area.x + shape_area.width > max_x) {
                     max_x = shape_area.x + shape_area.width;
                 } else if (shape_area.x < min_x) {
@@ -361,7 +347,6 @@ Slate.Layer = (function ($) {
     return {
         add_new_layer: add_new_layer,
         add_layer_from_server: add_layer_from_server,
-        get_invalid_area: get_invalid_area,
         draw_shapes: draw_shapes,
         get_active_layer: get_active_layer,
         find_intersecting_shapes: find_intersecting_shapes,

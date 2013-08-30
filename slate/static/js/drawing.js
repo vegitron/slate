@@ -288,7 +288,7 @@ Slate.Drawing = (function ($) {
 
     function text_input_change(ev) {
         var text_area = $("#input_text_area");
-        var size = get_text_size({
+        var size = Slate.Shape.Text.get_text_size({
             text: text_area.val(),
             font_size: app_context.drawing_state.text_info.font_size,
             font_face: app_context.drawing_state.text_info.font_face
@@ -422,7 +422,7 @@ Slate.Drawing = (function ($) {
         info.shape_definition.id = server_id;
         info.shape_definition.z_index = info.z_index;
 
-        info.shape_definition.coverage_area = Slate.Layer.get_invalid_area(info.shape_definition);
+        info.shape_definition.coverage_area = Slate.Shape.get_invalid_area(info.shape_definition);
 
         app_context.layer_data.layer_shapes[info.layer_id].push(info.shape_definition);
 
@@ -434,9 +434,9 @@ Slate.Drawing = (function ($) {
         var server_id = info.id;
 
         var original_shape = app_context.drawing_state.all_shapes[info.id];
-        var original_invalid_area = Slate.Layer.get_invalid_area(original_shape.shape_definition);
+        var original_invalid_area = Slate.Shape.get_invalid_area(original_shape.shape_definition);
 
-        var new_invalid_area = Slate.Layer.get_invalid_area(info.shape_definition);
+        var new_invalid_area = Slate.Shape.get_invalid_area(info.shape_definition);
         info.shape_definition.coverage_area = new_invalid_area;
 
         // Do this in pieces, so the references all get updated

@@ -28,7 +28,7 @@ Slate.ResizeShape = (function ($) {
 
             size_test_text = shape.values.reflowed_text || shape.values.text;
 
-            text_size = get_text_size({
+            text_size = Slate.Shape.Text.get_text_size({
                 text: size_test_text,
                 font_size: shape.values.font_size,
                 font_face: shape.values.font_face
@@ -143,14 +143,14 @@ Slate.ResizeShape = (function ($) {
                 }
             }
 
-            resize_shape(shape, width_scale, height_scale);
+            Slate.Shape.resize_shape(shape, width_scale, height_scale);
 
             if (shape.shape === "circle") {
                 if (box_data.select.left) {
-                    move_display_xy(shape,  (original_radius - shape.values.radius) * 2, 0);
+                    Slate.Shape.move_display_xy(shape,  (original_radius - shape.values.radius) * 2, 0);
                 }
                 if (box_data.select.top) {
-                    move_display_xy(shape, 0, (original_radius - shape.values.radius) * 2);
+                    Slate.Shape.move_display_xy(shape, 0, (original_radius - shape.values.radius) * 2);
                 }
 
                 if (shape.values.radius < 0) {
@@ -159,11 +159,11 @@ Slate.ResizeShape = (function ($) {
             } else {
                 if (box_data.select.left) {
                     diff = Slate.MoveShape.get_position_differential(shape, ev);
-                    move_display_xy(shape, diff.dx + move_differential_y, 0);
+                    Slate.Shape.move_display_xy(shape, diff.dx + move_differential_y, 0);
                 }
                 if (box_data.select.top) {
                     diff = Slate.MoveShape.get_position_differential(shape, ev);
-                    move_display_xy(shape, 0, diff.dy + move_differential_y);
+                    Slate.Shape.move_display_xy(shape, 0, diff.dy + move_differential_y);
                 }
             }
         }
@@ -175,7 +175,7 @@ Slate.ResizeShape = (function ($) {
                 canvas = document.getElementById("draw_surface"),
                 context = canvas.getContext("2d"),
                 origin = Slate.Artboard.get_canvas_origin();
-            set_movement_proxy_display(movement_proxy);
+            Slate.Shape.set_movement_proxy_display(movement_proxy);
             update_shape_data(movement_proxy, ev);
 
 

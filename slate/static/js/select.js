@@ -76,7 +76,7 @@ function show_selected_object_handles() {
     Slate.Event.clear_mousedown_regions();
     Slate.Event.clear_cursor_regions();
 
-    var corners = get_selection_highlight_corners(app_context.select_state.selected_object);
+    var corners = Slate.Shape.get_selection_highlight_corners(app_context.select_state.selected_object);
     var canvas = document.getElementById("artboard");
     var context = canvas.getContext("2d");
 
