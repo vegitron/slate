@@ -5,7 +5,7 @@ Slate.ResizeShape = (function ($) {
             top_pos = Number.MAX_VALUE,
             right_pos = -1 * Number.MAX_VALUE,
             bottom_pos = -1 * Number.MAX_VALUE,
-            shape = app_context.select_state.selected_object,
+            shape = Slate.Select.get_selected_shape(),
             size_test_text,
             text_size,
             i,
@@ -83,8 +83,9 @@ Slate.ResizeShape = (function ($) {
         // For resizing left/top, we need the differential between
         // the coverage area and the actual shape area, since moving
         // the shape uses coverage area.
-        move_differential_x = app_context.select_state.selected_object.coverage_area.x - left_pos;
-        move_differential_y = app_context.select_state.selected_object.coverage_area.y - top_pos;
+        var selected_object = Slate.Select.get_selected_shape();
+        move_differential_x = selected_object.coverage_area.x - left_pos;
+        move_differential_y = selected_object.coverage_area.y - top_pos;
 
         function update_shape_data(shape, ev) {
             var width_scale = null,
@@ -172,7 +173,7 @@ Slate.ResizeShape = (function ($) {
         function handle_mouse_move(ev) {
             // Keeps dragging up from selecting text in the shape dialog
             document.getSelection().removeAllRanges();
-            var movement_proxy = JSON.parse(JSON.stringify(app_context.select_state.selected_object)),
+            var movement_proxy = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape())),
                 canvas = document.getElementById("draw_surface"),
                 context = canvas.getContext("2d"),
                 origin = Slate.Artboard.get_canvas_origin();
@@ -186,7 +187,7 @@ Slate.ResizeShape = (function ($) {
         }
 
         function handle_mouse_up(ev) {
-            var save_obj = JSON.parse(JSON.stringify(app_context.select_state.selected_object)),
+            var save_obj = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape())),
                 canvas = document.getElementById("draw_surface"),
                 context = canvas.getContext("2d");
 

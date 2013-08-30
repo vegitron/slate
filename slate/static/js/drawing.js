@@ -453,7 +453,7 @@ Slate.Drawing = (function ($) {
         Slate.Layer.invalidate_rectangle(new_invalid_area);
 
         Slate.Select.show_selected_object_handles();
-        var selected_shape = app_context.select_state.selected_object;
+        var selected_shape = Slate.Select.get_selected_shape();
         if (selected_shape) {
             Slate.Attributes.load_attributes_for_shape(selected_shape);
         }

@@ -1,8 +1,9 @@
 Slate.MoveShape = (function ($) {
     "use strict";
     function start_selected_shape_move(x, y) {
-        var obj_x = app_context.select_state.selected_object.coverage_area.x,
-            obj_y = app_context.select_state.selected_object.coverage_area.y,
+        var selected_object = Slate.Select.get_selected_shape(),
+            obj_x = selected_object.coverage_area.x,
+            obj_y = selected_object.coverage_area.y,
             origin = Slate.Artboard.get_canvas_origin(),
             screen_x = obj_x + origin.x,
             screen_y = obj_y + origin.y,
@@ -12,7 +13,7 @@ Slate.MoveShape = (function ($) {
         function handle_mouse_move(ev) {
             document.getSelection().removeAllRanges();
             if (!movement_proxy) {
-                movement_proxy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+                movement_proxy = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape()));
                 Slate.Shape.set_movement_proxy_display(movement_proxy);
             }
 
@@ -39,7 +40,7 @@ Slate.MoveShape = (function ($) {
         }
 
         function handle_mouse_up(ev) {
-            var save_obj = JSON.parse(JSON.stringify(app_context.select_state.selected_object)),
+            var save_obj = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape())),
                 diff = get_position_differential(save_obj, ev),
                 canvas = document.getElementById("draw_surface"),
                 context = canvas.getContext("2d");

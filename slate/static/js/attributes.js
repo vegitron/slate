@@ -2,10 +2,11 @@ Slate.Attributes = (function ($) {
     "use strict";
     function handle_shape_fill_color_change() {
         var new_color = $("input[name='shape_fill_color']").val(),
-            object_copy;
+            object_copy,
+            selected_object = Slate.Select.get_selected_shape();
 
-        if (app_context.select_state.selected_object) {
-            object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        if (selected_object) {
+            object_copy = JSON.parse(JSON.stringify(selected_object));
             object_copy.values.fill_color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
@@ -15,10 +16,11 @@ Slate.Attributes = (function ($) {
 
     function handle_shape_border_color_change() {
         var new_color = $("input[name='shape_border_color']").val(),
-            object_copy;
+            object_copy,
+            selected_object = Slate.Select.get_selected_shape();
 
-        if (app_context.select_state.selected_object) {
-            object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        if (selected_object) {
+            object_copy = JSON.parse(JSON.stringify(selected_object));
             object_copy.values.border_color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
@@ -28,10 +30,11 @@ Slate.Attributes = (function ($) {
 
     function handle_shape_line_width_change() {
         var new_width = parseInt($("input[name='shape_line_width']:checked").val(), 10),
-            object_copy;
+            object_copy,
+            selected_object = Slate.Select.get_selected_shape();
 
-        if (app_context.select_state.selected_object) {
-            object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        if (selected_object) {
+            object_copy = JSON.parse(JSON.stringify(selected_object));
             object_copy.values.border_width = new_width;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
@@ -41,9 +44,10 @@ Slate.Attributes = (function ($) {
 
     function handle_text_color_change() {
         var new_color = $("input[name='text_color']").val(),
-            object_copy;
-        if (app_context.select_state.selected_object) {
-            object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+            object_copy,
+            selected_object = Slate.Select.get_selected_shape();
+        if (selected_object) {
+            object_copy = JSON.parse(JSON.stringify(selected_object));
             object_copy.values.color = new_color;
             Slate.Drawing.update_shape_on_artboard(object_copy);
         } else {
@@ -53,10 +57,11 @@ Slate.Attributes = (function ($) {
 
     function handle_text_size_change() {
         var new_size = parseInt($("input[name='text_font_size']:checked").val(), 10),
-            object_copy;
+            object_copy,
+            selected_object = Slate.Select.get_selected_shape();
 
-        if (app_context.select_state.selected_object) {
-            object_copy = JSON.parse(JSON.stringify(app_context.select_state.selected_object));
+        if (selected_object) {
+            object_copy = JSON.parse(JSON.stringify(selected_object));
             object_copy.values.font_size = new_size;
 
             Slate.Drawing.update_shape_on_artboard(object_copy);

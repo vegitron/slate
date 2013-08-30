@@ -1,9 +1,9 @@
-app_context.select_state = {
-    selected_object: null
-};
-
 Slate.Select = (function ($) {
     "use strict";
+
+    // This tracks the actively selected shape on the artboard
+    var current_shape = null;
+
     function find_select_object(x, y) {
         // Find the thing in the "highest" layer - lowest id, with the highest
         // z-index
@@ -32,7 +32,7 @@ Slate.Select = (function ($) {
 
 
         if (selected_shape) {
-            var last_selected = app_context.select_state.selected_object;
+            var last_selected = get_selected_shape();
 
             if (last_selected) {
                 Slate.Layer.invalidate_rectangle(last_selected.coverage_area);
@@ -41,7 +41,7 @@ Slate.Select = (function ($) {
 
             Slate.Layer.invalidate_rectangle(selected_shape.coverage_area);
             selected_shape.selected_shape = true;
-            app_context.select_state.selected_object = selected_shape;
+            set_selected_shape(selected_shape);
 
             Slate.Attributes.load_attributes_for_shape(selected_shape);
 
@@ -54,7 +54,7 @@ Slate.Select = (function ($) {
     }
 
     function deselect_current_object() {
-        var last_selected = app_context.select_state.selected_object;
+        var last_selected = get_selected_shape();
 
         if (last_selected) {
             Slate.Layer.invalidate_rectangle(last_selected.coverage_area);
@@ -63,7 +63,7 @@ Slate.Select = (function ($) {
 
         Slate.Event.clear_mousedown_regions();
         Slate.Event.clear_cursor_regions();
-        app_context.select_state.selected_object = null;
+        set_selected_shape(null);
         Slate.Attributes.load_attributes_for_new_object();
         Slate.Attributes.hide_shape_attribute_controls();
 
@@ -71,14 +71,14 @@ Slate.Select = (function ($) {
     }
 
     function show_selected_object_handles() {
-        if (!app_context.select_state.selected_object) {
+        if (!get_selected_shape()) {
             return;
         }
 
         Slate.Event.clear_mousedown_regions();
         Slate.Event.clear_cursor_regions();
 
-        var corners = Slate.Shape.get_selection_highlight_corners(app_context.select_state.selected_object);
+        var corners = Slate.Shape.get_selection_highlight_corners(get_selected_shape());
         var canvas = document.getElementById("artboard");
         var context = canvas.getContext("2d");
 
@@ -198,10 +198,19 @@ Slate.Select = (function ($) {
 
     }
 
+    function get_selected_shape() {
+        return current_shape;
+    }
+
+    function set_selected_shape(shape) {
+        current_shape = shape;
+    }
+
     return {
         show_selected_object_handles: show_selected_object_handles,
         find_select_object: find_select_object,
-        deselect_current_object: deselect_current_object
+        deselect_current_object: deselect_current_object,
+        get_selected_shape: get_selected_shape
     };
 
 })(jQuery);
