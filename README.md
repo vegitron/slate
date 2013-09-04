@@ -16,7 +16,7 @@ $ source bin/activate
 
 (slate)$ pip install -r requirements.txt
 
-(slate)$ python manage.py startproject project .
+(slate)$ django-admin.py startproject project .
 
 edit project/urls.py
 
@@ -24,10 +24,16 @@ Add: `url(r'^', include('slate.urls')),`
 
 edit project/settings.py
 
-Add: 
+**Add: **
 
     INSTALLED_APPS = (..., 
     'slate',
     'templatetag_handlebars')
+**Edit DATABASES**
+
+    'ENGINE': 'django.db.backends.sqlite3'
+    'NAME': '[name of DB file (eg db.sqlite)]',
+
+(slate)$ python manage.py syncdb
 
 (slate)$ python manage.py runserver
