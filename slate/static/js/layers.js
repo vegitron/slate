@@ -115,8 +115,10 @@ Slate.Layer = (function ($) {
                         layer_shapes = layer_data.layer_shapes[layer_id];
                         for (i = 0; i < layer_shapes.length; i++) {
                             info = layer_shapes[i];
-                            if (area_overlap(rectangle, info.coverage_area)) {
-                                intersecting_shapes.push(info);
+                            if (layer_shapes.hasOwnProperty(i)){
+                                if (area_overlap(rectangle, info.coverage_area)) {
+                                    intersecting_shapes.push(info);
+                                }
                             }
                         }
                     }
@@ -238,35 +240,52 @@ Slate.Layer = (function ($) {
             scaled_width = (scaled_height * dimensions.width) / dimensions.height;
         }
         var thumb_context = thumb_canvas.getContext('2d');
+        
         thumb_context.clearRect(0, 0, 100, 100);
-        thumb_context.drawImage(temp_canvas, 0, 0, scaled_width, scaled_height);
+        
+        // Invalid state error if either dimension is 0
+        if (scaled_width > 0 || scaled_height > 0) {
+            thumb_context.drawImage(temp_canvas, 0, 0, scaled_width, scaled_height);
+        }
+        
     }
 
     //Determine the maximum dimensions of all content across given layer
     function get_drawing_dimensions(layer_id) {
-        //Return 0 length dimensions of no shapes exist
-        if(layer_data.layer_shapes[layer_id].length === 0){
-            return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0};
+        var starting_point,
+            layer_shapes;
+        
+        $.each(layer_data.layer_shapes[layer_id], function(shape_id, shape_object){
+            if (shape_object !== undefined) {
+                starting_point = Slate.Shape.get_invalid_area(shape_object);
+            }
+        });
+
+        //Return dimensions of 0 if no shapes exist
+        if (starting_point === undefined) {
+            return {"max_x": 0, "min_x": 0, "max_y": 0, "min_y": 0, "height": 0, "width": 0};
         }
-        var starting_point = Slate.Shape.get_invalid_area(layer_data.layer_shapes[layer_id][0]);
+
         var max_x = starting_point.x + starting_point.width,
             min_x = starting_point.x,
             max_y = starting_point.y + starting_point.height,
             min_y = starting_point.y;
 
-        var layer_shapes = layer_data.layer_shapes[layer_id]
+        layer_shapes = layer_data.layer_shapes[layer_id]
         if (layer_shapes !== undefined){
             $.each(layer_shapes, function (shape_id, shape){
-                var shape_area = Slate.Shape.get_invalid_area(shape);
-                if (shape_area.x + shape_area.width > max_x) {
-                    max_x = shape_area.x + shape_area.width;
-                } else if (shape_area.x < min_x) {
-                    min_x = shape_area.x;
-                }
-                if (shape_area.y + shape_area.height > max_y) {
-                    max_y = shape_area.y + shape_area.height;
-                } else if (shape_area.y < min_y) {
-                    min_y = shape_area.y;
+                if (shape !== undefined){
+                    var shape_area = Slate.Shape.get_invalid_area(shape);
+                    if (shape_area.x + shape_area.width > max_x) {
+                        max_x = shape_area.x + shape_area.width;
+                    } else if (shape_area.x < min_x) {
+                        min_x = shape_area.x;
+                    }
+                    if (shape_area.y + shape_area.height > max_y) {
+                        max_y = shape_area.y + shape_area.height;
+                    } else if (shape_area.y < min_y) {
+                        min_y = shape_area.y;
+                    }
                 }
             });
         }
@@ -312,38 +331,41 @@ Slate.Layer = (function ($) {
             border_color;
 
         for (i = 0; i < shapes.length; i++) {
-            info = shapes[i];
-            shape = info.shape;
-            values = info.values;
-
-            shape_layer = info.layer;
-
-            if (shape === "text") {
-                text_color = values.color || "black";
+            if (shapes.hasOwnProperty(i)){
+                info = shapes[i];
+                shape = info.shape;
+                values = info.values;
+    
+                shape_layer = info.layer;
+    
+                if (shape === "text") {
+                    text_color = values.color || "black";
+                }
+                else {
+                    border_color = values.border_color || "black";
+                    var border_width = values.border_width || 4;
+                    fill_color = values.fill_color || "rgba(0, 0, 0, 0)";
+                }
+    
+                if (shape === 'circle') {
+                    Slate.Drawing.draw_circle(context, origin, border_width, border_color, fill_color, values.cx, values.cy, values.radius);
+                }
+                else if (shape === 'polygon') {
+                    Slate.Drawing.draw_polygon(context, origin, border_width, border_color, fill_color, values.points);
+                }
+                else if (shape === 'line') {
+                    Slate.Drawing.draw_line(context, origin, border_width, border_color, values.points);
+                }
+                else if (shape === 'bezier') {
+                    Slate.Drawing.draw_bezier(context, origin, border_width, border_color, values.points);
+                }
+                else if (shape === 'text') {
+                    Slate.Drawing.draw_text(context, origin, text_color, values);
+                }
+    
+                info.coverage_area.overlaps = false;
             }
-            else {
-                border_color = values.border_color || "black";
-                var border_width = values.border_width || 4;
-                fill_color = values.fill_color || "rgba(0, 0, 0, 0)";
-            }
-
-            if (shape === 'circle') {
-                Slate.Drawing.draw_circle(context, origin, border_width, border_color, fill_color, values.cx, values.cy, values.radius);
-            }
-            else if (shape === 'polygon') {
-                Slate.Drawing.draw_polygon(context, origin, border_width, border_color, fill_color, values.points);
-            }
-            else if (shape === 'line') {
-                Slate.Drawing.draw_line(context, origin, border_width, border_color, values.points);
-            }
-            else if (shape === 'bezier') {
-                Slate.Drawing.draw_bezier(context, origin, border_width, border_color, values.points);
-            }
-            else if (shape === 'text') {
-                Slate.Drawing.draw_text(context, origin, text_color, values);
-            }
-
-            info.coverage_area.overlaps = false;
+            
         }
     }
 
@@ -384,6 +406,34 @@ Slate.Layer = (function ($) {
         $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
 
+    function delete_shape(shape_object) {
+        var shape_layer = shape_object.layer,
+            shape_id = shape_object.id,
+            id_to_delete,
+            csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value,
+            post_args = {
+                type: "DELETE",
+                headers: {
+                    "X-CSRFToken": csrf_value
+                },
+            };
+
+        var layer_objs = layer_data.layer_shapes[shape_layer];
+        for (var i = 0; i < layer_objs.length; i++) {
+            if (layer_objs.hasOwnProperty(i)){
+                if (layer_objs[i].id === shape_object.id){
+                    id_to_delete = i;
+                }
+            }
+        }
+        Slate.Select.deselect_current_object();
+        delete layer_data.layer_shapes[shape_layer][id_to_delete];
+        invalidate_rectangle(shape_object.coverage_area);
+        redraw_regions();
+        draw_layer_previews();
+        $.ajax(slate_home + '/rest/shape/' + artboard_url_token + "/" + shape_id, post_args);
+    }
+
     function get_shape_count_for_layer(layer_id) {
         return layer_data.layer_shapes[layer_id].length;
     }
@@ -403,7 +453,8 @@ Slate.Layer = (function ($) {
         redraw_regions: redraw_regions,
         invalidate_rectangle: invalidate_rectangle,
         get_shape_count_for_layer: get_shape_count_for_layer,
-        add_shape_to_layer: add_shape_to_layer
+        add_shape_to_layer: add_shape_to_layer,
+        delete_shape: delete_shape
     }
 
 

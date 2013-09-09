@@ -26,7 +26,7 @@ class Artboard(models.Model):
         for layer in layers:
             data["layers"].append(layer.json_data())
 
-        shapes = Shape.objects.filter(artboard = self, creation_date__lt=test_date, layer__is_deleted = False)
+        shapes = Shape.objects.filter(artboard = self, creation_date__lt=test_date, layer__is_deleted = False, is_deleted = False)
         for shape in shapes:
             data["shapes"].append(shape.json_data())
 
@@ -51,7 +51,7 @@ class Artboard(models.Model):
             else:
                 data["modified_layers"].append(layer.json_data())
 
-        shapes = Shape.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date)
+        shapes = Shape.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date, layer__is_deleted = False, is_deleted = False)
         for shape in shapes:
             if shape.creation_date > test_date:
                 data["shapes"].append(shape.json_data())
@@ -129,7 +129,6 @@ class Layer(models.Model):
         super(Layer, self).save(*args, **kwargs)
 
     def delete (self, *args, **kwargs):
-        self.modification_date = datetime.now()
         self.is_deleted = True
         self.save()
 
@@ -141,6 +140,7 @@ class Shape(models.Model):
     json_definition = models.TextField()
     modification_date = models.DateTimeField(db_index = True)
     creation_date = models.DateTimeField(db_index = True)
+    is_deleted = models.BooleanField()
 
     # Any shape type that has a text value - text goes into search_content,
     # and the origin to use when displaying that search content goes into
@@ -164,3 +164,6 @@ class Shape(models.Model):
             self.creation_date = datetime.now()
         super(Shape, self).save(*args, **kwargs)
 
+    def delete(self, *args, **kwargs):
+        self.is_deleted = True
+        self.save()

@@ -99,6 +99,10 @@ def shape(request, url_token, shape_id=None):
     else:
         shape = Shape.objects.get(pk = shape_id)
 
+    if request.method == "DELETE":
+        shape.delete()
+        return HttpResponse('', content_type="application/json", status=204)
+
     if not (shape.artboard.pk == artboard.pk):
         raise("Invalid url_token for shape")
 

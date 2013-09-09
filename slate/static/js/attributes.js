@@ -92,12 +92,20 @@ Slate.Attributes = (function ($) {
         }
     }
 
+    function handle_delete_shape() {
+        var selected_shape = Slate.Select.get_selected_shape();
+        if (selected_shape !== undefined) {
+            Slate.Layer.delete_shape(selected_shape);
+        }
+    }
+
     function add_attribute_events() {
         $("input[name='shape_line_width']").on("change", handle_shape_line_width_change);
         $("input[name='shape_border_color']").on("change", handle_shape_border_color_change);
         $("input[name='shape_fill_color']").on("change", handle_shape_fill_color_change);
         $("input[name='text_color']").on("change", handle_text_color_change);
         $("input[name='text_font_size']").on("change", handle_text_size_change);
+        $("button[name='delete_shape']").on('click', handle_delete_shape);
 
         $("input[name='board_actions']").on("change", handle_new_board_action_selection);
 
