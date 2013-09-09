@@ -24,7 +24,7 @@ Add: `url(r'^', include('slate.urls')),`
 
 edit project/settings.py
 
-**Add: **
+**Add:**
 
     INSTALLED_APPS = (..., 
     'slate',
