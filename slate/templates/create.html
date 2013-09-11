@@ -1,5 +1,5 @@
 <h1>Make a whiteboard</h1>
-<form action="{% url slate.views.create_whiteboard %}" method="POST">
+<form action="{% url 'slate.views.create_whiteboard' %}" method="POST">
     {% csrf_token %}
     Name: <input type="text" name="name" />
     <br />

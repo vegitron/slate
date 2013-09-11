@@ -1,13 +1,13 @@
 
-<a href="{% url slate.views.create_whiteboard %}">New whiteboard</a>
-<form action="{% url slate.views.search %}" method="GET">
+<a href="{% url 'slate.views.create_whiteboard' %}">New whiteboard</a>
+<form action="{% url 'slate.views.search' %}" method="GET">
     Search: <input type="text" name="q" />
     <input type="submit" value="Go">
 </form>
 
 <ul>
 {% for artboard in artboards %}
-    <li><a href="{% url slate.views.whiteboard url_token=artboard.url_token %}">{{ artboard.name }}</a></li>
+    <li><a href="{% url 'slate.views.whiteboard' url_token=artboard.url_token %}">{{ artboard.name }}</a></li>
 {% endfor %}
 </ul>
 

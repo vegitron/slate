@@ -1,4 +1,4 @@
-Django==1.4
+Django==1.5
 django-templatetag-handlebars
 simplejson
 python-dateutil
