@@ -77,8 +77,14 @@ Slate.Shape = (function ($) {
     }
 
     function rotate_shape(shape, angle) {
-        if (shape.shape === "polygon") {
+        if (shape.shape === "circle") {
+            // Not even gonna try
+        }
+        else if (shape.shape === "polygon") {
             Slate.Shape.Polygon.rotate(shape, angle);
+        }
+        else if (shape.shape === "line") {
+            Slate.Shape.Line.rotate(shape, angle);
         }
 
     }
