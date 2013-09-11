@@ -730,7 +730,9 @@ var AutoShape = function() {
                 full: full_info,
                 best: choice
             };
-        }
+        },
+
+        angle_between_points: angle_between_points
 
 
     };

@@ -76,6 +76,13 @@ Slate.Shape = (function ($) {
 
     }
 
+    function rotate_shape(shape, angle) {
+        if (shape.shape === "polygon") {
+            Slate.Shape.Polygon.rotate(shape, angle);
+        }
+
+    }
+
     function set_movement_proxy_display(shape) {
         if (shape.shape === 'text') {
             shape.values.color = 'rgba(0, 0, 0, .7)';
@@ -91,6 +98,7 @@ Slate.Shape = (function ($) {
         get_invalid_area: get_invalid_area,
         move_display_xy: move_display_xy,
         resize_shape: resize_shape,
+        rotate_shape: rotate_shape,
         set_movement_proxy_display: set_movement_proxy_display
     };
 })(jQuery);

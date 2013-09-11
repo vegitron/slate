@@ -1,6 +1,8 @@
 Slate.Select = (function ($) {
     "use strict";
 
+    var ROTATE_SHAPE_OFFSET = 15;
+
     // This tracks the actively selected shape on the artboard
     var current_shape = null;
 
@@ -195,6 +197,21 @@ Slate.Select = (function ($) {
             width: corners[2].x - corners[0].x,
             height: corners[2].y - corners[0].y
         }, Slate.MoveShape.start_selected_shape_move);
+
+        // And now the rotate events, currently just a rectangle outside the shape rectangle
+        Slate.Event.set_cursor_region({
+            x: corners[0].x + origin.x - ROTATE_SHAPE_OFFSET,
+            y: corners[0].y + origin.y - ROTATE_SHAPE_OFFSET,
+            width: corners[2].x - corners[0].x + (ROTATE_SHAPE_OFFSET * 2),
+            height: corners[2].y - corners[0].y + (ROTATE_SHAPE_OFFSET * 2)
+        }, 'wait');
+
+        Slate.Event.set_mousedown_region({
+            x: corners[0].x + origin.x - ROTATE_SHAPE_OFFSET,
+            y: corners[0].y + origin.y - ROTATE_SHAPE_OFFSET,
+            width: corners[2].x - corners[0].x + (ROTATE_SHAPE_OFFSET * 2),
+            height: corners[2].y - corners[0].y + (ROTATE_SHAPE_OFFSET * 2)
+        }, Slate.RotateShape.start_shape_rotate, [get_selected_shape()]);
 
     }
 

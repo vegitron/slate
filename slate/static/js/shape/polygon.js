@@ -68,9 +68,37 @@ Slate.Shape.Polygon = (function ($) {
         }
     }
 
+    function rotate(shape, angle) {
+        var coverage_area = shape.coverage_area,
+            points = shape.values.points,
+            center_x = coverage_area.x + (coverage_area.width / 2),
+            center_y = coverage_area.y + (coverage_area.height / 2),
+            i,
+            tmp_x,
+            tmp_y,
+            offset_x,
+            offset_y,
+            sin_angle = Math.sin(angle * Math.PI / 180),
+            cos_angle = Math.cos(angle * Math.PI / 180);
+
+        for (i = 0; i < points.length; i++) {
+
+            offset_x = points[i].x - center_x;
+            offset_y = points[i].y - center_y;
+
+            tmp_x = (offset_x * cos_angle) - (offset_y * sin_angle);
+            tmp_y = (offset_x * sin_angle) + (offset_y * cos_angle);
+
+            points[i].x = tmp_x + center_x;
+            points[i].y = tmp_y + center_y;
+
+        }
+    }
+
     return {
         get_invalid_area: get_invalid_area,
         move: move,
+        rotate: rotate,
         resize: resize
     };
 
