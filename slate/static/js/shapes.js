@@ -89,6 +89,9 @@ Slate.Shape = (function ($) {
         else if (shape.shape === "bezier") {
             Slate.Shape.Bezier.rotate(shape, angle);
         }
+        else if (shape.shape === "text") {
+            Slate.Shape.Text.rotate(shape, angle);
+        }
 
     }
 

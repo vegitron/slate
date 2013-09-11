@@ -3,7 +3,8 @@ Slate.RotateShape = (function ($) {
     var starting_angle,
         center_x,
         center_y,
-        selected_shape;
+        selected_shape,
+        text_angle = 0;
 
     function start_shape_rotate(x, y, shape) {
         var coverage_area = shape.coverage_area,
@@ -18,6 +19,10 @@ Slate.RotateShape = (function ($) {
         center_y = obj_y + (coverage_area.height / 2);
 
         starting_angle = mouse_angle(center_x, center_y, x - origin.x, y - origin.y);
+
+        if (shape.shape === "text") {
+            text_angle = shape.values.angle || 0;
+        }
 
         $(window).on("mousemove", handle_mouse_move);
         $(window).on("mouseup", handle_mouse_up);
@@ -37,7 +42,7 @@ Slate.RotateShape = (function ($) {
         var movement_proxy = JSON.parse(JSON.stringify(selected_shape));
         Slate.Shape.set_movement_proxy_display(movement_proxy);
 
-        Slate.Shape.rotate_shape(movement_proxy, starting_angle - new_angle);
+        Slate.Shape.rotate_shape(movement_proxy, text_angle + starting_angle - new_angle);
 
         context.clearRect(0, 0, canvas.width, canvas.height);
         Slate.Layer.draw_shapes(context, [movement_proxy], origin);
@@ -56,7 +61,7 @@ Slate.RotateShape = (function ($) {
             new_angle = mouse_angle(center_x, center_y, canvas_x, canvas_y);
 
 
-        Slate.Shape.rotate_shape(save_obj, starting_angle - new_angle);
+        Slate.Shape.rotate_shape(save_obj, text_angle + starting_angle - new_angle);
         Slate.Drawing.update_shape_on_artboard(save_obj);
 
         context.clearRect(0, 0, canvas.width, canvas.height);

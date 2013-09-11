@@ -88,6 +88,19 @@ Slate.Shape.Text = (function ($) {
         }
     }
 
+    function rotate_point(sin, cos, center_x, center_y, x, y) {
+        var offset_x = x - center_x;
+        var offset_y = y - center_y;
+
+        var tmp_x = (offset_x * cos) - (offset_y * sin);
+        var tmp_y = (offset_x * sin) + (offset_y * cos);
+
+        return {
+            x: tmp_x + center_x,
+            y: tmp_y + center_y
+        };
+    }
+
     function get_invalid_area(info) {
         var text = info.reflowed_text || info.text,
 
@@ -95,14 +108,72 @@ Slate.Shape.Text = (function ($) {
                 text: text,
                 font_size: info.font_size,
                 font_face: info.font_face
-            });
+            }),
+            angle = info.angle || 0,
+            angle_sin,
+            angle_cos,
+            center_x,
+            center_y,
+            points = [],
+            i,
+            rotated,
+            final_rectangle = {};
+
+        points.push({
+            x: info.x - INVALID_AREA_SLOP,
+            y: info.y - INVALID_AREA_SLOP
+        });
+
+        points.push({
+            x: info.x - INVALID_AREA_SLOP + size.width + (2 * INVALID_AREA_SLOP),
+            y: info.y - INVALID_AREA_SLOP
+        });
+
+        points.push({
+            x: info.x - INVALID_AREA_SLOP,
+            y: info.y - INVALID_AREA_SLOP + size.height + (2 * INVALID_AREA_SLOP)
+        });
+
+        points.push({
+            x: info.x - INVALID_AREA_SLOP + size.width + (2 * INVALID_AREA_SLOP),
+            y: info.y - INVALID_AREA_SLOP + size.height + (2 * INVALID_AREA_SLOP)
+        });
+
+        angle_sin = Math.sin(angle * Math.PI / 180);
+        angle_cos = Math.cos(angle * Math.PI / 180);
+
+        center_x = info.x + (size.width / 2);
+        center_y = info.y + (size.height / 2);
+
+        var min_x = Number.MAX_VALUE;
+        var min_y = Number.MAX_VALUE;
+        var max_x = -1 * Number.MAX_VALUE;
+        var max_y = -1 * Number.MAX_VALUE;
+
+        for (i = 0; i < points.length; i++) {
+            rotated = rotate_point(angle_sin, angle_cos, center_x, center_y, points[i].x, points[i].y);
+
+            if (rotated.x > max_x) {
+                max_x = rotated.x;
+            }
+            if (rotated.x < min_x) {
+                min_x = rotated.x;
+            }
+            if (rotated.y > max_y) {
+                max_y = rotated.y;
+            }
+            if (rotated.y < min_y) {
+                min_y = rotated.y;
+            }
+        }
 
         return {
-            x: info.x - INVALID_AREA_SLOP,
-            y: info.y - INVALID_AREA_SLOP,
-            width: size.width + (2 * INVALID_AREA_SLOP),
-            height: size.height + (2 * INVALID_AREA_SLOP)
+            x: min_x,
+            y: min_y,
+            width: max_x - min_x,
+            height: max_y - min_y
         };
+
     }
 
     function get_text_size(info) {
@@ -127,10 +198,15 @@ Slate.Shape.Text = (function ($) {
         shape.values.y += dy;
     }
 
+    function rotate(shape, angle) {
+        shape.values.angle = angle;
+    }
+
 
     return {
         get_invalid_area: get_invalid_area,
         move: move,
+        rotate: rotate,
         resize: resize,
         get_text_size: get_text_size
     };

@@ -556,6 +556,20 @@ Slate.Drawing = (function ($) {
         context.font = info.font_size+"px "+info.font_face;
         context.fillStyle = color;
 
+        var rotation_angle = info.angle || 0;
+
+        // We need to get the size of the text here, so we can rotate from the center of the text,
+        // rather than the upper left hand corner
+        var text_size = Slate.Shape.Text.get_text_size(info);
+        var x_translate_offset = text_size.width / 2;
+        var y_translate_offset = text_size.height / 2;
+
+        context.translate(info.x + x_translate_offset + origin.x, info.y + y_translate_offset + origin.y);
+
+        if (rotation_angle) {
+            context.rotate(rotation_angle * Math.PI / 180);
+        }
+
         // fillText doesn't support multiple lines :(
         var text = info.reflowed_text || info.text;
         var lines = text.split("\n");
@@ -565,8 +579,8 @@ Slate.Drawing = (function ($) {
             // is the bottom of the text.
 
             // Working with a line-height of 120%.  The first line though isn't offset by the 20%, so that needs to be taken off.
-            var y = info.y + origin.y + (1.2 * info.font_size * (i +1)) - info.font_size * 0.2;
-            context.fillText(lines[i], x, y);
+            var y = (1.2 * info.font_size * (i +1)) - info.font_size * 0.2;
+            context.fillText(lines[i],  -1 * x_translate_offset, y - y_translate_offset);
         }
         context.restore();
     }
