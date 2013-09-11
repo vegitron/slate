@@ -86,6 +86,9 @@ Slate.Shape = (function ($) {
         else if (shape.shape === "line") {
             Slate.Shape.Line.rotate(shape, angle);
         }
+        else if (shape.shape === "bezier") {
+            Slate.Shape.Bezier.rotate(shape, angle);
+        }
 
     }
 
