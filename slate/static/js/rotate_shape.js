@@ -20,6 +20,8 @@ Slate.RotateShape = (function ($) {
 
         starting_angle = mouse_angle(center_x, center_y, x - origin.x, y - origin.y);
 
+        // Text data doesn't change for rotation, it just has an angle attribute
+        // Without tracking that, all rotation starts at 0 degrees, which looks lame.
         if (shape.shape === "text") {
             text_angle = shape.values.angle || 0;
         }
