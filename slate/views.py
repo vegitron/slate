@@ -53,7 +53,7 @@ def shape(request, url_token, shape_id=None):
     artboard = Artboard.objects.get(url_token = url_token)
 
     if request.method == "POST":
-        json_data = json.loads(request.raw_post_data)
+        json_data = json.loads(request.body)
 
         layer = Layer.objects.get(pk = json_data["layer_id"])
         if not (layer.artboard.pk == artboard.pk):
@@ -75,7 +75,7 @@ def shape(request, url_token, shape_id=None):
 
     elif request.method == "PUT":
         shape = Shape.objects.get(pk = shape_id)
-        json_data = json.loads(request.raw_post_data)
+        json_data = json.loads(request.body)
 
         if not (shape.artboard.pk == artboard.pk):
             raise("Invalid artboard id for shape")
@@ -113,7 +113,7 @@ def layer(request, url_token, layer_id=None):
     artboard = Artboard.objects.get(url_token = url_token)
 
     if request.method == "POST":
-        json_data = json.loads(request.raw_post_data)
+        json_data = json.loads(request.body)
 
         layer = Layer.objects.create(
             artboard = artboard,
