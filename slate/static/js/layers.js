@@ -64,7 +64,9 @@ Slate.Layer = (function ($) {
             select_layer(layer_id);
         });
         $("#delete_layer_" + layer_id).on("click", delete_layer);
-        select_layer(layer_id);
+        $("#layer_name_" + layer_id).on("click", function () {
+             init_rename_layer(layer_id)
+        });        
 
         layer_data.next_layer_id++;
     }
@@ -440,6 +442,42 @@ Slate.Layer = (function ($) {
 
     function add_shape_to_layer(layer_id, shape) {
         layer_data.layer_shapes[layer_id].push(shape);
+    }
+
+    function init_rename_layer(layer_id) {
+        var form = $("#layer_sidebar_" + layer_id +"> form")[0],
+            old_name = $("#layer_name_" + layer_id).html(),
+            new_name;
+        $(form).submit(function (e) {
+            new_name = $(form).children('[name="rename_layer"]').first().val();
+            if (old_name !== new_name && old_name.length > 0) {
+                update_layer(layer_id, {'name': new_name});
+                $("#layer_name_" + layer_id).html(new_name);
+                $(form).hide();
+            }
+            return false;
+        });
+        $(form).toggle();
+    }
+
+    function update_layer(layer_id, layer_props) {
+        var json_payload = layer_data.layers[layer_id],
+            csrf_value = $("input[name='csrfmiddlewaretoken']")[0].value,
+            post_args = {
+                type: "PUT",
+                headers: {
+                    "X-CSRFToken": csrf_value
+                },
+                dataType: 'json'
+            };
+        if(layer_props.hasOwnProperty("name")){
+            json_payload['name'] = layer_props['name'];
+        }
+        if(layer_props.hasOwnProperty("z_index")){
+            json_payload['z_index'] = layer_props['z_index'];
+        }
+        post_args['data'] = JSON.stringify(json_payload);
+        $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
 
     return {

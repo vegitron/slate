@@ -4,6 +4,10 @@
         <input type="checkbox" id="show_layer_{{layer_id}}" checked="checked" value="{{ layer_id }}">
         <canvas id="layer_preview_{{layer_id}}" width="100" height="100" class="layer_preview"></canvas>
         <span id="layer_name_{{layer_id}}">{{ name }}</span>
+        <form class="rename_layer">
+            <input type="text" name="rename_layer"/>
+            <input type="submit" value="rename" />
+        </form>
         <button id="delete_layer_{{layer_id}}" value="{{ layer_id }}">Delete</button>
     </div>
     {% endtplhandlebars %}

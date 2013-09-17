@@ -122,7 +122,12 @@ def layer(request, url_token, layer_id=None):
         )
 
     elif request.method == "PUT":
-        pass
+        if layer_id is not None:
+            json_data = json.loads(request.raw_post_data)
+            layer = Layer.objects.get(pk = layer_id)
+            if len(layer.name) > 0:
+                layer.name = json_data["name"]
+            layer.save()
 
     else:
         layer = Layer.objects.get(pk = layer_id)
