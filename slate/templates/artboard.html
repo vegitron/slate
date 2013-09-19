@@ -1,6 +1,12 @@
 {% extends "base_slate.html" %}
+{% load static %}
 
 {% block content %}
+
+<script>
+    artboard_url_token = "{{ url_token }}";
+    slate_home = "{% url 'slate.views.home' %}".replace(/\/$/, '');
+</script>
 
 {% csrf_token %}
 <div id="canvas_container">
@@ -64,8 +70,34 @@ Text controls:
 Loading...
 </div>
 
+{% include "handlebars/layer/sidebar.html" %}
+
 <!-- this span is for testing string lengths -->
 <span id="offscreen_text_test" style="visibility: hidden">TEST</span>
+
+<script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static 'js/jquery-ui-1.10.3.custom.min.js' %}"></script>
+<script src="{% static 'js/handlebars.js' %}"></script>
+
+<script src="{% static 'js/app.js' %}"></script>
+<script src="{% static 'js/handlebars_util.js' %}"></script>
+<script src="{% static 'js/autoshape.js' %}"></script>
+<script src="{% static 'js/artboard.js' %}"></script>
+<script src="{% static 'js/layers.js' %}"></script>
+<script src="{% static 'js/drawing.js' %}"></script>
+<script src="{% static 'js/move_shape.js' %}"></script>
+<script src="{% static 'js/rotate_shape.js' %}"></script>
+<script src="{% static 'js/resize_shape.js' %}"></script>
+<script src="{% static 'js/select.js' %}"></script>
+<script src="{% static 'js/shapes.js' %}"></script>
+<script src="{% static 'js/shape/bezier.js' %}"></script>
+<script src="{% static 'js/shape/polygon.js' %}"></script>
+<script src="{% static 'js/shape/circle.js' %}"></script>
+<script src="{% static 'js/shape/line.js' %}"></script>
+<script src="{% static 'js/shape/text.js' %}"></script>
+
+<script src="{% static 'js/events.js' %}"></script>
+<script src="{% static 'js/attributes.js' %}"></script>
 
 
 {% endblock content %}
