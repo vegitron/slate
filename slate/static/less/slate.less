@@ -1,0 +1,19 @@
+/* Slate LESS File */
+ 
+/* ===================================================================
+Import Bootstrap LESS and Site Specific LESS
+=================================================================== */
+ 
+@import 'bootstrap.less'; /* Main BS compiled file */
+@import '../font-awesome/less/font-awesome.less'; /* font-awesome fonts */
+@import 'slate-variables.less'; /* app specific LESS variables - these override BS defaults  */
+
+li, ul li {list-style-type:none;}
+
+.whiteboard-name {font-size:@font-size-large;}
+
+span.modified-meta {font-size:@font-size-small;font-style: italic;color:@gray-light;}
+
+header {
+	h1 {margin: 0 5px;font-size:@slate-font-size-h1;color:@brand-slate;}
+	}

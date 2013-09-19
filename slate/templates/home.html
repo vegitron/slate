@@ -1,13 +1,52 @@
+{% extends "base_slate.html" %}
 
-<a href="{% url 'slate.views.create_whiteboard' %}">New whiteboard</a>
-<form action="{% url 'slate.views.search' %}" method="GET">
-    Search: <input type="text" name="q" />
-    <input type="submit" value="Go">
-</form>
+{% block content %}
 
-<ul>
-{% for artboard in artboards %}
-    <li><a href="{% url 'slate.views.whiteboard' url_token=artboard.url_token %}">{{ artboard.name }}</a></li>
-{% endfor %}
-</ul>
+<div class="row">
+  <div class="col-md-8">	
+  
+  	<a id="make_whiteboard" class="btn btn-info" href="{% url 'slate.views.create_whiteboard' %}">
+	<i class="icon-plus"></i> Create New Whiteboard</a>
+	
+  </div>
+  <div class="col-md-4">
+  	<form class="form-inline pull-right" role="form" action="{% url 'slate.views.search' %}" method="GET">
+	<div class="form-group">
+    	<input type="text" name="q" class="form-control" placeholder="Search..."/>
+	</div>
+	<div class="form-group">
+    	<button type="submit" class="btn btn-default" value="Go">Go</button>
+	</div>
+	</form>
+  </div>
+</div>
+
+<div class="row">
+	<table class="table table-striped table-condensed">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Whiteboard</th>
+            <th>Online now</th>
+            <th>asdf jkl;</th>
+          </tr>
+        </thead>
+        <tbody>
+        <ul id="whiteboard-list">
+		{% for artboard in artboards %}
+		<li>
+          <tr>
+            <td></td>
+            <td><a class="whiteboard-name" href="{% url 'slate.views.whiteboard' url_token=artboard.url_token %}">{{ artboard.name }}</a><br /><span class="modified-meta">Modified by bexar 3 hours ago</span></td>
+            <td>bexar, jcivjan and <a href="#">3 others</a></td>
+            <td>asdf jkl;</td>
+          </tr>
+		</li>
+		{% endfor %} 
+        </ul>
+        </tbody>
+      </table>
+</div>
+
+{% endblock content %}
 
