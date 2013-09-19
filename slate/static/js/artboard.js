@@ -20,7 +20,9 @@ Slate.Artboard = (function ($) {
 
     function post_artboard_data(data) {
         var i;
-
+        $("#layers_sidebar_sortable").sortable({
+            update: Slate.Layer.reorder_layers
+        });
         periodic_update_data.last_check_date = data.date;
 
         for (i = 0; i < data.layers.length; i++) {

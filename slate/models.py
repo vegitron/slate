@@ -22,7 +22,7 @@ class Artboard(models.Model):
             "shapes": [],
         }
 
-        layers = Layer.objects.filter(artboard = self, creation_date__lt=test_date, is_deleted = False)
+        layers = Layer.objects.filter(artboard = self, creation_date__lt=test_date, is_deleted = False).order_by('z_index')
         for layer in layers:
             data["layers"].append(layer.json_data())
 
@@ -44,7 +44,7 @@ class Artboard(models.Model):
             "modified_shapes": [],
         }
 
-        layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date, is_deleted = False)
+        layers = Layer.objects.filter(artboard = self, modification_date__gt = test_date, modification_date__lt = new_test_date, is_deleted = False).order_by('z_index')
         for layer in layers:
             if layer.creation_date > test_date:
                 data["layers"].append(layer.json_data())

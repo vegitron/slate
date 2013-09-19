@@ -45,19 +45,18 @@ Slate.Layer = (function ($) {
             return;
         }
 
-        new_display_div = document.createElement("div");
-        new_display_div.innerHTML = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
+        new_display_div = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
 
         layer_data.layers[layer_id] = {
             id: layer_id,
-            z_index: layer_id,
+            z_index: data.z_index,
             visible: true,
             name: data.name
         };
 
         layer_data.layer_shapes[layer_id] = [];
 
-        document.getElementById("layers_sidebar").appendChild(new_display_div);
+        $(document.getElementById("layers_sidebar_sortable")).append(new_display_div);
 
         $("#show_layer_" + layer_id).on("click", show_hide_layer);
         $("#layer_sidebar_" + layer_id).on("click", function () {
@@ -65,7 +64,7 @@ Slate.Layer = (function ($) {
         });
         $("#delete_layer_" + layer_id).on("click", delete_layer);
         $("#layer_name_" + layer_id).on("click", function () {
-             init_rename_layer(layer_id)
+             init_rename_layer(layer_id);
         });        
 
         layer_data.next_layer_id++;
@@ -159,10 +158,10 @@ Slate.Layer = (function ($) {
         context.clearRect(0, 0, canvas.width, canvas.height);
 
         sorted_shapes = redraw_info.shapes.sort(function (a, b) {
-            if (a.layer < b.layer) {
+            if (layer_data.layers[a.layer].z_index < layer_data.layers[b.layer].z_index) {
                 return -1;
             }
-            if (a.layer > b.layer) {
+            if (layer_data.layers[a.layer].z_index > layer_data.layers[b.layer].z_index) {
                 return 1;
             }
 
@@ -480,6 +479,37 @@ Slate.Layer = (function ($) {
         $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
 
+    function reorder_layers(event, ui) {
+        var layer_id,
+            layer_index,
+            items,
+            item = ui['item'],
+            origin = Slate.Artboard.get_canvas_origin(),
+            canvas = document.getElementById("artboard");
+        layer_id = $(item).attr('id');
+        layer_index = layer_id.match(/layer_sidebar_(.*)/)[1];
+        items = $("#layers_sidebar_sortable").sortable("toArray");
+        update_z_indices(items);
+        invalidate_rectangle({
+            x: -1 * origin.x - 10,
+            y: -1 * origin.y - 10,
+            width: canvas.width + 20,
+            height: canvas.height + 20
+        });
+        redraw_regions();
+    }
+
+    function update_z_indices(items) {
+        var layer_index;
+        
+        $(items).each(function (index, layer_id) {
+            layer_index = layer_id.match(/layer_sidebar_(.*)/)[1];
+            layer_data.layers[layer_index].z_index = index + 1;
+        });
+
+
+    }
+
     return {
         add_new_layer: add_new_layer,
         add_layer_from_server: add_layer_from_server,
@@ -492,7 +522,8 @@ Slate.Layer = (function ($) {
         invalidate_rectangle: invalidate_rectangle,
         get_shape_count_for_layer: get_shape_count_for_layer,
         add_shape_to_layer: add_shape_to_layer,
-        delete_shape: delete_shape
+        delete_shape: delete_shape,
+        reorder_layers: reorder_layers
     }
 
 

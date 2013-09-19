@@ -60,10 +60,11 @@ Text controls:
 
 
     </div>
+    
     <div id="layers_sidebar">
         Layers
-        <div>
-            <button id="add_layer">Add Layer</button>
+        <button id="add_layer">Add Layer</button>
+        <div id="layers_sidebar_sortable">
         </div>
     </div>
     <div>
@@ -79,6 +80,7 @@ Loading...
 <span id="offscreen_text_test" style="visibility: hidden">TEST</span>
 
 <script src="{% static 'js/jquery-2.0.3.min.js' %}"></script>
+<script src="{% static 'js/jquery-ui-1.10.3.custom.min.js' %}"></script>
 <script src="{% static 'js/app.js' %}"></script>
 <script src="{% static 'js/handlebars.js' %}"></script>
 <script src="{% static 'js/handlebars_util.js' %}"></script>
