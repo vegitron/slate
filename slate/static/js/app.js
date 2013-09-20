@@ -35,6 +35,9 @@ var Slate = {};
         Slate.Attributes.add_attribute_events();
 
         Slate.Artboard.post_artboard_data(data);
+        if (data.layers.length > 0){
+            Slate.Layer.select_layer(data.layers[0].id);
+        }
 
         $("#loading_cover").hide();
     }

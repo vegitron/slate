@@ -522,7 +522,8 @@ Slate.Layer = (function ($) {
         get_shape_count_for_layer: get_shape_count_for_layer,
         add_shape_to_layer: add_shape_to_layer,
         delete_shape: delete_shape,
-        reorder_layers: reorder_layers
+        reorder_layers: reorder_layers,
+        select_layer: select_layer
     }
 
 
