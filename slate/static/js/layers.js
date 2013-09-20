@@ -497,17 +497,16 @@ Slate.Layer = (function ($) {
             height: canvas.height + 20
         });
         redraw_regions();
+        update_layer(layer_index, {z_index: layer_data.layers[layer_index].z_index});
     }
 
     function update_z_indices(items) {
         var layer_index;
-        
+
         $(items).each(function (index, layer_id) {
             layer_index = layer_id.match(/layer_sidebar_(.*)/)[1];
             layer_data.layers[layer_index].z_index = index + 1;
         });
-
-
     }
 
     return {

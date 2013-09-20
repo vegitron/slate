@@ -120,6 +120,19 @@ class Layer(models.Model):
             'id': self.pk,
         }
 
+    def update_z_index(self, z_index):
+        if z_index < self.z_index:
+            affected_layers = Layer.objects.filter(artboard = self.artboard, z_index__range=(z_index, self.z_index - 1))
+            for layer in affected_layers:
+                layer.z_index = layer.z_index + 1
+                layer.save()
+        elif z_index > self.z_index:
+            affected_layers = Layer.objects.filter(artboard = self.artboard, z_index__range=(self.z_index + 1, z_index))
+            for layer in affected_layers:
+                layer.z_index = layer.z_index - 1
+                layer.save()
+        self.z_index = z_index
+        self.save()
 
     def save(self, *args, **kwargs):
         self.modification_date = datetime.now()
@@ -129,6 +142,11 @@ class Layer(models.Model):
         super(Layer, self).save(*args, **kwargs)
 
     def delete (self, *args, **kwargs):
+        #shift z_indices, will have to re-think if we add layer undelete functionality
+        affected_layers = Layer.objects.filter(artboard = self.artboard, z_index__gt=self.z_index)
+        for layer in affected_layers:
+            layer.z_index = layer.z_index - 1
+            layer.save()
         self.is_deleted = True
         self.save()
 
