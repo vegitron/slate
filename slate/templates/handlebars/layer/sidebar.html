@@ -8,6 +8,7 @@
             <input type="text" name="rename_layer"/>
             <input type="submit" value="rename" />
         </form>
+        <label>Lock/Unlock:</label> <input id="lock_layer_{{layer_id}}" type="checkbox" {{ #if is_locked }} checked="checked"{{ /if }}/>
         <button id="delete_layer_{{layer_id}}" value="{{ layer_id }}">Delete</button>
     </div>
     {% endtplhandlebars %}

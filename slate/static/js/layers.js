@@ -45,13 +45,14 @@ Slate.Layer = (function ($) {
             return;
         }
 
-        new_display_div = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name });
+        new_display_div = Slate.Handlebars.load_template("layer_sidebar")({ layer_id: layer_id, name: data.name, is_locked: data.is_locked });
 
         layer_data.layers[layer_id] = {
             id: layer_id,
             z_index: data.z_index,
             visible: true,
-            name: data.name
+            name: data.name,
+            is_locked: data.is_locked
         };
 
         layer_data.layer_shapes[layer_id] = [];
