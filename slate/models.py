@@ -112,12 +112,14 @@ class Layer(models.Model):
     modification_date = models.DateTimeField(db_index = True)
     creation_date = models.DateTimeField(db_index = True)
     is_deleted = models.BooleanField()
+    is_locked = models.BooleanField()
 
     def json_data(self):
         return {
             'name': self.name,
             'z_index': self.z_index,
             'id': self.pk,
+            'is_locked': self.is_locked
         }
 
     def update_z_index(self, z_index):
