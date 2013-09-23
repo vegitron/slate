@@ -58,6 +58,8 @@ Slate.Layer = (function ($) {
 
         $(document.getElementById("layers_sidebar_sortable")).append(new_display_div);
 
+        select_layer(layer_id)
+
         $("#show_layer_" + layer_id).on("click", show_hide_layer);
         $("#layer_sidebar_" + layer_id).on("click", function () {
             select_layer(layer_id);
