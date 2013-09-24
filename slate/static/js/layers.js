@@ -68,7 +68,8 @@ Slate.Layer = (function ($) {
         $("#delete_layer_" + layer_id).on("click", delete_layer);
         $("#layer_name_" + layer_id).on("click", function () {
              init_rename_layer(layer_id);
-        });        
+        });
+        $("#lock_layer_" + layer_id).change(toggle_lock_layer);        
 
         layer_data.next_layer_id++;
     }
@@ -478,6 +479,9 @@ Slate.Layer = (function ($) {
         if(layer_props.hasOwnProperty("z_index")){
             json_payload['z_index'] = layer_props['z_index'];
         }
+        if(layer_props.hasOwnProperty("is_locked")){
+            json_payload['is_locked'] = layer_props['is_locked'];
+        }
         post_args['data'] = JSON.stringify(json_payload);
         $.ajax(slate_home + '/rest/layer/' + artboard_url_token + "/" + layer_id, post_args);
     }
@@ -510,6 +514,12 @@ Slate.Layer = (function ($) {
             layer_index = layer_id.match(/layer_sidebar_(.*)/)[1];
             layer_data.layers[layer_index].z_index = index + 1;
         });
+    }
+
+    function toggle_lock_layer() {
+        var layer_id = $(this).attr('id').match(/lock_layer_(.*)/)[1],
+        is_checked = $(this).prop('checked');
+        update_layer(layer_id, {'is_locked': is_checked});
     }
 
     return {

@@ -127,8 +127,11 @@ def layer(request, url_token, layer_id=None):
             layer = Layer.objects.get(pk = layer_id)
             if len(layer.name) > 0:
                 layer.name = json_data["name"]
+                layer.save()
             if layer.z_index != json_data['z_index']:
                 layer.update_z_index(json_data['z_index'])
+            if layer.is_locked != json_data['is_locked']:
+                layer.is_locked = json_data['is_locked']
 
     else:
         layer = Layer.objects.get(pk = layer_id)
