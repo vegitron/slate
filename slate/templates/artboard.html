@@ -14,7 +14,7 @@
     <canvas id="draw_surface" onclick="void(0)"></canvas>
 </div>
 
-<div id="title">{{ name }}</div>
+<div id="title"><h1>{{ name }}</h1></div>
 <div id="shape_controls">
 Shape controls:
     <br />
@@ -30,44 +30,44 @@ Shape controls:
     <br />
     <button name="delete_shape">Delete Shape</button>
 </div>
-<div id="text_controls">
-Text controls:
-    <br />
-    Size:
-        <br /><label><input type="radio" name="text_font_size" value="12">Small</label>
-        <br /><label><input type="radio" name="text_font_size" value="24" checked="checked">Medium</label>
-        <br /><label><input type="radio" name="text_font_size" value="48">Large</label>
+<!-- text controls -->
+<div id="text_controls" class="btn-toolbar">
+	<div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-default btn-small"><input type="radio" name="text_font_size" value="12"><i class="icon-font icon-smaller"></i></label>
+        <label class="btn btn-default"><input type="radio" name="text_font_size" value="24" checked="checked"><i class="icon-font"></i></label>
+        <label class="btn btn-default"><input type="radio" name="text_font_size" value="48"><i class="icon-font icon-large"></i></label>       
+	</div>
+	 <label>Color: <input type="text" name="text_color" value="black"/></label>
 
-        <br/>
-        <label>Color: <input type="text" name="text_color" value="black"/></label>
+
 </div>
 
 <div id="sidebar">
     <div>
-        Actions<br />
-        <input type="radio" name="board_actions" value="autoshape" checked="checked">Draw autoshape <br />
-        <input type="radio" name="board_actions" value="rectangle">Draw rectangle <br />
-        <input type="radio" name="board_actions" value="text">Write something<br />
-        ... <br />
-        <input type="radio" name="board_actions" value="select">Select an object<br />
-        <input type="radio" name="board_actions" value="pan">Move around canvas<br />
-
-
+		<div class="btn-group-vertical" data-toggle="buttons">
+		<label class="btn btn-info"><input type="radio" name="board_actions" value="autoshape" checked="checked"><i class="icon-pencil"></i>	</label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" value="rectangle"><i class="icon-unchecked"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" value="text"><i class="icon-font"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" value="select"><i class="icon-hand-up"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" value="pan"><i class="icon-move"></i></label>	
+		</div>
     </div>
     
     <div id="layers_sidebar">
-        Layers
-        <button id="add_layer">Add Layer</button>        
-        <div id="layers_sidebar_sortable">
-        </div>
+	    <div id="layers_header">
+	     	<div class="pull-left"><h2>Layers</h2></div>
+		 	<div class="new_layer pull-right"><button type="button" class="btn btn-info btn-xs"><i id="add_layer" class="icon-plus"></i></button></div>   
+	    </div>     
+	    <div id="layers_sidebar_sortable">
+	    </div>
     </div>
-    <div>
+  <!--  <div>
         Preview
-    </div>
+    </div> -->
 </div>
 
-<div style="position: absolute; left: 0px; top: 0px; bottom: 0px; right: 0px; background: white;" id="loading_cover">
-Loading...
+<div style="position:fixed; top:50%; left: 50%; background: white;" id="loading_cover">
+<i class="icon-spinner icon-spin icon-4x"></i>
 </div>
 
 {% include "handlebars/layer/sidebar.html" %}

@@ -15,16 +15,16 @@ As elements from here are styled properly, these styles can go away.
     position: absolute;
     display: none;
     background: white;
-    border: 2px solid black;
+    /*border: 2px solid black;*/
 }
 
 .new_content_attributes_panel {
     top: 0px;
-    right: 300px;
+    left: 300px;
 }
 
-#title { position: fixed; top: 0px; left: 0px; width: 100%; height: 40px; }
-#sidebar { position: fixed; top: 0px; right: 0px; width: 200px; height: 100%; }
+#title { position: fixed; top: 0px; left: 5px; width: 100%; height: 40px; }
+#sidebar { position: fixed; top: 40px; left: 5px; width: 200px; height: 100%; }
 #canvas_container { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; }
 
 .layer_sidebar { border: 1px solid blue; }
