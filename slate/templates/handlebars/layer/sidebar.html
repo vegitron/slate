@@ -2,20 +2,25 @@
     {% tplhandlebars "layer_sidebar" %}
     <div id="layer_sidebar_{{layer_id}}" class="layer_sidebar">
 		<div>
-			<span id="layer_name_{{layer_id}}">{{ name }}</span>
+			<h3><span id="layer_name_{{layer_id}}">{{ name }}</span></h3>
 	        <form class="rename_layer">
 	            <input type="text" name="rename_layer"/>
 	            <input type="submit" value="rename" />
 	        </form>
 		</div>
 		<canvas id="layer_preview_{{layer_id}}" width="100" height="100" class="layer_preview"></canvas>
-		<div class="layer-lock">
-	        <label><input id="lock_layer_{{layer_id}}" type="checkbox" value="1" {{ #if is_locked }} checked="checked"{{ /if }}/><span class="locked"><i aria-hidden="true" class="icon-lock icon-large"></i></span></label>
-	        <button type="button" id="delete_layer_{{layer_id}}" class="pull-right btn btn-xs" value="{{ layer_id }}"><i class="delete-layer icon-trash"></i></button>
+		<div>
+		<span class="layer-delete">
+		<label title="Delete Layer"><input id="delete_layer_{{layer_id}}" type="checkbox" value="{{ layer_id }}" /><i aria-hidden="true" class="delete-layer icon-trash icon-large"></i></label>
+		</span>
+	    <span class="layer-hide">
+	        <label title="Show/Hide Layer"><input id="show_layer_{{layer_id}}" type="checkbox" checked="checked" value="{{ layer_id }}"><span class="hide-layer"><i class="icon-eye-open icon-large"></i></span></label>
+		</span>
+		<span class="layer-lock">
+	        <label title="Lock/Unlock Layer"><input id="lock_layer_{{layer_id}}" type="checkbox" value="1" {{ #if is_locked }} checked="checked"{{ /if }}/><span class="locked"><i aria-hidden="true" class="icon-lock icon-large"></i></span></label>
+		</span>
 		</div>
-	    <div class="layer-hide">
-	        <label><input id="show_layer_{{layer_id}}" type="checkbox" checked="checked" value="{{ layer_id }}"><span class="hide"><i class="icon-eye-open icon-large"></i></span></label>
-		</div>
+		
 	        
 		
     </div>

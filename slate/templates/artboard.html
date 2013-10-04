@@ -13,22 +13,19 @@
     <canvas id="artboard"></canvas>
     <canvas id="draw_surface" onclick="void(0)"></canvas>
 </div>
-
+<span style="position:absolute; top:5px; left:5px;"><a href="/"><i class="icon-chevron-left"></i> Back</a></span> 
 <div id="title"><h1>{{ name }}</h1></div>
-<div id="shape_controls">
-Shape controls:
-    <br />
-    Line width:
-        <br /><label><input type="radio" name="shape_line_width" value="1">Thin</label>
-        <br /><label><input type="radio" name="shape_line_width" value="4" checked="checked">Medium</label>
-        <br /><label><input type="radio" name="shape_line_width" value="10">Thick</label>
-
-    <Br />
-    <label>Border color: <input type="text" name="shape_border_color" value="black"/></label>
-    <br />
-    <label>Fill color: <input type="text" name="shape_fill_color" value="rgba(255, 255, 0, .1)"/></label>
-    <br />
-    <button name="delete_shape">Delete Shape</button>
+<div id="shape_controls" class="btn-toolbar">
+	<div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-default"><input type="radio" name="shape_line_width" value="1">Thin</label>
+        <label class="btn btn-default"><input type="radio" name="shape_line_width" value="4" checked="checked">Medium</label>
+		<label class="btn btn-default"><input type="radio" name="shape_line_width" value="10">Thick</label>
+	</div>
+	<div class="pull-left" style="padding-left:5px;">
+		<label><input type="text" class="form-control" name="shape_border_color" placeholder="color"/></label>
+		<label><input type="text" class="form-control" name="shape_fill_color" placeholder="Fill"/></label>
+		<button name="delete_shape" class="btn btn-link"><i class="delete-layer icon-trash"></i></button>
+	</div>
 </div>
 <!-- text controls -->
 <div id="text_controls" class="btn-toolbar">
@@ -37,26 +34,26 @@ Shape controls:
         <label class="btn btn-default"><input type="radio" name="text_font_size" value="24" checked="checked"><i class="icon-font"></i></label>
         <label class="btn btn-default"><input type="radio" name="text_font_size" value="48"><i class="icon-font icon-large"></i></label>       
 	</div>
-	 <label>Color: <input type="text" name="text_color" value="black"/></label>
-
-
+	<div class="col-lg-4">
+	 <label><input type="text" class="form-control" name="text_color" placeholder="color"/></label>
+	</div>
 </div>
 
 <div id="sidebar">
     <div>
 		<div class="btn-group-vertical" data-toggle="buttons">
-		<label class="btn btn-info"><input type="radio" name="board_actions" value="autoshape" checked="checked"><i class="icon-pencil"></i>	</label>
-		<label class="btn btn-info"><input type="radio" name="board_actions" value="rectangle"><i class="icon-unchecked"></i></label>
-		<label class="btn btn-info"><input type="radio" name="board_actions" value="text"><i class="icon-font"></i></label>
-		<label class="btn btn-info"><input type="radio" name="board_actions" value="select"><i class="icon-hand-up"></i></label>
-		<label class="btn btn-info"><input type="radio" name="board_actions" value="pan"><i class="icon-move"></i></label>	
+		<label class="btn btn-info"><input type="radio" name="board_actions" id="action_autoshape" value="autoshape" checked="checked"><i class="icon-pencil"></i>	</label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" id="action_rectangle" value="rectangle"><i class="icon-unchecked"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" id="action_text" value="text"><i class="icon-font"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" id="action_select" value="select"><i class="icon-hand-up"></i></label>
+		<label class="btn btn-info"><input type="radio" name="board_actions" id="action_move" value="pan"><i class="icon-move"></i></label>	
 		</div>
     </div>
     
     <div id="layers_sidebar">
 	    <div id="layers_header">
 	     	<div class="pull-left"><h2>Layers</h2></div>
-		 	<div class="new_layer pull-right"><button type="button" class="btn btn-info btn-xs"><i id="add_layer" class="icon-plus"></i></button></div>   
+		 	<div class="new-layer pull-right"><button type="button" class="btn btn-link btn-sm"><i id="add_layer" class="new-layer-icon icon-plus icon-large"></i></button></div>   
 	    </div>     
 	    <div id="layers_sidebar_sortable">
 	    </div>

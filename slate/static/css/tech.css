@@ -15,7 +15,7 @@ As elements from here are styled properly, these styles can go away.
     position: absolute;
     display: none;
     background: white;
-    /*border: 2px solid black;*/
+    border: 2px solid black;
 }
 
 .new_content_attributes_panel {
