@@ -2,7 +2,9 @@ Slate.Artboard = (function ($) {
     "use strict";
     var periodic_update_data = {},
         canvas_origin_x = 0,
-        canvas_origin_y = 0;
+        canvas_origin_y = 0,
+        canvas_zoom_factor = 0,
+        ZOOM_BASE = 2; // Arbitrary - zoom is this raised to the zoom level.
 
     function update_origin_from_url() {
         var test_match = [window.slate_home, "/board/", window.artboard_url_token, "/([-0-9]+),([-0-9]+)"].join(""),
@@ -66,10 +68,53 @@ Slate.Artboard = (function ($) {
         canvas_origin_y = y;
     }
 
+    function get_zoom_level() {
+        return canvas_zoom_factor;
+    }
+
+    function get_zoom_scale() {
+        return Math.pow(ZOOM_BASE, get_zoom_level());
+    }
+
+    function zoom_in() {
+        canvas_zoom_factor++;
+        update_zoom_display();
+    }
+
+    function zoom_out() {
+        canvas_zoom_factor--;
+        update_zoom_display();
+    }
+
+    function on_change_zoom_input() {
+        var new_value = $("#zoom_level_display").val();
+
+        if (parseInt(new_value) == new_value) {
+            canvas_zoom_factor = parseInt(new_value);
+        }
+
+        update_zoom_display();
+    }
+
+    function update_zoom_display() {
+        $("#zoom_level_display").val(canvas_zoom_factor);
+    }
+
+    function add_zoom_events() {
+        $(".zoom_in").on("click", zoom_in);
+        $(".zoom_out").on("click", zoom_out);
+        $("#zoom_level_display").on("change", on_change_zoom_input);
+    }
+
     return {
         post_artboard_data: post_artboard_data,
         update_origin_from_url: update_origin_from_url,
         get_canvas_origin: get_canvas_origin,
-        set_canvas_origin: set_canvas_origin
+        set_canvas_origin: set_canvas_origin,
+        get_zoom_level: get_zoom_level,
+        get_zoom_scale: get_zoom_scale,
+        add_zoom_events: add_zoom_events
     };
+
+
 })(jQuery);

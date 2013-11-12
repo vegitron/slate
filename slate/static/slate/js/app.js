@@ -33,6 +33,7 @@ var Slate = {};
         $("#add_layer").on("click", Slate.Layer.add_new_layer);
         Slate.Drawing.add_drawing_events();
         Slate.Attributes.add_attribute_events();
+        Slate.Artboard.add_zoom_events();
 
         Slate.Artboard.post_artboard_data(data);
         if (data.layers.length > 0){

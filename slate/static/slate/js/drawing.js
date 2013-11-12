@@ -519,16 +519,20 @@ Slate.Drawing = (function ($) {
 
     }
 
+    function value_scaled_by_zoom(val) {
+        return val * Slate.Artboard.get_zoom_scale();
+    }
+
     function draw_polygon(context, origin, border_width, border_color, fill_color, points) {
         context.save();
         context.beginPath();
 
-        context.moveTo(points[0].x + origin.x, points[0].y + origin.y);
+        context.moveTo(value_scaled_by_zoom(points[0].x + origin.x), value_scaled_by_zoom(points[0].y + origin.y));
         for (var i = 0; i < points.length-1; i++) {
-            context.lineTo(points[i+1].x + origin.x, points[i+1].y + origin.y);
+            context.lineTo(value_scaled_by_zoom(points[i+1].x + origin.x), value_scaled_by_zoom(points[i+1].y + origin.y));
         }
 
-        context.lineWidth = border_width;
+        context.lineWidth = value_scaled_by_zoom(border_width);
         context.lineCap = 'round';
         context.strokeStyle= border_color;
 
@@ -544,10 +548,10 @@ Slate.Drawing = (function ($) {
 
     function draw_line(context, origin, border_width, border_color, points) {
         context.beginPath();
-        context.moveTo(points[0].x + origin.x, points[0].y + origin.y);
+        context.moveTo(value_scaled_by_zoom(points[0].x + origin.x), value_scaled_by_zoom(points[0].y + origin.y));
         context.strokeStyle = border_color;
-        context.lineWidth = border_width;
-        context.lineTo(points[1].x + origin.x, points[1].y + origin.y);
+        context.lineWidth = value_scaled_by_zoom(border_width);
+        context.lineTo(value_scaled_by_zoom(points[1].x + origin.x), value_scaled_by_zoom(points[1].y + origin.y));
         context.stroke();
     }
 
@@ -588,8 +592,8 @@ Slate.Drawing = (function ($) {
     function draw_circle(context, origin, border_width, border_color, fill_color, cx, cy, radius) {
         context.save();
         context.beginPath();
-        context.arc(cx + origin.x, cy + origin.y, radius, 0, 2 * Math.PI, false);
-        context.lineWidth = border_width;
+        context.arc(value_scaled_by_zoom(cx + origin.x), value_scaled_by_zoom(cy + origin.y), value_scaled_by_zoom(radius), 0, 2 * Math.PI, false);
+        context.lineWidth = value_scaled_by_zoom(border_width);
         context.strokeStyle = border_color;
         context.stroke();
         if (fill_color !== null) {
