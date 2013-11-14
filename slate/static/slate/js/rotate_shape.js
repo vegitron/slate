@@ -37,8 +37,8 @@ Slate.RotateShape = (function ($) {
         var origin = Slate.Artboard.get_canvas_origin(),
             canvas = document.getElementById("draw_surface"),
             context = canvas.getContext("2d"),
-            canvas_x = ev.clientX - origin.x,
-            canvas_y = ev.clientY - origin.y,
+            canvas_x = Slate.Artboard.screen_to_canvas_zoom(ev.clientX) - origin.x,
+            canvas_y = Slate.Artboard.screen_to_canvas_zoom(ev.clientY) - origin.y,
             new_angle = mouse_angle(center_x, center_y, canvas_x, canvas_y);
 
         var movement_proxy = JSON.parse(JSON.stringify(selected_shape));
@@ -58,8 +58,8 @@ Slate.RotateShape = (function ($) {
             save_obj = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape())),
             canvas = document.getElementById("draw_surface"),
             context = canvas.getContext("2d"),
-            canvas_x = ev.clientX - origin.x,
-            canvas_y = ev.clientY - origin.y,
+            canvas_x = Slate.Artboard.screen_to_canvas_zoom(ev.clientX) - origin.x,
+            canvas_y = Slate.Artboard.screen_to_canvas_zoom(ev.clientY) - origin.y,
             new_angle = mouse_angle(center_x, center_y, canvas_x, canvas_y);
 
 
