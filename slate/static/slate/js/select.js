@@ -88,9 +88,9 @@ Slate.Select = (function ($) {
 
         context.save();
         context.beginPath();
-        context.moveTo(corners[0].x + origin.x, corners[0].y + origin.y);
+        context.moveTo(Slate.Artboard.canvas_to_screen_zoom(corners[0].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(corners[0].y + origin.y));
         for (var i = 1; i < corners.length; i++) {
-            context.lineTo(corners[i].x + origin.x, corners[i].y + origin.y);
+            context.lineTo(Slate.Artboard.canvas_to_screen_zoom(corners[i].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(corners[i].y + origin.y));
         }
 
         // Not implemented in all browsers, like firefox...
@@ -134,6 +134,10 @@ Slate.Select = (function ($) {
 
             var x_pos = corners[i].x - SELECT_SQUARE_SIZE / 2 + origin.x;
             var y_pos = corners[i].y - SELECT_SQUARE_SIZE / 2 + origin.y;
+
+            x_pos = Slate.Artboard.canvas_to_screen_zoom(x_pos);
+            y_pos = Slate.Artboard.canvas_to_screen_zoom(y_pos);
+
             context.rect(x_pos, y_pos, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
             context.closePath();
             context.stroke();
@@ -159,6 +163,10 @@ Slate.Select = (function ($) {
 
             x_pos = mid_x - SELECT_SQUARE_SIZE / 2 + origin.x;
             y_pos = mid_y - SELECT_SQUARE_SIZE / 2 + origin.y;
+
+            x_pos = Slate.Artboard.canvas_to_screen_zoom(x_pos);
+            y_pos = Slate.Artboard.canvas_to_screen_zoom(y_pos);
+
             context.rect(x_pos, y_pos, SELECT_SQUARE_SIZE, SELECT_SQUARE_SIZE);
             context.closePath();
 

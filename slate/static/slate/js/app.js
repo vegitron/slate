@@ -17,8 +17,8 @@ var Slate = {};
         Slate.Layer.invalidate_rectangle({
             x: -1 * origin.x - 10,
             y: -1 * origin.y - 10,
-            width: canvas.width + 20,
-            height: canvas.height + 20
+            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
+            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
         });
         Slate.Layer.redraw_regions();
 

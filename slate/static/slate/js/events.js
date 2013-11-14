@@ -34,6 +34,9 @@ Slate.Event = (function ($) {
             args,
             ev_val;
 
+        x = Slate.Artboard.screen_to_canvas_zoom(x);
+        y = Slate.Artboard.screen_to_canvas_zoom(y);
+
         for (i = 0; i < mousedown_events.length; i++) {
             var possible_event = mousedown_events[i];
 

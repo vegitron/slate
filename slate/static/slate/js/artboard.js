@@ -68,6 +68,14 @@ Slate.Artboard = (function ($) {
         canvas_origin_y = y;
     }
 
+    function canvas_to_screen_zoom(val) {
+        return val * get_zoom_scale();
+    }
+
+    function screen_to_canvas_zoom(val) {
+        return val / get_zoom_scale();
+    }
+
     function get_zoom_level() {
         return canvas_zoom_factor;
     }
@@ -113,6 +121,8 @@ Slate.Artboard = (function ($) {
         set_canvas_origin: set_canvas_origin,
         get_zoom_level: get_zoom_level,
         get_zoom_scale: get_zoom_scale,
+        canvas_to_screen_zoom: canvas_to_screen_zoom,
+        screen_to_canvas_zoom: screen_to_canvas_zoom,
         add_zoom_events: add_zoom_events
     };
 

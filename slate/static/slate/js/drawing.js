@@ -39,8 +39,12 @@ Slate.Drawing = (function ($) {
         drawing_state.is_drawing = true;
         drawing_state.points = [];
 
+
         var origin = Slate.Artboard.get_canvas_origin(),
             action_type = $("input[name='board_actions']:checked").val();
+
+        var canvas_x = Slate.Artboard.screen_to_canvas_zoom(position.x) - origin.x;
+        var canvas_y = Slate.Artboard.screen_to_canvas_zoom(position.y) - origin.y;
 
         if (action_type === "pan") {
             drawing_state.points.push({
@@ -50,7 +54,7 @@ Slate.Drawing = (function ($) {
         } else if (action_type === "select") {
             Slate.Event.clear_cursor_regions();
             Slate.Event.clear_mousedown_regions();
-            Slate.Select.find_select_object(position.x - origin.x, position.y - origin.y);
+            Slate.Select.find_select_object(canvas_x, canvas_y);
         } else if (action_type === "text") {
             show_text_box(position.x, position.y);
         } else {
@@ -132,8 +136,8 @@ Slate.Drawing = (function ($) {
         Slate.Layer.invalidate_rectangle({
             x: -1 * origin_x - 10,
             y: -1 * origin_y - 10,
-            width: canvas.width + 20,
-            height: canvas.height + 20
+            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
+            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
         });
 
         Slate.Layer.redraw_regions();
@@ -519,20 +523,16 @@ Slate.Drawing = (function ($) {
 
     }
 
-    function value_scaled_by_zoom(val) {
-        return val * Slate.Artboard.get_zoom_scale();
-    }
-
     function draw_polygon(context, origin, border_width, border_color, fill_color, points) {
         context.save();
         context.beginPath();
 
-        context.moveTo(value_scaled_by_zoom(points[0].x + origin.x), value_scaled_by_zoom(points[0].y + origin.y));
+        context.moveTo(Slate.Artboard.canvas_to_screen_zoom(points[0].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(points[0].y + origin.y));
         for (var i = 0; i < points.length-1; i++) {
-            context.lineTo(value_scaled_by_zoom(points[i+1].x + origin.x), value_scaled_by_zoom(points[i+1].y + origin.y));
+            context.lineTo(Slate.Artboard.canvas_to_screen_zoom(points[i+1].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(points[i+1].y + origin.y));
         }
 
-        context.lineWidth = value_scaled_by_zoom(border_width);
+        context.lineWidth = Slate.Artboard.canvas_to_screen_zoom(border_width);
         context.lineCap = 'round';
         context.strokeStyle= border_color;
 
@@ -548,16 +548,17 @@ Slate.Drawing = (function ($) {
 
     function draw_line(context, origin, border_width, border_color, points) {
         context.beginPath();
-        context.moveTo(value_scaled_by_zoom(points[0].x + origin.x), value_scaled_by_zoom(points[0].y + origin.y));
+        context.moveTo(Slate.Artboard.canvas_to_screen_zoom(points[0].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(points[0].y + origin.y));
         context.strokeStyle = border_color;
-        context.lineWidth = value_scaled_by_zoom(border_width);
-        context.lineTo(value_scaled_by_zoom(points[1].x + origin.x), value_scaled_by_zoom(points[1].y + origin.y));
+        context.lineWidth = Slate.Artboard.canvas_to_screen_zoom(border_width);
+        context.lineTo(Slate.Artboard.canvas_to_screen_zoom(points[1].x + origin.x), Slate.Artboard.canvas_to_screen_zoom(points[1].y + origin.y));
         context.stroke();
     }
 
     function draw_text(context, origin, color, info) {
+        // XXX - improper positioning on zoom
         context.save();
-        context.font = info.font_size+"px "+info.font_face;
+        context.font = Slate.Artboard.canvas_to_screen_zoom(info.font_size)+"px "+info.font_face;
         context.fillStyle = color;
 
         var rotation_angle = info.angle || 0;
@@ -568,7 +569,7 @@ Slate.Drawing = (function ($) {
         var x_translate_offset = text_size.width / 2;
         var y_translate_offset = text_size.height / 2;
 
-        context.translate(info.x + x_translate_offset + origin.x, info.y + y_translate_offset + origin.y);
+        context.translate(Slate.Artboard.canvas_to_screen_zoom(info.x + x_translate_offset + origin.x), Slate.Artboard.canvas_to_screen_zoom(info.y + y_translate_offset + origin.y));
 
         if (rotation_angle) {
             context.rotate(rotation_angle * Math.PI / 180);
@@ -592,8 +593,8 @@ Slate.Drawing = (function ($) {
     function draw_circle(context, origin, border_width, border_color, fill_color, cx, cy, radius) {
         context.save();
         context.beginPath();
-        context.arc(value_scaled_by_zoom(cx + origin.x), value_scaled_by_zoom(cy + origin.y), value_scaled_by_zoom(radius), 0, 2 * Math.PI, false);
-        context.lineWidth = value_scaled_by_zoom(border_width);
+        context.arc(Slate.Artboard.canvas_to_screen_zoom(cx + origin.x), Slate.Artboard.canvas_to_screen_zoom(cy + origin.y), Slate.Artboard.canvas_to_screen_zoom(radius), 0, 2 * Math.PI, false);
+        context.lineWidth = Slate.Artboard.canvas_to_screen_zoom(border_width);
         context.strokeStyle = border_color;
         context.stroke();
         if (fill_color !== null) {

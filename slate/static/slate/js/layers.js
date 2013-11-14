@@ -150,13 +150,23 @@ Slate.Layer = (function ($) {
             i,
             origin = Slate.Artboard.get_canvas_origin(),
             region,
-            sorted_shapes;
+            sorted_shapes,
+            zoomed_x,
+            zoomed_y,
+            zoomed_width,
+            zoomed_height;
 
         context.save();
         context.beginPath();
         for (i = 0; i < redraw_info.areas.length; i++) {
             region = redraw_info.areas[i];
-            context.rect(region.x + origin.x, region.y + origin.y, region.width, region.height);
+
+            zoomed_x = Slate.Artboard.canvas_to_screen_zoom(region.x + origin.x);
+            zoomed_y = Slate.Artboard.canvas_to_screen_zoom(region.y + origin.y);
+            zoomed_width = Slate.Artboard.canvas_to_screen_zoom(region.width);
+            zoomed_height = Slate.Artboard.canvas_to_screen_zoom(region.height);
+
+            context.rect(zoomed_x, zoomed_y, zoomed_width, zoomed_height);
         }
         context.clip();
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -395,8 +405,8 @@ Slate.Layer = (function ($) {
         invalidate_rectangle({
             x: -1 * origin.x - 10,
             y: -1 * origin.y - 10,
-            width: canvas.width + 20,
-            height: canvas.height + 20
+            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
+            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
         });
         redraw_regions();
         $("#layer_sidebar_" + layer_id).remove();
@@ -500,8 +510,8 @@ Slate.Layer = (function ($) {
         invalidate_rectangle({
             x: -1 * origin.x - 10,
             y: -1 * origin.y - 10,
-            width: canvas.width + 20,
-            height: canvas.height + 20
+            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
+            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
         });
         redraw_regions();
         update_layer(layer_index, {z_index: layer_data.layers[layer_index].z_index});
