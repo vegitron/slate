@@ -92,8 +92,8 @@ Slate.ResizeShape = (function ($) {
                 height_scale = null,
 
                 origin = Slate.Artboard.get_canvas_origin(),
-                canvas_x = ev.clientX - origin.x,
-                canvas_y = ev.clientY - origin.y,
+                canvas_x = Slate.Artboard.screen_to_canvas_zoom(ev.clientX) - origin.x,
+                canvas_y = Slate.Artboard.screen_to_canvas_zoom(ev.clientY) - origin.y,
                 x_diff,
                 new_width,
                 original_right,
