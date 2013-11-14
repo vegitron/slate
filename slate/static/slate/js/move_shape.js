@@ -12,10 +12,8 @@ Slate.MoveShape = (function ($) {
 
         function handle_mouse_move(ev) {
             document.getSelection().removeAllRanges();
-            if (!movement_proxy) {
-                movement_proxy = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape()));
-                Slate.Shape.set_movement_proxy_display(movement_proxy);
-            }
+            var  movement_proxy = JSON.parse(JSON.stringify(Slate.Select.get_selected_shape()));
+            Slate.Shape.set_movement_proxy_display(movement_proxy);
 
             var diff = get_position_differential(movement_proxy, ev),
                 canvas = document.getElementById("draw_surface"),
@@ -56,7 +54,7 @@ Slate.MoveShape = (function ($) {
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        $(window).on("mousemove", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_move);
+        $(window).on("mousemove", { x_offset: x - screen_x, y_offset: y - screen_y }, handle_mouse_move);
         $(window).on("mouseup", { x_offset: x - screen_x, y_offset: y - screen_y}, handle_mouse_up);
 
         return false;
@@ -69,8 +67,8 @@ Slate.MoveShape = (function ($) {
             new_y = ev.clientY - ev.data.y_offset,
             old_x = shape.coverage_area.x,
             old_y = shape.coverage_area.y,
-            dx = new_x - old_x - origin.x,
-            dy = new_y - old_y - origin.y;
+            dx = Slate.Artboard.screen_to_canvas_zoom(new_x - old_x - origin.x),
+            dy = Slate.Artboard.screen_to_canvas_zoom(new_y - old_y - origin.y);
 
         return {
             dx: dx,

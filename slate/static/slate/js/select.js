@@ -187,38 +187,47 @@ Slate.Select = (function ($) {
                 height: SELECT_SQUARE_SIZE
             }, Slate.ResizeShape.start_shape_resize, [ edge_event_data[i-1] ]);
 
-
         }
 
         context.restore();
         // Add this last, so the corners get priority w/ the cursor
+        var move_x = Slate.Artboard.canvas_to_screen_zoom(corners[0].x + origin.x),
+            move_y = Slate.Artboard.canvas_to_screen_zoom(corners[0].y + origin.y),
+            move_width = Slate.Artboard.canvas_to_screen_zoom(corners[2].x - corners[0].x),
+            move_height = Slate.Artboard.canvas_to_screen_zoom(corners[2].y - corners[0].y);
+
         Slate.Event.set_cursor_region({
-            x: corners[0].x + origin.x,
-            y: corners[0].y + origin.y,
-            width: corners[2].x - corners[0].x,
-            height: corners[2].y - corners[0].y
+            x: move_x,
+            y: move_y,
+            width: move_width,
+            height: move_height
         }, 'move');
 
         Slate.Event.set_mousedown_region({
-            x: corners[0].x + origin.x,
-            y: corners[0].y + origin.y,
-            width: corners[2].x - corners[0].x,
-            height: corners[2].y - corners[0].y
+            x: move_x,
+            y: move_y,
+            width: move_width,
+            height: move_height
         }, Slate.MoveShape.start_selected_shape_move);
 
         // And now the rotate events, currently just a rectangle outside the shape rectangle
+        var rotate_x = Slate.Artboard.canvas_to_screen_zoom(corners[0].x + origin.x - ROTATE_SHAPE_OFFSET),
+            rotate_y = Slate.Artboard.canvas_to_screen_zoom(corners[0].y + origin.y - ROTATE_SHAPE_OFFSET),
+            rotate_width = Slate.Artboard.canvas_to_screen_zoom(corners[2].x - corners[0].x + (ROTATE_SHAPE_OFFSET * 2)),
+            rotate_height = Slate.Artboard.canvas_to_screen_zoom(corners[2].y - corners[0].y + (ROTATE_SHAPE_OFFSET * 2));
+
         Slate.Event.set_cursor_region({
-            x: corners[0].x + origin.x - ROTATE_SHAPE_OFFSET,
-            y: corners[0].y + origin.y - ROTATE_SHAPE_OFFSET,
-            width: corners[2].x - corners[0].x + (ROTATE_SHAPE_OFFSET * 2),
-            height: corners[2].y - corners[0].y + (ROTATE_SHAPE_OFFSET * 2)
+            x: rotate_x,
+            y: rotate_y,
+            width: rotate_width,
+            height: rotate_height
         }, 'wait');
 
         Slate.Event.set_mousedown_region({
-            x: corners[0].x + origin.x - ROTATE_SHAPE_OFFSET,
-            y: corners[0].y + origin.y - ROTATE_SHAPE_OFFSET,
-            width: corners[2].x - corners[0].x + (ROTATE_SHAPE_OFFSET * 2),
-            height: corners[2].y - corners[0].y + (ROTATE_SHAPE_OFFSET * 2)
+            x: rotate_x,
+            y: rotate_y,
+            width: rotate_width,
+            height: rotate_height
         }, Slate.RotateShape.start_shape_rotate, [get_selected_shape()]);
 
     }
