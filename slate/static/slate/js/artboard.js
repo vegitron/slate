@@ -4,7 +4,7 @@ Slate.Artboard = (function ($) {
         canvas_origin_x = 0,
         canvas_origin_y = 0,
         canvas_zoom_factor = 0,
-        ZOOM_BASE = 2; // Arbitrary - zoom is this raised to the zoom level.
+        ZOOM_BASE = 1.3; // Arbitrary - zoom is this raised to the zoom level.
 
     function update_origin_from_url() {
         var test_match = [window.slate_home, "/board/", window.artboard_url_token, "/([-0-9]+),([-0-9]+)"].join(""),
@@ -87,11 +87,13 @@ Slate.Artboard = (function ($) {
     function zoom_in() {
         canvas_zoom_factor++;
         update_zoom_display();
+        Slate.Layer.redraw_screen();
     }
 
     function zoom_out() {
         canvas_zoom_factor--;
         update_zoom_display();
+        Slate.Layer.redraw_screen();
     }
 
     function on_change_zoom_input() {
@@ -102,6 +104,7 @@ Slate.Artboard = (function ($) {
         }
 
         update_zoom_display();
+        Slate.Layer.redraw_screen();
     }
 
     function update_zoom_display() {

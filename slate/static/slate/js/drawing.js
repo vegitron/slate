@@ -122,31 +122,9 @@ Slate.Drawing = (function ($) {
     }
 
     function update_display_origin(x, y) {
-        var canvas = document.getElementById("artboard"),
-            context = canvas.getContext("2d"),
-
-            last_origin = Slate.Artboard.get_canvas_origin(),
-            origin_x = last_origin.x,
-            origin_y = last_origin.y;
-
         Slate.Artboard.set_canvas_origin(x, y);
 
-        // XXX - drop these constants, fill in the image w/ image data, invalidate
-        // only the areas that actually need re-drawing
-        Slate.Layer.invalidate_rectangle({
-            x: -1 * origin_x - 10,
-            y: -1 * origin_y - 10,
-            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
-            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
-        });
-
-        Slate.Layer.redraw_regions();
-
-    /*
-        var image_data = context.getImageData(0, 0, canvas.width, canvas.height);
-
-        context.putImageData(image_data, image_dest_x, image_dest_y);
-    */
+        Slate.Layer.redraw_screen();
     }
 
     function live_update_panning(ev) {

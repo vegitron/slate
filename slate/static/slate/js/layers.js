@@ -134,6 +134,24 @@ Slate.Layer = (function ($) {
         return intersecting_shapes;
     }
 
+    function redraw_screen() {
+        var canvas = document.getElementById("artboard"),
+            context = canvas.getContext("2d"),
+            origin = Slate.Artboard.get_canvas_origin(),
+            origin_x = origin.x,
+            origin_y = origin.y;
+
+        Slate.Layer.invalidate_rectangle({
+            x: -1 * origin_x - 10,
+            y: -1 * origin_y - 10,
+            width: Slate.Artboard.screen_to_canvas_zoom(canvas.width + 20),
+            height: Slate.Artboard.screen_to_canvas_zoom(canvas.height + 20)
+        });
+
+        Slate.Layer.redraw_regions();
+
+    }
+
     function invalidate_rectangle(rectangle) {
         redraw_info.areas.push(rectangle);
 
@@ -541,6 +559,7 @@ Slate.Layer = (function ($) {
         area_overlap: area_overlap,
         draw_layer_previews: draw_layer_previews,
         redraw_regions: redraw_regions,
+        redraw_screen: redraw_screen,
         invalidate_rectangle: invalidate_rectangle,
         get_shape_count_for_layer: get_shape_count_for_layer,
         add_shape_to_layer: add_shape_to_layer,
