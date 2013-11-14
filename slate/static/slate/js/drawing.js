@@ -534,9 +534,12 @@ Slate.Drawing = (function ($) {
     }
 
     function draw_text(context, origin, color, info) {
-        // XXX - improper positioning on zoom
         context.save();
-        context.font = Slate.Artboard.canvas_to_screen_zoom(info.font_size)+"px "+info.font_face;
+
+        // We need to stash this before zooming, so each zoom is working with the proper base.  Otherwise we get multiple zoom
+        var original_font_size = info.font_size;
+        info.font_size = Slate.Artboard.canvas_to_screen_zoom(info.font_size);
+        context.font = info.font_size+"px "+info.font_face;
         context.fillStyle = color;
 
         var rotation_angle = info.angle || 0;
@@ -547,7 +550,9 @@ Slate.Drawing = (function ($) {
         var x_translate_offset = text_size.width / 2;
         var y_translate_offset = text_size.height / 2;
 
-        context.translate(Slate.Artboard.canvas_to_screen_zoom(info.x + x_translate_offset + origin.x), Slate.Artboard.canvas_to_screen_zoom(info.y + y_translate_offset + origin.y));
+        console.log("Y translate offset?  ", y_translate_offset, Slate.Artboard.canvas_to_screen_zoom(y_translate_offset));
+
+        context.translate(Slate.Artboard.canvas_to_screen_zoom(info.x + origin.x) + x_translate_offset, Slate.Artboard.canvas_to_screen_zoom(info.y + origin.y) + y_translate_offset);
 
         if (rotation_angle) {
             context.rotate(rotation_angle * Math.PI / 180);
@@ -565,6 +570,8 @@ Slate.Drawing = (function ($) {
             var y = (1.2 * info.font_size * (i +1)) - info.font_size * 0.2;
             context.fillText(lines[i],  -1 * x_translate_offset, y - y_translate_offset);
         }
+
+        info.font_size = original_font_size;
         context.restore();
     }
 
