@@ -160,8 +160,8 @@ Slate.Attributes = (function ($) {
         window_width = $(window).width();
         window_height = $(window).height();
 
-        panel.css("top", shape.coverage_area.y + origin.y - panel.height());
-        panel.css("left", shape.coverage_area.x + origin.x);
+        panel.css("top", Slate.Artboard.canvas_to_screen_zoom(shape.coverage_area.y + origin.y) - panel.height());
+        panel.css("left", Slate.Artboard.canvas_to_screen_zoom(shape.coverage_area.x + origin.x));
         panel.show();
     }
 
