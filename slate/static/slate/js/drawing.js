@@ -131,8 +131,8 @@ Slate.Drawing = (function ($) {
         var first_point = drawing_state.points[0],
 
             position = get_event_position(ev),
-            d_x = position.x - first_point.x,
-            d_y = position.y - first_point.y,
+            d_x = Slate.Artboard.screen_to_canvas_zoom(position.x - first_point.x),
+            d_y = Slate.Artboard.screen_to_canvas_zoom(position.y - first_point.y),
 
             origin = Slate.Artboard.get_canvas_origin(),
 
