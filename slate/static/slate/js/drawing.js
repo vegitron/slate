@@ -98,12 +98,15 @@ Slate.Drawing = (function ($) {
 
             points = drawing_state.points,
             last_point = points[points.length - 1],
-            x1 = last_point.x,
-            y1 = last_point.y,
+            base_x1 = last_point.x + origin.x,
+            base_y1 = last_point.y + origin.y,
+
+            x1 = Slate.Artboard.screen_to_canvas_zoom(base_x1) - origin.x,
+            y1 = Slate.Artboard.screen_to_canvas_zoom(base_y1) - origin.y,
 
             position = get_event_position(ev),
-            x2 = position.x - origin.x,
-            y2 = position.y - origin.y,
+            x2 = Slate.Artboard.screen_to_canvas_zoom(position.x) - origin.x,
+            y2 = Slate.Artboard.screen_to_canvas_zoom(position.y) - origin.y,
 
             border_width = drawing_state.border_width,
             border_color = drawing_state.border_color,
@@ -190,12 +193,17 @@ Slate.Drawing = (function ($) {
         var shape_values = autoshape.full[autoshape.best];
 
         if (shape_type === "circle") {
+            shape_values.cx = Slate.Artboard.screen_to_canvas_zoom(shape_values.cx);
+            shape_values.cy = Slate.Artboard.screen_to_canvas_zoom(shape_values.cy);
+            shape_values.radius = Slate.Artboard.screen_to_canvas_zoom(shape_values.radius);
             shape_values.cx -= origin.x;
             shape_values.cy -= origin.y;
         } else if (shape_type === "bezier") {
             shape_values = { points: drawing_state.points };
         } else if (shape_type === "line") {
             for (var i = 0; i < shape_values.points.length; i++) {
+                shape_values.points[i].x = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].x);
+                shape_values.points[i].y = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].y);
                 shape_values.points[i].x -= origin.x;
                 shape_values.points[i].y -= origin.y;
             }
@@ -203,6 +211,8 @@ Slate.Drawing = (function ($) {
             // The last element in this array is a reference to the first, so don't
             // offset it twice
             for (var i = 0; i < shape_values.points.length-1; i++) {
+                shape_values.points[i].x = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].x);
+                shape_values.points[i].y = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].y);
                 shape_values.points[i].x -= origin.x;
                 shape_values.points[i].y -= origin.y;
             }
@@ -230,12 +240,15 @@ Slate.Drawing = (function ($) {
         var origin = Slate.Artboard.get_canvas_origin();
 
         var last_point = points[points.length - 1];
-        var x1 = last_point.x;
-        var y1 = last_point.y;
+        var base_x1 = last_point.x + origin.x;
+        var base_y1 = last_point.y + origin.y;
+
+        var x1 = Slate.Artboard.screen_to_canvas_zoom(base_x1) - origin.x;
+        var y1 = Slate.Artboard.screen_to_canvas_zoom(base_y1) - origin.y;
 
         var position = get_event_position(ev);
-        var x2 = position.x - origin.x;
-        var y2 = position.y - origin.y;
+        var x2 = Slate.Artboard.screen_to_canvas_zoom(position.x) - origin.x;
+        var y2 = Slate.Artboard.screen_to_canvas_zoom(position.y) - origin.y;
 
         var shape_type = 'polygon';
         var shape_values = { points: [
@@ -549,8 +562,6 @@ Slate.Drawing = (function ($) {
         var text_size = Slate.Shape.Text.get_text_size(info);
         var x_translate_offset = text_size.width / 2;
         var y_translate_offset = text_size.height / 2;
-
-        console.log("Y translate offset?  ", y_translate_offset, Slate.Artboard.canvas_to_screen_zoom(y_translate_offset));
 
         context.translate(Slate.Artboard.canvas_to_screen_zoom(info.x + origin.x) + x_translate_offset, Slate.Artboard.canvas_to_screen_zoom(info.y + origin.y) + y_translate_offset);
 
