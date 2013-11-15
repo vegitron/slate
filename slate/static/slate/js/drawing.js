@@ -192,6 +192,20 @@ Slate.Drawing = (function ($) {
         var shape_type = autoshape.best;
         var shape_values = autoshape.full[autoshape.best];
 
+        function update_points(points, max) {
+            if (!max) {
+                max = points.length;
+            }
+            for (var i = 0; i < max; i++) {
+                points[i].x = Slate.Artboard.screen_to_canvas_zoom(points[i].x);
+                points[i].y = Slate.Artboard.screen_to_canvas_zoom(points[i].y);
+                points[i].x -= origin.x;
+                points[i].y -= origin.y;
+            }
+
+            return points;
+        }
+
         if (shape_type === "circle") {
             shape_values.cx = Slate.Artboard.screen_to_canvas_zoom(shape_values.cx);
             shape_values.cy = Slate.Artboard.screen_to_canvas_zoom(shape_values.cy);
@@ -200,22 +214,20 @@ Slate.Drawing = (function ($) {
             shape_values.cy -= origin.y;
         } else if (shape_type === "bezier") {
             shape_values = { points: drawing_state.points };
-        } else if (shape_type === "line") {
+
             for (var i = 0; i < shape_values.points.length; i++) {
-                shape_values.points[i].x = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].x);
-                shape_values.points[i].y = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].y);
+                shape_values.points[i].x = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].x + origin.x);
+                shape_values.points[i].y = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].y + origin.y);
                 shape_values.points[i].x -= origin.x;
                 shape_values.points[i].y -= origin.y;
             }
+
+        } else if (shape_type === "line") {
+            update_points(shape_values.points);
         } else if (shape_type === "polygon") {
             // The last element in this array is a reference to the first, so don't
             // offset it twice
-            for (var i = 0; i < shape_values.points.length-1; i++) {
-                shape_values.points[i].x = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].x);
-                shape_values.points[i].y = Slate.Artboard.screen_to_canvas_zoom(shape_values.points[i].y);
-                shape_values.points[i].x -= origin.x;
-                shape_values.points[i].y -= origin.y;
-            }
+            update_points(shape_values.points, shape_values.points.length-1);
         }
 
 
