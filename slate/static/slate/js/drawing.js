@@ -307,6 +307,14 @@ Slate.Drawing = (function ($) {
 
     function text_input_blur(ev) {
         $("#input_text_area").hide();
+
+        var origin = Slate.Artboard.get_canvas_origin();
+        var base_x = drawing_state.text_info.x + origin.x;
+        var base_y = drawing_state.text_info.y + origin.y;
+
+        var x_pos = Slate.Artboard.screen_to_canvas_zoom(base_x) - origin.x;
+        var y_pos = Slate.Artboard.screen_to_canvas_zoom(base_y) - origin.y;
+
         add_shape_to_artboard({
             layer: Slate.Layer.get_active_layer(),
             shape: 'text',
@@ -315,8 +323,8 @@ Slate.Drawing = (function ($) {
                 font_face: drawing_state.text_info.font_face,
                 font_size: drawing_state.text_info.font_size,
                 color: drawing_state.text_info.color,
-                x: drawing_state.text_info.x,
-                y: drawing_state.text_info.y
+                x: x_pos,
+                y: y_pos
             }
         });
 
